@@ -8,7 +8,7 @@
 """Flask Resources module to create REST APIs."""
 
 from ..args.parsers import item_request_parser
-from .base import BaseView, with_resource_requestctx
+from .base import BaseView
 
 
 class SingletonView(BaseView):
@@ -23,22 +23,17 @@ class SingletonView(BaseView):
         super(SingletonView, self).__init__(resource=resource, *args, **kwargs)
         self.item_parser = item_parser
 
-    @with_resource_requestctx
     def post(self, *args, **kwargs):
         return self.resource.create()
 
-    @with_resource_requestctx
     def get(self, *args, **kwargs):
         return self.resource.read()
 
-    @with_resource_requestctx
     def put(self, *args, **kwargs):
         return self.resource.update()
 
-    @with_resource_requestctx
     def patch(self, *args, **kwargs):
         return self.resource.partial_update()
 
-    @with_resource_requestctx
     def delete(self, *args, **kwargs):
         return self.resource.delete()

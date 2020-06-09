@@ -29,6 +29,9 @@ class Resource(object):
     ## Primary interface
     def search(self, request_context):
         """Perform a search over the items."""
+        # TODO: the resource itself shouldn't be "request"-aware. Returning of
+        # HTTP responses should be done in views. Maybe some base
+        # error/exception classes can be defined to help?
         abort(405)
 
     def create(self):

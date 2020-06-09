@@ -7,7 +7,7 @@
 
 """Module tests."""
 
-from contextlib import contextmanager
+from functools import wraps
 
 from flask import g
 from werkzeug.local import LocalProxy
@@ -64,3 +64,13 @@ class ResourceRequestCtx(object):
     def __exit__(self, type, value, traceback):
         """Pop the resource context manager from the current request."""
         del g.resource_requestctx
+
+
+def with_resource_requestctx(f):
+    @wraps(f)
+    def inner(*args, **kwargs):
+        # TODO: Can we pass any arguments to "ResourceRequestCtx(...)"?
+        with ResourceRequestCtx():
+            return f(*args, **kwargs)
+
+    return inner

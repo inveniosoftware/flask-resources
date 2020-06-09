@@ -13,23 +13,20 @@ The views responsabilities are:
 """
 
 from flask.views import MethodView
-from functools import wraps
 
-from ..context import ResourceRequestCtx
-
-
-def with_resource_requestctx(f):
-    @wraps(f)
-    def inner(*args, **kwargs):
-        with ResourceRequestCtx() as request_context:
-            return f(*args, **kwargs)
-
-    return inner
+from ..context import with_resource_requestctx
 
 
 class BaseView(MethodView):
     """Base view."""
 
+    with_context_decorator = True
+    """Flag to control resource context pushing decorator."""
+
     def __init__(self, resource, *args, **kwargs):
         super(BaseView, self).__init__(*args, **kwargs)
         self.resource = resource
+        if self.with_context_decorator:
+            # Push the decorator to the end, so that it's applied before any
+            # other decorator.
+            self.decorators += (with_resource_requestctx,)
