@@ -10,13 +10,12 @@
 from functools import wraps
 
 from flask import g
+from functools import wraps
 from werkzeug.local import LocalProxy
 
 #
 # Proxy to the current resource context
 #
-
-
 def _get_context():
     """Get the resource request context from the g object."""
     if hasattr(g, "resource_requestctx"):
@@ -31,8 +30,6 @@ resource_requestctx = LocalProxy(_get_context)
 #
 # Resource context
 #
-
-
 class ResourceRequestCtx(object):
     """Context manager for the resource context.
 
@@ -69,7 +66,6 @@ class ResourceRequestCtx(object):
 def with_resource_requestctx(f):
     @wraps(f)
     def inner(*args, **kwargs):
-        # TODO: Can we pass any arguments to "ResourceRequestCtx(...)"?
         with ResourceRequestCtx():
             return f(*args, **kwargs)
 
