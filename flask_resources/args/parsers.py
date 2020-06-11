@@ -15,9 +15,9 @@ from webargs.flaskparser import parser
 
 
 class RequestParser:
-    def __init__(self, fields={}, processors=[]):
-        self.fields = fields
-        self.processors = processors
+    def __init__(self, fields=None, processors=None):
+        self.fields = fields or {}
+        self.processors = processors or []
 
     def parse(self):
         return self.post_process(
