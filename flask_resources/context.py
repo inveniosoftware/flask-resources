@@ -41,11 +41,7 @@ class ResourceRequestCtx(object):
     """
 
     def __init__(
-        self,
-        accept_mimetype=None,
-        payload_mimetype=None,
-        request_args=None,
-        data=None,
+        self, accept_mimetype=None, payload_mimetype=None, request_args=None, data=None,
     ):
         """Initialize the resource context."""
         self.accept_mimetype = accept_mimetype
@@ -65,6 +61,7 @@ class ResourceRequestCtx(object):
 
 def with_resource_requestctx(f):
     """Wrap in resource request context."""
+
     @wraps(f)
     def inner(*args, **kwargs):
         with ResourceRequestCtx():

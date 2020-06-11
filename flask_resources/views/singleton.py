@@ -17,9 +17,7 @@ class SingletonView(BaseView):
     Note that the resource route should contain the `<id>` param.
     """
 
-    def __init__(
-        self, resource=None, item_parser=item_request_parser, *args, **kwargs
-    ):
+    def __init__(self, resource=None, item_parser=item_request_parser, *args, **kwargs):
         """Constructor."""
         super(SingletonView, self).__init__(resource=resource, *args, **kwargs)
         self.item_parser = item_parser
