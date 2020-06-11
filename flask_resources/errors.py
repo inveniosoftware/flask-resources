@@ -111,7 +111,8 @@ class SearchPaginationRESTError(RESTException):
 #         """Initialize exception."""
 #         super(InvalidContentType, self).__init__(**kwargs)
 #         self.allowed_content_types = allowed_content_types
-#         self.description = "Invalid 'Content-Type' header. Expected one of: {0}".format(
+#         self.description = (
+#           "Invalid 'Content-Type' header. Expected one of: {0}".format(
 #             ", ".join(allowed_content_types)
 #         )
 

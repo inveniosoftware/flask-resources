@@ -10,8 +10,8 @@
 from functools import wraps
 
 from flask import g
-from functools import wraps
 from werkzeug.local import LocalProxy
+
 
 #
 # Proxy to the current resource context
@@ -64,6 +64,7 @@ class ResourceRequestCtx(object):
 
 
 def with_resource_requestctx(f):
+    """Wrap in resource request context."""
     @wraps(f)
     def inner(*args, **kwargs):
         with ResourceRequestCtx():

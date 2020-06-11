@@ -20,20 +20,26 @@ class SingletonView(BaseView):
     def __init__(
         self, resource=None, item_parser=item_request_parser, *args, **kwargs
     ):
+        """Constructor."""
         super(SingletonView, self).__init__(resource=resource, *args, **kwargs)
         self.item_parser = item_parser
 
     def post(self, *args, **kwargs):
+        """Post."""
         return self.resource.create()
 
     def get(self, *args, **kwargs):
+        """Get."""
         return self.resource.read()
 
     def put(self, *args, **kwargs):
+        """Put."""
         return self.resource.update()
 
     def patch(self, *args, **kwargs):
+        """Patch."""
         return self.resource.partial_update()
 
     def delete(self, *args, **kwargs):
+        """Delete."""
         return self.resource.delete()

@@ -19,11 +19,14 @@ from .base import BaseView
 class ListView(BaseView):
     """List view representation.
 
-    Allows searching and creating an item in the list."""
+    Allows searching and creating an item in the list.
+    """
 
     def __init__(self, *args, **kwargs):
+        """Constructor."""
         super(ListView, self).__init__(*args, **kwargs)
-        # FIXME: Parsers here? It is a naming dependency on the resource config.
+        # FIXME: Parsers here? It is a naming dependency on the resource
+        # config.
         # However there is no default config in flask-resources
         self.search_parser = self.resource.config.search_request_parser
         self.create_parser = self.resource.config.create_request_parser
@@ -42,20 +45,26 @@ class ListView(BaseView):
 class ItemView(BaseView):
     """Item view representation.
 
-    Allows reading, (partial) updating and deleting an item."""
+    Allows reading, (partial) updating and deleting an item.
+    """
 
     def __init__(self, *args, **kwargs):
+        """Constructor."""
         super(ItemView, self).__init__(*args, **kwargs)
         self.item_parser = self.resource.config.item_request_parser
 
     def get(self, *args, **kwargs):
+        """Get."""
         return self.resource.read()
 
     def put(self, *args, **kwargs):
+        """Put."""
         return self.resource.update()
 
     def patch(self, *args, **kwargs):
+        """Patch."""
         return self.resource.partial_update()
 
     def delete(self, *args, **kwargs):
+        """Delete."""
         return self.resource.delete()

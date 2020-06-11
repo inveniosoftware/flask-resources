@@ -19,7 +19,6 @@ from ..errors import SearchPaginationRESTError
 
 def build_pagination(request_args):
     """Build pagination."""
-
     pagination = {}
     if request_args.get("page") and request_args.get("from"):
         raise SearchPaginationRESTError(

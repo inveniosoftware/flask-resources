@@ -8,6 +8,3 @@
 
 Configuration
 =============
-
-.. automodule:: flask_resources.config
-   :members:

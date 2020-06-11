@@ -7,10 +7,12 @@
 
 """Library for easily implementing REST APIs."""
 
+
 class FlaskResources(object):
     """Flask-Resources extension."""
 
     def __init__(self, app=None):
+        """Constructor."""
         if app:
             self.init_app(app)
 

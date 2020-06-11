@@ -24,6 +24,7 @@ class BaseView(MethodView):
     """Flag to control resource context pushing decorator."""
 
     def __init__(self, resource, *args, **kwargs):
+        """Constructor."""
         super(BaseView, self).__init__(*args, **kwargs)
         self.resource = resource
         if self.with_context_decorator:

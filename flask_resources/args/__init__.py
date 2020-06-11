@@ -10,4 +10,3 @@
 from .parsers import RequestParser
 
 __all__ = "RequestParser"
-

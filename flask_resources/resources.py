@@ -9,8 +9,7 @@
 
 from flask import Blueprint, abort
 
-from .views import ListView, ItemView, SingletonView
-
+from .views import ItemView, ListView, SingletonView
 
 ITEM_VIEW_SUFFIX = "_item_view"
 LIST_VIEW_SUFFIX = "_list_view"
@@ -26,7 +25,7 @@ class Resource(object):
         self.config = config
         self.bp_name = None
 
-    ## Primary interface
+    # Primary interface
     def search(self, request_context):
         """Perform a search over the items."""
         # TODO: the resource itself shouldn't be "request"-aware. Returning of
@@ -54,7 +53,7 @@ class Resource(object):
         """Delete an item."""
         abort(405)
 
-    ## Secondary interface
+    # Secondary interface
     def as_blueprint(self, name, **bp_kwargs):
         """Create blueprint and register rules only for the RecordResource."""
         self.bp_name = name
@@ -66,6 +65,7 @@ class Resource(object):
         return blueprint
 
     def create_url_rules(self, bp_name):
+        """Create url rules."""
         return [
             {
                 "rule": self.config.item_route,
@@ -77,31 +77,39 @@ class Resource(object):
         ]
 
     def create_error_handlers(self):
+        """Create error handlers."""
         return []
 
     def load_item_from_request(self):
+        """Load item from request."""
         # FIXME: Code default
         # self.config.item_loader()
         pass
 
     def make_list_response(self, item_list, http_code):
+        """Make list response."""
         # FIXME: Code default
         # self.config.list_serializer()
         pass
 
     def make_item_response(self, item, http_code):
+        """Make item response."""
         # FIXME: Code default
         # self.config.item_serializer()
         pass
 
     def make_error_response(self, error_data, http_code):
+        """Make error response."""
         # FIXME: Code default
         # self.config.error_serializer()
         pass
 
 
 class CollectionResource(Resource):
+    """CollectionResource."""
+
     def create_url_rules(self, bp_name):
+        """Create url rules."""
         return [
             {
                 "rule": self.config.item_route,
@@ -121,7 +129,10 @@ class CollectionResource(Resource):
 
 
 class SingletonResource(Resource):
+    """SingletonResource."""
+
     def create_url_rules(self, bp_name):
+        """Create url rules."""
         return [
             {
                 "rule": self.config.list_route,

@@ -8,23 +8,29 @@
 """Library for easily implementing REST APIs."""
 
 from flask import request
-from flask_resources.args.paginate import build_pagination
 from marshmallow.validate import Range, Regexp
 from webargs.fields import Int, String
 from webargs.flaskparser import parser
 
+from flask_resources.args.paginate import build_pagination
+
 
 class RequestParser:
+    """RequestParser."""
+
     def __init__(self, fields=None, processors=None):
+        """Constructor."""
         self.fields = fields or {}
         self.processors = processors or []
 
     def parse(self):
+        """Parse."""
         return self.post_process(
             parser.parse(self.fields, request, locations=["view_args"])
         )
 
     def post_process(self, request_arguments):
+        """Post process."""
         for func in self.processors:
             func(request_arguments)
         return request_arguments

@@ -7,7 +7,7 @@
 
 """Library for easily implementing REST APIs."""
 
-from .resources import Resource, CollectionResource, SingletonResource
+from .resources import CollectionResource, Resource, SingletonResource
 from .version import __version__
 
 __all__ = (
