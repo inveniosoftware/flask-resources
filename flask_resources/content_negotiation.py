@@ -7,8 +7,6 @@
 
 """Content negotiation API."""
 
-from werkzeug.datastructures import MIMEAccept
-
 
 class ContentNegotiator(object):
     """Content negotiation API.
@@ -22,8 +20,8 @@ class ContentNegotiator(object):
               default=None):
         """Select the MIME type which best matches the client request.
 
-        :param mimetypes: List/set of available MIME types.
-        :param accept_mimetypes: The clients "Accept" header as MIMEAccept
+        :param mimetypes: Iterable of available MIME types.
+        :param accept_mimetypes: The client's "Accept" header as MIMEAccept
             object.
         :param formats_map: Map of format values to MIME type.
         :param format: The client's selected format.
@@ -34,39 +32,34 @@ class ContentNegotiator(object):
 
     @classmethod
     def match_by_accept(cls, mimetypes, accept_mimetypes, default=None):
-        """Select the MIME type which best matches Accept header."""
-        # Bail out fast if no accept headers were given.
-        if len(accept_mimetypes) == 0:
+        """Select the MIME type which best matches Accept header.
+
+        TODO: Choose the explicit policy for this "best match".
+        Meanwhile, the policy implemented below is:
+
+            Select the highest quality (accepted) + provided mimetype.
+            If no match,
+                but accept wildcard, return default
+                otherwise if provide wildcard, return wildcard
+                else: return None
+
+        This is probably not an ideal policy.
+        """
+        desc_client_mimetypes = sorted(accept_mimetypes, key=lambda m: -m[1])
+        for client_mimetype, quality in desc_client_mimetypes:
+            if client_mimetype in mimetypes:
+                return client_mimetype
+
+        # if here, then no match at all
+        if '*/*' in accept_mimetypes:
             return default
 
-        # Determine best match based on quality.
-        best_quality = -1
-        best = None
-        has_wildcard = False
-        for client_accept, quality in accept_mimetypes:
-            if quality <= best_quality:
-                continue
-            if client_accept == '*/*':
-                has_wildcard = True
-            for m in mimetypes:
-                if m in ['*/*', client_accept] and quality > 0:
-                    best_quality = quality
-                    best = m
+        if '*/*' in mimetypes:
+            return '*/*'  # NOTE: this is weird but that was the case before
 
-        # If no match found, but wildcard exists, them use default media
-        # type.
-        if best is None and has_wildcard:
-            best = default
-
-        return best
+        return default
 
     @classmethod
-    def match_by_format(cls, formats_map, format):
+    def match_by_format(cls, formats_map, fmt):
         """Select the MIME type based on a query parameters."""
-        if format is None:
-            return None
-
-        try:
-            return formats_map[format]
-        except KeyError:
-            return None
+        return formats_map.get(fmt) if fmt else None
