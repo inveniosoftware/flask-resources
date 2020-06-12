@@ -7,7 +7,7 @@
 
 """Resource view."""
 
-from flask import Blueprint, abort
+from flask import Blueprint
 
 from .views import ItemView, ListView, SingletonView
 
@@ -31,27 +31,27 @@ class Resource(object):
         # TODO: the resource itself shouldn't be "request"-aware. Returning of
         # HTTP responses should be done in views. Maybe some base
         # error/exception classes can be defined to help?
-        abort(405)
+        return 405
 
     def create(self):
         """Create an item."""
-        abort(405)
+        return 405
 
     def read(self, *args, **kwargs):
         """Read an item."""
-        abort(405)
+        return 405
 
     def update(self, data, *args, **kwargs):
         """Update an item."""
-        abort(405)
+        return 405
 
     def partial_update(self, data, *args, **kwargs):
         """Partial update an item."""
-        abort(405)
+        return 405
 
     def delete(self, *args, **kwargs):
         """Delete an item."""
-        abort(405)
+        return 405
 
     # Secondary interface
     def as_blueprint(self, name, **bp_kwargs):
@@ -78,30 +78,6 @@ class Resource(object):
     def create_error_handlers(self):
         """Create error handlers."""
         return []
-
-    def load_item_from_request(self):
-        """Load item from request."""
-        # FIXME: Code default
-        # self.config.item_loader()
-        pass
-
-    def make_list_response(self, item_list, http_code):
-        """Make list response."""
-        # FIXME: Code default
-        # self.config.list_serializer()
-        pass
-
-    def make_item_response(self, item, http_code):
-        """Make item response."""
-        # FIXME: Code default
-        # self.config.item_serializer()
-        pass
-
-    def make_error_response(self, error_data, http_code):
-        """Make error response."""
-        # FIXME: Code default
-        # self.config.error_serializer()
-        pass
 
 
 class CollectionResource(Resource):

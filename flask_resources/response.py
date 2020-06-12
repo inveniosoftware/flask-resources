@@ -7,7 +7,7 @@
 
 """Response module."""
 
-from flask import make_response
+from flask import abort, make_response
 
 
 class ResponseMixin:
@@ -19,7 +19,7 @@ class ResponseMixin:
 
     def make_error_response(reason, message):
         """Builds an error response."""
-        raise NotImplementedError()
+        raise abort(405)
 
 
 class ItemResponse(ResponseMixin):
@@ -34,8 +34,10 @@ class ItemResponse(ResponseMixin):
 
     def make_response(code, content):
         """Builds a response for a single object."""
-        # This should do the link building (e.g. sign posting): self, pagination, query, etc.
-        # In case of list responses, it would also take care of extras such as aggregation
+        # This should do the link building (e.g. sign posting):
+        # self, pagination, query, etc.
+        # In case of list responses, it would also take care of
+        # extras such as aggregation.
         make_response(
             body=self.serializer.serialize_object(content),  # content is the object
             status=code,
@@ -55,8 +57,10 @@ class ListResponse(ResponseMixin):
 
     def make_response(code, content):
         """Builds a response for a list of objects."""
-        # This should do the link building (e.g. sign posting): self, pagination, query, etc.
-        # In case of list responses, it would also take care of extras such as aggregation
+        # This should do the link building (e.g. sign posting):
+        # self, pagination, query, etc.
+        # In case of list responses, it would also take care of
+        # extras such as aggregation
         make_response(
             body=self.serializer.serialize_object(content),  # content is the object
             response_code=code,
