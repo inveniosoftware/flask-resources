@@ -7,6 +7,8 @@
 
 """Content negotiation API."""
 
+from werkzeug.datastructures import MIMEAccept
+
 
 class ContentNegotiator(object):
     """Content negotiation API.
@@ -34,6 +36,10 @@ class ContentNegotiator(object):
     def match_by_accept(cls, mimetypes, accept_mimetypes, default=None):
         """Select the MIME type which best matches Accept header.
 
+        NOTE: Match policy differs from Werkzeug's best_match policy.
+        - If client accepts specific and wildcard, and server serves specific,
+          then favour specific no matter the client quality.
+
         TODO: Choose the explicit policy for this "best match".
         Meanwhile, the policy implemented below is:
 
@@ -44,22 +50,32 @@ class ContentNegotiator(object):
                 else: return None
 
         This is probably not an ideal policy.
+
+        :param mimetypes: Iterable of available MIME types.
+        :param accept_mimetypes: The client's "Accept" header as MIMEAccept
+            object.
+        :param mimetypes: Default MIMEtype if wildcard received.
         """
-        desc_client_mimetypes = sorted(accept_mimetypes, key=lambda m: -m[1])
-        for client_mimetype, quality in desc_client_mimetypes:
+        assert isinstance(accept_mimetypes, MIMEAccept)
+
+        # NOTE: accept_mimetypes is already sorted in descending quality order
+        for client_mimetype, quality in accept_mimetypes:
             if client_mimetype in mimetypes:
                 return client_mimetype
 
         # if here, then no match at all
-        if '*/*' in accept_mimetypes:
+        # WARNING: '*/*' in MIMEAccept object always evaluates to True
+        # WARNING: MIMEAccept.find('*/*') always evaluates to 0
+        # So we have to do the following
+        accepted_values = list(accept_mimetypes.values())
+        if '*/*' in accepted_values or not accepted_values:
             return default
 
-        if '*/*' in mimetypes:
-            return '*/*'  # NOTE: this is weird but that was the case before
+        # TODO: What happens if server provides */* ? Is that possible?
 
-        return default
+        return None
 
     @classmethod
     def match_by_format(cls, formats_map, fmt):
         """Select the MIME type based on a query parameters."""
-        return formats_map.get(fmt) if fmt else None
+        return formats_map.get(fmt)
