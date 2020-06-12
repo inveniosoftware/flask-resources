@@ -10,7 +10,7 @@
 
 class SerializableMixin:
     """Serializable Interface.
-    
+
     Objects that will be serialized must implement it.
     """
 
@@ -40,14 +40,14 @@ class SerializerMixin:
 
     def serialize_object(self, object, response_ctx, *args, **kwargs):
         """Serialize a single object according to the response ctx.
-        
+
         The object type must implement ``SerializableMixin``.
         """
         raise NotImplementedError()
 
     def serialize_object_list(self, object_list, response_ctx, *args, **kwargs):
         """Serialize a list of objects according to the response ctx.
-        
+
         Each object type of the list should implement ``SerializableMixin``.
         """
         raise NotImplementedError()

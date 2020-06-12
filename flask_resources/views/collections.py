@@ -30,16 +30,19 @@ class ListView(BaseView):
         # However there is no default config in flask-resources
         self.search_parser = self.resource.config.search_request_parser
         self.create_parser = self.resource.config.create_request_parser
+        self.response_handler = self.resource.config.list_response_handler
 
     def get(self, *args, **kwargs):
         """Search the collection."""
         resource_requestctx.request_args = self.search_parser.parse()
-        return self.resource.search()
+
+        self.response_handler.make_response(self.resource.search())
 
     def post(self, *args, **kwargs):
         """Create an item in the collection."""
         resource_requestctx.request_args = self.create_parser.parse()
-        return self.resource.create()
+
+        self.response_handler.make_response(self.resource.create())
 
 
 class ItemView(BaseView):
@@ -52,19 +55,20 @@ class ItemView(BaseView):
         """Constructor."""
         super(ItemView, self).__init__(*args, **kwargs)
         self.item_parser = self.resource.config.item_request_parser
+        self.response_handler = self.resource.config.item_response_handler
 
     def get(self, *args, **kwargs):
         """Get."""
-        return self.resource.read()
+        self.response_handler.make_response(self.resource.read())
 
     def put(self, *args, **kwargs):
         """Put."""
-        return self.resource.update()
+        self.response_handler.make_response(self.resource.update())
 
     def patch(self, *args, **kwargs):
         """Patch."""
-        return self.resource.partial_update()
+        self.response_handler.make_response(self.resource.partial_update())
 
     def delete(self, *args, **kwargs):
         """Delete."""
-        return self.resource.delete()
+        self.response_handler.make_response(self.resource.delete())
