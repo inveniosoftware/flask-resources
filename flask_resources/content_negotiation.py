@@ -18,7 +18,7 @@ class ContentNegotiator(object):
     """
 
     @classmethod
-    def match(cls, mimetypes, accept_mimetypes, formats_map, format,
+    def match(cls, mimetypes, accept_mimetypes, formats_map, fmt,
               default=None):
         """Select the MIME type which best matches the client request.
 
@@ -29,27 +29,20 @@ class ContentNegotiator(object):
         :param format: The client's selected format.
         :param default: Default MIMEtype if a wildcard was received.
         """
-        return cls.match_by_format(formats_map, format) or \
+        return cls.match_by_format(formats_map, fmt) or \
             cls.match_by_accept(mimetypes, accept_mimetypes, default=default)
 
     @classmethod
     def match_by_accept(cls, mimetypes, accept_mimetypes, default=None):
         """Select the MIME type which best matches Accept header.
 
-        NOTE: Match policy differs from Werkzeug's best_match policy.
-        - If client accepts specific and wildcard, and server serves specific,
-          then favour specific no matter the client quality.
+        NOTE: Our match policy differs from Werkzeug's best_match policy:
+              If the client accepts a specific mimetype and wildcards, and
+              the server serves that specific mimetype, then favour
+              that mimetype no matter its quality over the wildcard.
 
         TODO: Choose the explicit policy for this "best match".
         Meanwhile, the policy implemented below is:
-
-            Select the highest quality (accepted) + provided mimetype.
-            If no match,
-                but accept wildcard, return default
-                otherwise if provide wildcard, return wildcard
-                else: return None
-
-        This is probably not an ideal policy.
 
         :param mimetypes: Iterable of available MIME types.
         :param accept_mimetypes: The client's "Accept" header as MIMEAccept

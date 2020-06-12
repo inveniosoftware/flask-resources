@@ -131,7 +131,7 @@ def test_choose_query_mimetype():
         'json': 'application/json',
         'marcxml': 'application/marcxml+xml',
     }
-    fmt = 'marcxml'
+    fmt = 'marcxml'  # this is the query
 
     mime_type = ContentNegotiator.match_by_format(formats_map, fmt)
 
@@ -150,20 +150,81 @@ def test_choose_query_mimetype():
     assert mime_type is None
 
 
-# TODO: Fill tests for top-level match
-def test_favour_query_over_header():
-    # (urlencode({arg_name: 'marcxml'}), 'application/json', 'xml-get'),
-    # (urlencode({arg_name: 'json'}), 'application/marcxml+xml',
-    pass
+# Test top-level ContentNegotiator.match
+def test_favour_query_mimetype_over_header_mimetype():
+    server_mimetypes = ['application/json', 'application/marcxml+xml']
+    client_mimetypes = parse_accept_header(
+        'application/json',
+        MIMEAccept
+    )
+    formats_map = {
+        'json': 'application/json',
+        'marcxml': 'application/marcxml+xml',
+    }
+    fmt = 'marcxml'
+
+    mime_type = ContentNegotiator.match(
+        server_mimetypes, client_mimetypes, formats_map, fmt
+    )
+
+    assert 'application/marcxml+xml' == mime_type
+
+    client_mimetypes = parse_accept_header(
+        'application/marcxml+xml',
+        MIMEAccept
+    )
+    fmt = 'json'
+
+    mime_type = ContentNegotiator.match(
+        server_mimetypes, client_mimetypes, formats_map, fmt
+    )
+
+    assert 'application/json' == mime_type
 
 
-def test_favour_header_if_no_query():
-    # Should serialize to json
-    # (urlencode({}), 'application/json', 'json-get'),
-    pass
+def test_favour_header_mimetype_if_no_query_mimetype():
+    server_mimetypes = ['application/json', 'application/marcxml+xml']
+    client_mimetypes = parse_accept_header(
+        'application/json',
+        MIMEAccept
+    )
+    formats_map = {
+        'json': 'application/json',
+        'marcxml': 'application/marcxml+xml',
+    }
+    fmt = None
+
+    mime_type = ContentNegotiator.match(
+        server_mimetypes, client_mimetypes, formats_map, fmt
+    )
+
+    assert 'application/json' == mime_type
+
+    formats_map = {}
+    fmt = 'marcxml'
+
+    mime_type = ContentNegotiator.match(
+        server_mimetypes, client_mimetypes, formats_map, fmt
+    )
+
+    assert 'application/json' == mime_type
 
 
 def test_choose_default_if_no_query_and_no_header():
-    # Should serialize to json
-    # (urlencode({}), 'application/json', 'json-get'),
-    pass
+    server_mimetypes = ['application/json', 'application/marcxml+xml']
+    client_mimetypes = parse_accept_header(
+        '',
+        MIMEAccept
+    )
+    formats_map = {
+        'json': 'application/json',
+        'marcxml': 'application/marcxml+xml',
+    }
+    fmt = None
+
+    mime_type = ContentNegotiator.match(
+        server_mimetypes, client_mimetypes, formats_map, fmt,
+        default='application/json'
+    )
+
+    assert 'application/json' == mime_type
