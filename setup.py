@@ -15,17 +15,12 @@ readme = open("README.rst").read()
 history = open("CHANGES.rst").read()
 
 tests_require = [
-    "check-manifest>=0.25",
-    "coverage>=4.0",
-    "isort>=4.3.3",
-    "pydocstyle>=2.0.0",
-    "pytest-cov>=2.5.1",
-    "pytest-pep8>=1.0.6",
+    "pytest-invenio>=1.3.2",
     "black>=19.10b0",
 ]
 
 extras_require = {
-    "docs": ["Sphinx>=1.5.1",],
+    "docs": ["Sphinx>=1.5.1,<3",],
     "tests": tests_require,
 }
 
@@ -33,10 +28,7 @@ extras_require["all"] = []
 for reqs in extras_require.values():
     extras_require["all"].extend(reqs)
 
-setup_requires = [
-    "Babel>=1.3",
-    "pytest-runner>=3.0.0,<5",
-]
+setup_requires = ["Babel>=1.3"]
 
 install_requires = [
     "Flask~=1.1.2",
