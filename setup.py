@@ -21,6 +21,7 @@ tests_require = [
     "pydocstyle>=2.0.0",
     "pytest-cov>=2.5.1",
     "pytest-pep8>=1.0.6",
+    "black>=19.10b0",
 ]
 
 extras_require = {
