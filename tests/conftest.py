@@ -14,23 +14,7 @@ fixtures are available.
 import pytest
 from flask import Flask
 
-
-class CustomSerializer(SerializerMixin):
-    """Custom serializer implementation."""
-
-    def serialize_object(self, object, response_ctx, *args, **kwargs):
-        """Custom object serialization."""
-        pass
-
-    def serialize_object_list(self, object_list, response_ctx, *args, **kwargs):
-        """Custom object list serialization."""
-        pass
-
-
-class CustomResourceConfig:
-    """Custom resource configuration."""
-
-    item_handlers = {"application/json": ItemResponse(CustomSerializer)}
+from flask_resources.resources import CollectionResource
 
 
 class CustomResource(CollectionResource):
@@ -77,4 +61,4 @@ def create_app(instance_path):
 @pytest.fixture(scope="module")
 def custom_resource_config():
     """Returns a simple custom resource with a custom configuration."""
-    return CustomResource(config=CustomResourceConfig)
+    return CustomResource()

@@ -9,6 +9,8 @@
 
 from flask import Blueprint
 
+from .response import ItemResponse, ListResponse
+from .serializers import JSONSerializer
 from .views import ItemView, ListView, SingletonView
 
 ITEM_VIEW_SUFFIX = "_item_view"
@@ -16,10 +18,17 @@ LIST_VIEW_SUFFIX = "_list_view"
 SINGLETON_VIEW_SUFFIX = "_singleton_view"
 
 
-class Resource(object):
+class ResourceConfig:
+    """Base resource configuration."""
+
+    item_handlers = {"application/json": ItemResponse(JSONSerializer)}
+    list_handlers = {"application/json": ListResponse(JSONSerializer)}
+
+
+class Resource:
     """Resource controller interface."""
 
-    def __init__(self, config, *args, **kwargs):
+    def __init__(self, config=ResourceConfig, *args, **kwargs):
         """Initialize the base resource."""
         self.config = config
         self.bp_name = None
