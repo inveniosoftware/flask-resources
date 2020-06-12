@@ -18,55 +18,54 @@ class ContentNegotiator(object):
     """
 
     @classmethod
-    def match(cls, mimetypes, accept_mimetypes, formats_map, format, default=None):
+    def match(cls, mimetypes, accept_mimetypes, formats_map, fmt, default=None):
         """Select the MIME type which best matches the client request.
 
-        :param mimetypes: List/set of available MIME types.
-        :param accept_mimetypes: The clients "Accept" header as MIMEAccept
+        :param mimetypes: Iterable of available MIME types.
+        :param accept_mimetypes: The client's "Accept" header as MIMEAccept
             object.
         :param formats_map: Map of format values to MIME type.
         :param format: The client's selected format.
         :param default: Default MIMEtype if a wildcard was received.
         """
-        return cls.match_by_format(formats_map, format) or cls.match_by_accept(
+        return cls.match_by_format(formats_map, fmt) or cls.match_by_accept(
             mimetypes, accept_mimetypes, default=default
         )
 
     @classmethod
     def match_by_accept(cls, mimetypes, accept_mimetypes, default=None):
-        """Select the MIME type which best matches Accept header."""
-        # Bail out fast if no accept headers were given.
-        if len(accept_mimetypes) == 0:
+        """Select the MIME type which best matches Accept header.
+
+        NOTE: Our match policy differs from Werkzeug's best_match policy:
+              If the client accepts a specific mimetype and wildcards, and
+              the server serves that specific mimetype, then favour
+              that mimetype no matter its quality over the wildcard.
+              This is as opposed to Werkzeug which only cares about quality.
+
+        :param mimetypes: Iterable of available MIME types.
+        :param accept_mimetypes: The client's "Accept" header as MIMEAccept
+            object.
+        :param default: Default MIMEtype if wildcard received.
+        """
+        assert isinstance(accept_mimetypes, MIMEAccept)
+        assert "*/*" not in mimetypes
+
+        # NOTE: accept_mimetypes is already sorted in descending quality order
+        for client_mimetype, quality in accept_mimetypes:
+            if client_mimetype in mimetypes:
+                return client_mimetype
+
+        # if here, then no match at all
+        # WARNING: '*/*' in MIMEAccept object always evaluates to True
+        # WARNING: MIMEAccept.find('*/*') always evaluates to 0
+        # So we have to do the following
+        accepted_values = list(accept_mimetypes.values())
+        if "*/*" in accepted_values or not accepted_values:
             return default
 
-        # Determine best match based on quality.
-        best_quality = -1
-        best = None
-        has_wildcard = False
-        for client_accept, quality in accept_mimetypes:
-            if quality <= best_quality:
-                continue
-            if client_accept == "*/*":
-                has_wildcard = True
-            for m in mimetypes:
-                if m in ["*/*", client_accept] and quality > 0:
-                    best_quality = quality
-                    best = m
-
-        # If no match found, but wildcard exists, them use default media
-        # type.
-        if best is None and has_wildcard:
-            best = default
-
-        return best
+        return None
 
     @classmethod
-    def match_by_format(cls, formats_map, format):
+    def match_by_format(cls, formats_map, fmt):
         """Select the MIME type based on a query parameters."""
-        if format is None:
-            return None
-
-        try:
-            return formats_map[format]
-        except KeyError:
-            return None
+        return formats_map.get(fmt)
