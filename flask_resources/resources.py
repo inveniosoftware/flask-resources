@@ -19,9 +19,8 @@ SINGLETON_VIEW_SUFFIX = "_singleton_view"
 class Resource(object):
     """Resource controller interface."""
 
-    def __init__(self, controller, config):
+    def __init__(self, config, *args, **kwargs):
         """Initialize the base resource."""
-        self.controller = controller
         self.config = config
         self.bp_name = None
 
