@@ -7,6 +7,7 @@
 
 """Serializers."""
 
+from .json import JSONSerializer
 from .serializers import SerializableMixin, SerializerMixin
 
-__all__ = ("SerializableMixin", "SerializerMixin")
+__all__ = ("JSONSerializer", "SerializableMixin", "SerializerMixin")
