@@ -8,7 +8,7 @@
 
 pydocstyle flask_resources tests docs && \
 isort --multi-line=3 --line-width=88 --trailing-comma --force-grid-wrap=0 --use-parentheses -rc -c -df && \
-black --check --diff flask_resources && \
+black --check --diff flask_resources tests && \
 check-manifest --ignore ".travis-*" && \
 sphinx-build -qnNW docs docs/_build/html && \
 pytest
