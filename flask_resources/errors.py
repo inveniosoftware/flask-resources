@@ -13,8 +13,6 @@ from flask import g
 from werkzeug.exceptions import HTTPException
 from werkzeug.http import http_date
 
-# FIXME: (LARS) This has to be reviewed
-
 
 class RESTException(HTTPException):
     """HTTP Exception delivering JSON error responses."""
@@ -97,6 +95,21 @@ class SearchPaginationRESTError(RESTException):
             for field, messages in errors.items():
                 _errors.extend([FieldError(field, msg) for msg in messages])
         super(SearchPaginationRESTError, self).__init__(errors=_errors, **kwargs)
+
+
+#
+# Loading/Serializing
+#
+class UnsupportedMediaRESTError(RESTException):
+    """Creating record with unsupported media type."""
+
+    code = 415
+
+    def __init__(self, content_type=None, **kwargs):
+        """Initialize exception."""
+        super(UnsupportedMediaRESTError, self).__init__(**kwargs)
+        content_type = content_type
+        self.description = 'Unsupported media type "{0}".'.format(content_type)
 
 
 # class InvalidContentType(RESTException):

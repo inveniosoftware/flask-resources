@@ -9,13 +9,18 @@
 
 from flask import abort, make_response
 
+from .context import resource_requestctx
+
 
 class ResponseMixin:
     """Response interface."""
 
-    def make_header(self, content):
+    def make_header(self, content=None):
         """Build response headers."""
-        raise NotImplementedError()
+        return {
+            "content-type": resource_requestctx.payload_mimetype,
+            "accept": resource_requestctx.accept_mimetype,
+        }
 
     def make_response(self, code, content):
         """Builds a response."""
@@ -38,18 +43,12 @@ class ItemResponse(ResponseMixin):
 
     def make_response(self, code, content):
         """Builds a response for a single object."""
-        # This should do the link building (e.g. sign posting):
-        # self, pagination, query, etc.
-        # In case of list responses, it would also take care of
-        # extras such as aggregation.
-
         # https://flask.palletsprojects.com/en/1.1.x/api/#flask.Flask.make_response
-        # (body, status)
-        response = make_response(
-            self.serializer.serialize_object(content), code,  # content is the object
+        # (body, status, header)
+
+        return make_response(
+            self.serializer.serialize_object(content), code, self.make_header(),
         )
-        response.mimetype = "application/json"
-        return response
 
 
 class ListResponse(ResponseMixin):
@@ -64,17 +63,9 @@ class ListResponse(ResponseMixin):
 
     def make_response(self, code, content):
         """Builds a response for a list of objects."""
-        # This should do the link building (e.g. sign posting):
-        # self, pagination, query, etc.
-        # In case of list responses, it would also take care of
-        # extras such as aggregation
-
         # https://flask.palletsprojects.com/en/1.1.x/api/#flask.Flask.make_response
-        # (body, status)
-        response = make_response(
-            self.serializer.serialize_object_list(content),  # content is the object
-            code,
-        )
+        # (body, status, header)
 
-        response.mimetype = "application/json"
-        return response
+        return make_response(
+            self.serializer.serialize_object_list(content), code, self.make_header(),
+        )

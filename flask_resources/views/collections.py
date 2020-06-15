@@ -12,6 +12,7 @@ from ..args.parsers import (
     item_request_parser,
     search_request_parser,
 )
+from ..content_negotiation import content_negotiation
 from ..context import resource_requestctx, with_resource_requestctx
 from .base import BaseView
 
@@ -27,27 +28,25 @@ class ListView(BaseView):
         super(ListView, self).__init__(*args, **kwargs)
         self.search_parser = self.resource.config.search_request_parser
         self.create_parser = self.resource.config.create_request_parser
-        self.response_handler = self.resource.config.list_response_handlers
+        self.response_handlers = self.resource.config.list_response_handlers
         self.request_loaders = self.resource.config.item_request_loaders
 
     @with_resource_requestctx
+    @content_negotiation
     def get(self, *args, **kwargs):
         """Search the collection."""
         resource_requestctx.request_args = self.search_parser.parse()
-        # FIXME: This selection should come from the request context
-        # along with content negotiation (fail fast if not supported)
-        _response_handler = self.response_handler["application/json"]
+        _response_handler = self.response_handlers[resource_requestctx.accept_mimetype]
 
         return _response_handler.make_response(*self.resource.search(*args, **kwargs))
 
     @with_resource_requestctx
+    @content_negotiation
     def post(self, *args, **kwargs):
         """Create an item in the collection."""
         resource_requestctx.request_args = self.create_parser.parse()
-        # FIXME: This selection should come from the request context
-        # along with content negotiation (fail fast if not supported)
-        _response_handler = self.response_handler["application/json"]
-        _response_loader = self.request_loaders["application/json"]
+        _response_handler = self.response_handlers[resource_requestctx.accept_mimetype]
+        _response_loader = self.request_loaders[resource_requestctx.payload_mimetype]
 
         data = _response_loader.load_request()
         return _response_handler.make_response(
@@ -65,26 +64,23 @@ class ItemView(BaseView):
         """Constructor."""
         super(ItemView, self).__init__(*args, **kwargs)
         self.item_parser = self.resource.config.item_request_parser
-        self.response_handler = self.resource.config.item_response_handlers
+        self.response_handlers = self.resource.config.item_response_handlers
         self.request_loaders = self.resource.config.item_request_loaders
 
     @with_resource_requestctx
+    @content_negotiation
     def get(self, *args, **kwargs):
         """Get."""
-        # FIXME: This selection should come from the request context
-        # along with content negotiation (fail fast if not supported)
-        _response_handler = self.response_handler["application/json"]
-        _response_loader = self.request_loaders["application/json"]
+        _response_handler = self.response_handlers[resource_requestctx.accept_mimetype]
 
         return _response_handler.make_response(*self.resource.read(*args, **kwargs))
 
     @with_resource_requestctx
+    @content_negotiation
     def put(self, *args, **kwargs):
         """Put."""
-        # FIXME: This selection should come from the request context
-        # along with content negotiation (fail fast if not supported)
-        _response_handler = self.response_handler["application/json"]
-        _response_loader = self.request_loaders["application/json"]
+        _response_handler = self.response_handlers[resource_requestctx.accept_mimetype]
+        _response_loader = self.request_loaders[resource_requestctx.payload_mimetype]
 
         data = _response_loader.load_request()
         return _response_handler.make_response(
@@ -92,12 +88,11 @@ class ItemView(BaseView):
         )
 
     @with_resource_requestctx
+    @content_negotiation
     def patch(self, *args, **kwargs):
         """Patch."""
-        # FIXME: This selection should come from the request context
-        # along with content negotiation (fail fast if not supported)
-        _response_handler = self.response_handler["application/json"]
-        _response_loader = self.request_loaders["application/json+patch"]
+        _response_handler = self.response_handlers[resource_requestctx.accept_mimetype]
+        _response_loader = self.request_loaders[resource_requestctx.payload_mimetype]
 
         data = _response_loader.load_request()
         return _response_handler.make_response(
@@ -105,11 +100,9 @@ class ItemView(BaseView):
         )
 
     @with_resource_requestctx
+    @content_negotiation
     def delete(self, *args, **kwargs):
         """Delete."""
-        # FIXME: This selection should come from the request context
-        # along with content negotiation (fail fast if not supported)
-        _response_handler = self.response_handler["application/json"]
-        _response_loader = self.request_loaders["application/json"]
+        _response_handler = self.response_handlers[resource_requestctx.accept_mimetype]
 
         return _response_handler.make_response(*self.resource.delete(*args, **kwargs))
