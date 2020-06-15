@@ -36,7 +36,7 @@ class CustomResource(CollectionResource):
 
         return 200, resp
 
-    def create(self, data):
+    def create(self, obj):
         """Create."""
         self.db[obj["id"]] = obj["content"]
 
@@ -44,7 +44,7 @@ class CustomResource(CollectionResource):
 
     def read(self, id):
         """Read."""
-        return 200, self.db[id]
+        return 200, {"id": id, "content": self.db[id]}
 
 
 @pytest.fixture(scope="module")
@@ -55,7 +55,7 @@ def create_app(instance_path):
         """Create app."""
         app_ = Flask(__name__)
 
-        bp = CustomResource().as_blueprint()
+        bp = CustomResource().as_blueprint("custom_resource")
         app_.register_blueprint(bp)
 
         return app_
