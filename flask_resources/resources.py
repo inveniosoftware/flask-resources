@@ -9,6 +9,7 @@
 
 from flask import Blueprint
 
+from .args import create_request_parser, item_request_parser, search_request_parser
 from .loaders import JSONLoader, JSONPatchLoader
 from .response import ItemResponse, ListResponse
 from .serializers import JSONSerializer
@@ -26,10 +27,13 @@ class ResourceConfig:
         "application/json": JSONLoader(),
         "application/json+patch": JSONPatchLoader(),
     }
-    item_response_handlers = {"application/json": ItemResponse(JSONSerializer)}
-    item_route = "resources/<id>"
-    list_response_handlers = {"application/json": ListResponse(JSONSerializer)}
-    list_route = "resources/"
+    item_response_handlers = {"application/json": ItemResponse(JSONSerializer())}
+    item_route = "/resources/<id>"
+    list_response_handlers = {"application/json": ListResponse(JSONSerializer())}
+    list_route = "/resources/"
+    create_request_parser = create_request_parser
+    item_request_parser = item_request_parser
+    search_request_parser = search_request_parser
 
 
 class Resource:
