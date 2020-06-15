@@ -14,35 +14,37 @@ fixtures are available.
 import pytest
 from flask import Flask
 
+from flask_resources.context import resource_requestctx
 from flask_resources.resources import CollectionResource
 
 
 class CustomResource(CollectionResource):
     """Custom resource implementation."""
 
-    def search(self, request_context):
+    def __init__(self, *args, **kwargs):
+        """Constructor."""
+        super(CustomResource, self).__init__(*args, **kwargs)
+        self.db = {}
+
+    def search(self):
         """Search."""
-        pass
+        query = resource_requestctx.request_args.get("q", "")
+        resp = []
+        for key, value in self.db.items():
+            if query in key or query in value:
+                resp.append({"id": key, "content": value})
 
-    def create(self):
+        return 200, resp
+
+    def create(self, data):
         """Create."""
-        pass
+        self.db[obj["id"]] = obj["content"]
 
-    def read(self, id, *args, **kwargs):
+        return 201, self.db
+
+    def read(self, id):
         """Read."""
-        pass
-
-    def update(self, data, *args, **kwargs):
-        """Update."""
-        pass
-
-    def partial_update(self, data, *args, **kwargs):
-        """Partial update."""
-        pass
-
-    def delete(self, *args, **kwargs):
-        """Delete."""
-        pass
+        return 200, self.db[id]
 
 
 @pytest.fixture(scope="module")
@@ -53,12 +55,9 @@ def create_app(instance_path):
         """Create app."""
         app_ = Flask(__name__)
 
+        bp = CustomResource().as_blueprint()
+        app_.register_blueprint(bp)
+
         return app_
 
     return app
-
-
-@pytest.fixture(scope="module")
-def custom_resource_config():
-    """Returns a simple custom resource with a custom configuration."""
-    return CustomResource()
