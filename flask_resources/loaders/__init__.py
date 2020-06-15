@@ -5,9 +5,9 @@
 # Flask-Resources is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
-"""Request loader view."""
+"""Loaders."""
 
+from .json import JSONLoader
+from .loaders import LoaderMixin
 
-def load_request(self):
-    """Load item from request."""
-    pass
+__all__ = ("JSONLoader", "JSONPatchLoader", "LoaderMixin")
