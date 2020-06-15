@@ -9,6 +9,8 @@
 
 import json
 
+method_not_allowed_str = "The method is not allowed for the requested URL."
+
 
 def test_base_resourece(base_client):
     """Test the default resource."""
@@ -17,6 +19,7 @@ def test_base_resourece(base_client):
     # GET/Read a resource
     resource_obj = base_client.get("/resources/1234-ABCD", headers=headers)
     assert resource_obj.status_code == 405
+    assert resource_obj.get_json() == method_not_allowed_str
 
     # PUT/Edit a resource
     obj_json = json.dumps({"id": "1234-ABCD", "content": "something new"})
@@ -24,6 +27,7 @@ def test_base_resourece(base_client):
         "/resources/1234-ABCD", data=obj_json, headers=headers
     )
     assert resource_obj.status_code == 405
+    assert resource_obj.get_json() == method_not_allowed_str
 
     # PATCH/Partial edit a resource
     ops_json = json.dumps(
@@ -31,12 +35,14 @@ def test_base_resourece(base_client):
     )
     resource_obj = base_client.get("/resources/1234-ABCD", headers=headers)
     assert resource_obj.status_code == 405
+    assert resource_obj.get_json() == method_not_allowed_str
 
     # DELETE/remove a resource
     resource_obj = base_client.get(
         "/resources/1234-ABCD", data=obj_json, headers=headers
     )
     assert resource_obj.status_code == 405
+    assert resource_obj.get_json() == method_not_allowed_str
 
 
 def test_custom_resource(base_client):

@@ -47,11 +47,33 @@ class RESTException(HTTPException):
         if self.code and (self.code >= 500) and hasattr(g, "sentry_event_id"):
             body["error_id"] = str(g.sentry_event_id)
 
-        return json.dumps(body)
+        return body
 
-    def get_headers(self, environ=None):
-        """Get a list of headers."""
-        return [("Content-Type", "application/json")]
+
+#
+# Loading/Serializing
+#
+class UnsupportedMimetypeError(RESTException):
+    """The request content or accepts a MIMEType that the application cannot serialize.
+
+    It applies to both `Content-Type` and `Accept` headers. Potentially to any other
+    passed as the `header` parameter.
+    """
+
+    code = 415
+
+    def __init__(self, header, received_mimetype, allowed_mimetypes, *args, **kwargs):
+        """Initialize exception."""
+        super(UnsupportedMimetypeError, self).__init__(*args, **kwargs)
+        self.description = (
+            "Invalid '{}' header. "
+            "Received '{}'. Expected one of: {}".format(
+                header, received_mimetype, ", ".join(allowed_mimetypes)
+            )
+        )
+
+
+# FIXME: From here down need review
 
 
 class FieldError(object):
@@ -95,79 +117,3 @@ class SearchPaginationRESTError(RESTException):
             for field, messages in errors.items():
                 _errors.extend([FieldError(field, msg) for msg in messages])
         super(SearchPaginationRESTError, self).__init__(errors=_errors, **kwargs)
-
-
-#
-# Loading/Serializing
-#
-class UnsupportedMediaRESTError(RESTException):
-    """Creating record with unsupported media type."""
-
-    code = 415
-
-    def __init__(self, content_type=None, **kwargs):
-        """Initialize exception."""
-        super(UnsupportedMediaRESTError, self).__init__(**kwargs)
-        content_type = content_type
-        self.description = 'Unsupported media type "{0}".'.format(content_type)
-
-
-# class InvalidContentType(RESTException):
-#     """Error for when an invalid Content-Type is provided."""
-
-#     code = 415
-#     """HTTP Status code."""
-
-#     def __init__(self, allowed_content_types=None, **kwargs):
-#         """Initialize exception."""
-#         super(InvalidContentType, self).__init__(**kwargs)
-#         self.allowed_content_types = allowed_content_types
-#         self.description = (
-#           "Invalid 'Content-Type' header. Expected one of: {0}".format(
-#             ", ".join(allowed_content_types)
-#         )
-
-
-# class RESTValidationError(RESTException):
-#     """A standard REST validation error."""
-
-#     code = 400
-#     """HTTP Status code."""
-
-#     description = "Validation error."
-#     """Error description."""
-
-
-# class SameContentException(RESTException):
-#     """304 Same Content exception.
-
-#     Exception thrown when request is GET or HEAD, ETag is If-None-Match and
-#     one or more of the ETag values match.
-#     """
-
-#     code = 304
-#     """HTTP Status code."""
-
-#     description = "Same Content."
-#     """Error description."""
-
-#     def __init__(self, etag, last_modified=None, **kwargs):
-#         """Constructor.
-
-#         :param etag: matching etag
-#         :param last_modified: The last modified date. (Default: ``None``)
-#         """
-#         super(SameContentException, self).__init__(**kwargs)
-#         self.etag = etag
-#         self.last_modified = last_modified
-
-#     def get_response(self, environ=None):
-#         """Get a list of headers."""
-#         response = super(SameContentException, self).get_response(
-#             environ=environ
-#         )
-#         if self.etag is not None:
-#             response.set_etag(self.etag)
-#         if self.last_modified is not None:
-#             response.headers["Last-Modified"] = http_date(self.last_modified)
-#         return response

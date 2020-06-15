@@ -7,6 +7,8 @@
 
 """Flask Resources module to create REST APIs."""
 
+from werkzeug.exceptions import HTTPException
+
 from ..args.parsers import (
     create_request_parser,
     item_request_parser,
@@ -73,7 +75,10 @@ class ItemView(BaseView):
         """Get."""
         _response_handler = self.response_handlers[resource_requestctx.accept_mimetype]
 
-        return _response_handler.make_response(*self.resource.read(*args, **kwargs))
+        try:
+            return _response_handler.make_response(*self.resource.read(*args, **kwargs))
+        except HTTPException as error:
+            return _response_handler.make_error_response(error)
 
     @with_resource_requestctx
     @content_negotiation
