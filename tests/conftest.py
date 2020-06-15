@@ -15,7 +15,14 @@ import pytest
 from flask import Flask
 
 from flask_resources.context import resource_requestctx
-from flask_resources.resources import CollectionResource
+from flask_resources.resources import CollectionResource, Resource, ResourceConfig
+
+
+class CustomResourceConfig(ResourceConfig):
+    """Custom resource configuration."""
+
+    item_route = "/custom/<id>"
+    list_route = "/custom/"
 
 
 class CustomResource(CollectionResource):
@@ -23,7 +30,9 @@ class CustomResource(CollectionResource):
 
     def __init__(self, *args, **kwargs):
         """Constructor."""
-        super(CustomResource, self).__init__(*args, **kwargs)
+        super(CustomResource, self).__init__(
+            config=CustomResourceConfig, *args, **kwargs
+        )
         self.db = {}
 
     def search(self):
@@ -55,8 +64,10 @@ def create_app(instance_path):
         """Create app."""
         app_ = Flask(__name__)
 
-        bp = CustomResource().as_blueprint("custom_resource")
-        app_.register_blueprint(bp)
+        default_bp = Resource().as_blueprint("default_resource")
+        app_.register_blueprint(default_bp)
+        custom_bp = CustomResource().as_blueprint("custom_resource")
+        app_.register_blueprint(custom_bp)
 
         return app_
 
