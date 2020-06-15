@@ -9,6 +9,7 @@
 
 from flask import Blueprint
 
+from .loaders import JSONLoader, JSONPatchLoader
 from .response import ItemResponse, ListResponse
 from .serializers import JSONSerializer
 from .views import ItemView, ListView, SingletonView
@@ -21,8 +22,14 @@ SINGLETON_VIEW_SUFFIX = "_singleton_view"
 class ResourceConfig:
     """Base resource configuration."""
 
-    item_handlers = {"application/json": ItemResponse(JSONSerializer)}
-    list_handlers = {"application/json": ListResponse(JSONSerializer)}
+    item_request_loaders = {
+        "application/json": JSONLoader(),
+        "application/json+patch": JSONPatchLoader(),
+    }
+    item_response_handlers = {"application/json": ItemResponse(JSONSerializer)}
+    item_route = "resources/<id>"
+    list_response_handlers = {"application/json": ListResponse(JSONSerializer)}
+    list_route = "resources/"
 
 
 class Resource:
@@ -36,9 +43,6 @@ class Resource:
     # Primary interface
     def search(self, request_context):
         """Perform a search over the items."""
-        # TODO: the resource itself shouldn't be "request"-aware. Returning of
-        # HTTP responses should be done in views. Maybe some base
-        # error/exception classes can be defined to help?
         return 405
 
     def create(self):

@@ -25,9 +25,6 @@ class ListView(BaseView):
     def __init__(self, *args, **kwargs):
         """Constructor."""
         super(ListView, self).__init__(*args, **kwargs)
-        # FIXME: Parsers here? It is a naming dependency on the resource
-        # config.
-        # However there is no default config in flask-resources
         self.search_parser = self.resource.config.search_request_parser
         self.create_parser = self.resource.config.create_request_parser
         self.response_handler = self.resource.config.list_response_handler
@@ -56,6 +53,7 @@ class ItemView(BaseView):
         super(ItemView, self).__init__(*args, **kwargs)
         self.item_parser = self.resource.config.item_request_parser
         self.response_handler = self.resource.config.item_response_handler
+        self.request_loaders = self.resource.config.item_request_loaders
 
     def get(self, *args, **kwargs):
         """Get."""
