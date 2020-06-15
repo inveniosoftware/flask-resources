@@ -48,7 +48,7 @@ class ItemResponse(ResponseMixin):
         response = make_response(
             self.serializer.serialize_object(content), code,  # content is the object
         )
-
+        response.mimetype = "application/json"
         return response
 
 
@@ -76,4 +76,5 @@ class ListResponse(ResponseMixin):
             code,
         )
 
+        response.mimetype = "application/json"
         return response
