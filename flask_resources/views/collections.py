@@ -13,7 +13,7 @@ from ..args.parsers import (
     search_request_parser,
 )
 from ..content_negotiation import content_negotiation
-from ..context import resource_requestctx, with_resource_requestctx
+from ..context import resource_requestctx
 from .base import BaseView
 
 
@@ -31,8 +31,6 @@ class ListView(BaseView):
         self.response_handlers = self.resource.config.list_response_handlers
         self.request_loaders = self.resource.config.item_request_loaders
 
-    @with_resource_requestctx
-    @content_negotiation
     def get(self, *args, **kwargs):
         """Search the collection."""
         resource_requestctx.request_args = self.search_parser.parse()
@@ -40,8 +38,6 @@ class ListView(BaseView):
 
         return _response_handler.make_response(*self.resource.search(*args, **kwargs))
 
-    @with_resource_requestctx
-    @content_negotiation
     def post(self, *args, **kwargs):
         """Create an item in the collection."""
         resource_requestctx.request_args = self.create_parser.parse()
@@ -67,16 +63,12 @@ class ItemView(BaseView):
         self.response_handlers = self.resource.config.item_response_handlers
         self.request_loaders = self.resource.config.item_request_loaders
 
-    @with_resource_requestctx
-    @content_negotiation
     def get(self, *args, **kwargs):
         """Get."""
         _response_handler = self.response_handlers[resource_requestctx.accept_mimetype]
 
         return _response_handler.make_response(*self.resource.read(*args, **kwargs))
 
-    @with_resource_requestctx
-    @content_negotiation
     def put(self, *args, **kwargs):
         """Put."""
         _response_handler = self.response_handlers[resource_requestctx.accept_mimetype]
@@ -87,8 +79,6 @@ class ItemView(BaseView):
             *self.resource.update(data, *args, **kwargs)
         )
 
-    @with_resource_requestctx
-    @content_negotiation
     def patch(self, *args, **kwargs):
         """Patch."""
         _response_handler = self.response_handlers[resource_requestctx.accept_mimetype]
@@ -99,8 +89,6 @@ class ItemView(BaseView):
             *self.resource.partial_update(data, *args, **kwargs)
         )
 
-    @with_resource_requestctx
-    @content_negotiation
     def delete(self, *args, **kwargs):
         """Delete."""
         _response_handler = self.response_handlers[resource_requestctx.accept_mimetype]
