@@ -50,11 +50,7 @@ def build_pagination(request_args):
                 from_idx=request_args["from"] - 1,
                 to_idx=request_args["from"] - 1 + request_args["size"],
                 links=dict(
-                    prev={
-                        "from": max(
-                            1, request_args["from"] - request_args["size"]
-                        )
-                    },
+                    prev={"from": max(1, request_args["from"] - request_args["size"])},
                     self={"from": request_args["from"]},
                     next={"from": request_args["from"] + request_args["size"]},
                 ),

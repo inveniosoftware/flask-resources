@@ -96,9 +96,7 @@ class SearchPaginationRESTError(RESTException):
         if errors:
             for field, messages in errors.items():
                 _errors.extend([FieldError(field, msg) for msg in messages])
-        super(SearchPaginationRESTError, self).__init__(
-            errors=_errors, **kwargs
-        )
+        super(SearchPaginationRESTError, self).__init__(errors=_errors, **kwargs)
 
 
 # class InvalidContentType(RESTException):

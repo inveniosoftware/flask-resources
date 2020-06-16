@@ -18,8 +18,7 @@ class ContentNegotiator(object):
     """
 
     @classmethod
-    def match(cls, mimetypes, accept_mimetypes, formats_map, format,
-              default=None):
+    def match(cls, mimetypes, accept_mimetypes, formats_map, format, default=None):
         """Select the MIME type which best matches the client request.
 
         :param mimetypes: List/set of available MIME types.
@@ -29,8 +28,9 @@ class ContentNegotiator(object):
         :param format: The client's selected format.
         :param default: Default MIMEtype if a wildcard was received.
         """
-        return cls.match_by_format(formats_map, format) or \
-            cls.match_by_accept(mimetypes, accept_mimetypes, default=default)
+        return cls.match_by_format(formats_map, format) or cls.match_by_accept(
+            mimetypes, accept_mimetypes, default=default
+        )
 
     @classmethod
     def match_by_accept(cls, mimetypes, accept_mimetypes, default=None):
@@ -46,10 +46,10 @@ class ContentNegotiator(object):
         for client_accept, quality in accept_mimetypes:
             if quality <= best_quality:
                 continue
-            if client_accept == '*/*':
+            if client_accept == "*/*":
                 has_wildcard = True
             for m in mimetypes:
-                if m in ['*/*', client_accept] and quality > 0:
+                if m in ["*/*", client_accept] and quality > 0:
                     best_quality = quality
                     best = m
 

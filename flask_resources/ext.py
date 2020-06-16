@@ -18,4 +18,4 @@ class FlaskResources(object):
 
     def init_app(self, app):
         """Flask application initialization."""
-        app.extensions['flask-resources'] = self
+        app.extensions["flask-resources"] = self
