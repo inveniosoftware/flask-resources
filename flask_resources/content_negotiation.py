@@ -7,7 +7,12 @@
 
 """Content negotiation API."""
 
+from functools import wraps
+
 from werkzeug.datastructures import MIMEAccept
+
+from .context import resource_requestctx
+from .errors import UnsupportedMediaRESTError
 
 
 class ContentNegotiator(object):
@@ -69,3 +74,37 @@ class ContentNegotiator(object):
     def match_by_format(cls, formats_map, fmt):
         """Select the MIME type based on a query parameters."""
         return formats_map.get(fmt)
+
+
+def content_negotiation(f):
+    """Decorator to perform content negotiation."""
+
+    @wraps(f)
+    def inner(self, *args, **kwargs):
+        # resource_requestctx.payload_mimetype = ContentNegotiator.match(
+        #     self.item_loaders.keys(),
+        #     request.content_type,
+        #     {},  # self.formats,
+        #     request.args.get("format", None),
+        #     None,  # self.default_mimetype,
+        # )
+
+        # FIXME: content negotiation
+        payload_mimetype = "application/json"  # Content-Type
+        accept_mimetype = "application/json"
+
+        # Check if content-type can be treated otherwise, fail fast
+        # Serialization is checked per function due to lack of
+        # knowledge at this point
+        if payload_mimetype not in self.request_loaders.keys():
+            raise UnsupportedMediaRESTError(payload_mimetype)
+
+        if accept_mimetype not in self.response_handlers.keys():
+            raise UnsupportedMediaRESTError(accept_mimetype)
+
+        resource_requestctx.payload_mimetype = payload_mimetype
+        resource_requestctx.accept_mimetype = accept_mimetype
+
+        return f(self, *args, **kwargs)
+
+    return inner

@@ -5,10 +5,14 @@
 # Flask-Resources is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
-"""Library for easily implementing REST APIs."""
+"""Resource view."""
 
-from flask import Blueprint, abort
+from flask import Blueprint
 
+from .args import create_request_parser, item_request_parser, search_request_parser
+from .loaders import JSONLoader, JSONPatchLoader
+from .response import ItemResponse, ListResponse
+from .serializers import JSONSerializer
 from .views import ItemView, ListView, SingletonView
 
 ITEM_VIEW_SUFFIX = "_item_view"
@@ -16,42 +20,54 @@ LIST_VIEW_SUFFIX = "_list_view"
 SINGLETON_VIEW_SUFFIX = "_singleton_view"
 
 
-class Resource(object):
+class ResourceConfig:
+    """Base resource configuration."""
+
+    item_request_loaders = {
+        "application/json": JSONLoader(),
+        "application/json+patch": JSONPatchLoader(),
+    }
+    item_response_handlers = {"application/json": ItemResponse(JSONSerializer())}
+    item_route = "/resources/<id>"
+    list_response_handlers = {"application/json": ListResponse(JSONSerializer())}
+    list_route = "/resources/"
+    create_request_parser = create_request_parser
+    item_request_parser = item_request_parser
+    search_request_parser = search_request_parser
+
+
+class Resource:
     """Resource controller interface."""
 
-    def __init__(self, controller, config):
+    def __init__(self, config=ResourceConfig, *args, **kwargs):
         """Initialize the base resource."""
-        self.controller = controller
         self.config = config
         self.bp_name = None
 
     # Primary interface
     def search(self, request_context):
         """Perform a search over the items."""
-        # TODO: the resource itself shouldn't be "request"-aware. Returning of
-        # HTTP responses should be done in views. Maybe some base
-        # error/exception classes can be defined to help?
-        abort(405)
+        return 405
 
     def create(self):
         """Create an item."""
-        abort(405)
+        return 405
 
     def read(self, *args, **kwargs):
         """Read an item."""
-        abort(405)
+        return 405
 
     def update(self, data, *args, **kwargs):
         """Update an item."""
-        abort(405)
+        return 405
 
     def partial_update(self, data, *args, **kwargs):
         """Partial update an item."""
-        abort(405)
+        return 405
 
     def delete(self, *args, **kwargs):
         """Delete an item."""
-        abort(405)
+        return 405
 
     # Secondary interface
     def as_blueprint(self, name, **bp_kwargs):
@@ -78,30 +94,6 @@ class Resource(object):
     def create_error_handlers(self):
         """Create error handlers."""
         return []
-
-    def load_item_from_request(self):
-        """Load item from request."""
-        # FIXME: Code default
-        # self.config.item_loader()
-        pass
-
-    def make_list_response(self, item_list, http_code):
-        """Make list response."""
-        # FIXME: Code default
-        # self.config.list_serializer()
-        pass
-
-    def make_item_response(self, item, http_code):
-        """Make item response."""
-        # FIXME: Code default
-        # self.config.item_serializer()
-        pass
-
-    def make_error_response(self, error_data, http_code):
-        """Make error response."""
-        # FIXME: Code default
-        # self.config.error_serializer()
-        pass
 
 
 class CollectionResource(Resource):

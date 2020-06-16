@@ -14,20 +14,26 @@ The views responsabilities are:
 
 from flask.views import MethodView
 
+from ..content_negotiation import content_negotiation
 from ..context import with_resource_requestctx
 
 
 class BaseView(MethodView):
     """Base view."""
 
-    with_context_decorator = True
-    """Flag to control resource context pushing decorator."""
+    resource_decorators = [content_negotiation, with_resource_requestctx]
+    """Resource-specific decorators to be applied to the views."""
 
     def __init__(self, resource, *args, **kwargs):
         """Constructor."""
         super(BaseView, self).__init__(*args, **kwargs)
         self.resource = resource
-        if self.with_context_decorator:
-            # Push the decorator to the end, so that it's applied before any
-            # other decorator.
-            self.decorators += (with_resource_requestctx,)
+
+    def dispatch_request(self, *args, **kwargs):
+        """Dispatch request after applying resource decorators."""
+        view = MethodView.dispatch_request
+
+        for decorator in self.resource_decorators:
+            view = decorator(view)
+
+        return view(self, *args, **kwargs)
