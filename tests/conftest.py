@@ -57,18 +57,13 @@ class CustomResource(CollectionResource):
 
 
 @pytest.fixture(scope="module")
-def create_app(instance_path):
+def app():
     """Application factory fixture."""
+    app_ = Flask(__name__)
 
-    def app(*args, **kwargs):
-        """Create app."""
-        app_ = Flask(__name__)
+    default_bp = Resource().as_blueprint("default_resource")
+    app_.register_blueprint(default_bp)
+    custom_bp = CustomResource().as_blueprint("custom_resource")
+    app_.register_blueprint(custom_bp)
 
-        default_bp = Resource().as_blueprint("default_resource")
-        app_.register_blueprint(default_bp)
-        custom_bp = CustomResource().as_blueprint("custom_resource")
-        app_.register_blueprint(custom_bp)
-
-        return app_
-
-    return app
+    return app_
