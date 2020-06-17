@@ -23,6 +23,8 @@ class BaseView(MethodView):
 
     resource_decorators = [content_negotiation, with_resource_requestctx]
     """Resource-specific decorators to be applied to the views."""
+    # todo: can https://flask.palletsprojects.com/en/1.1.x/api/#flask.views.View.decorators
+    # be used instead?
 
     def __init__(self, resource, *args, **kwargs):
         """Constructor."""

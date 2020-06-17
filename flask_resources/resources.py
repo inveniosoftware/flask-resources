@@ -16,9 +16,8 @@ from .response import ItemResponse, ListResponse
 from .serializers import JSONSerializer
 from .views import ItemView, ListView, SingletonView
 
-ITEM_VIEW_SUFFIX = "_item_view"
-LIST_VIEW_SUFFIX = "_list_view"
-SINGLETON_VIEW_SUFFIX = "_singleton_view"
+ITEM_VIEW_SUFFIX = "_item"
+LIST_VIEW_SUFFIX = "_list"
 
 
 class ResourceConfig:
@@ -26,7 +25,6 @@ class ResourceConfig:
 
     item_request_loaders = {
         "application/json": JSONLoader(),
-        "application/json+patch": JSONPatchLoader(),
     }
     item_response_handlers = {"application/json": ItemResponse(JSONSerializer())}
     item_route = "/resources/<id>"
@@ -37,20 +35,22 @@ class ResourceConfig:
     search_request_parser = search_request_parser
 
 
-class Resource:
+class ResourceView:
     """Resource controller interface."""
 
-    def __init__(self, config=ResourceConfig, *args, **kwargs):
+    def __init__(self, config=ResourceConfig):
         """Initialize the base resource."""
         self.config = config
+        # todo: is this actually being used? I see it's stored in as_blueprint, but
+        #       i don't see it used.
         self.bp_name = None
 
     # Primary interface
-    def search(self, request_context):
+    def search(self, *args, **kwargs):
         """Perform a search over the items."""
         raise MethodNotAllowed()
 
-    def create(self):
+    def create(self, *args, **kwargs):
         """Create an item."""
         raise MethodNotAllowed()
 
@@ -58,11 +58,11 @@ class Resource:
         """Read an item."""
         raise MethodNotAllowed()
 
-    def update(self, data, *args, **kwargs):
+    def update(self, *args, **kwargs):
         """Update an item."""
         raise MethodNotAllowed()
 
-    def partial_update(self, data, *args, **kwargs):
+    def partial_update(self, *args, **kwargs):
         """Partial update an item."""
         raise MethodNotAllowed()
 
@@ -87,7 +87,7 @@ class Resource:
             {
                 "rule": self.config.item_route,
                 "view_func": ItemView.as_view(
-                    name="{}{}".format(bp_name, ITEM_VIEW_SUFFIX), resource=self,
+                    name="{}{}".format(bp_name), resource=self,
                 ),
             }
         ]
@@ -127,7 +127,7 @@ class SingletonResource(Resource):
             {
                 "rule": self.config.list_route,
                 "view_func": SingletonView.as_view(
-                    name="{}{}".format(bp_name, SINGLETON_VIEW_SUFFIX), resource=self,
+                    name="{}{}".format(bp_name), resource=self,
                 ),
             }
         ]

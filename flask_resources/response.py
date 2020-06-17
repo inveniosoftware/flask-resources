@@ -19,7 +19,8 @@ class ResponseMixin:
         """Build response headers."""
         return {
             "content-type": resource_requestctx.payload_mimetype,
-            "accept": resource_requestctx.accept_mimetype,
+            # todo: should etag and last modified be set from here somehow as
+            #       well as link headers.
         }
 
     def make_response(self, code, content):
@@ -37,7 +38,7 @@ class ItemResponse(ResponseMixin):
     Builds up a reponse for a single object.
     """
 
-    def __init__(self, serializer=None, *args, **kwargs):
+    def __init__(self, serializer=None):
         """Constructor."""
         self.serializer = serializer
 
@@ -63,7 +64,7 @@ class ListResponse(ResponseMixin):
     Builds up a reponse for a list of objects.
     """
 
-    def __init__(self, serializer=None, *args, **kwargs):
+    def __init__(self, serializer=None):
         """Constructor."""
         self.serializer = serializer
 

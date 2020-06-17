@@ -18,11 +18,3 @@ class JSONLoader(LoaderMixin):
     def load_request(self, *args, **kwargs):
         """Load the body of the request."""
         return request.get_json()
-
-
-class JSONPatchLoader(LoaderMixin):
-    """JSON+Patch loader."""
-
-    def load_request(self, *args, **kwargs):
-        """Load the body of the request."""
-        return request.get_json(force=True)

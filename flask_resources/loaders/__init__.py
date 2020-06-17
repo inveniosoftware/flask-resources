@@ -7,7 +7,7 @@
 
 """Loaders."""
 
-from .json import JSONLoader, JSONPatchLoader
+from .json import JSONLoader
 from .loaders import LoaderMixin
 
-__all__ = ("JSONLoader", "JSONPatchLoader", "LoaderMixin")
+__all__ = ("JSONLoader", "LoaderMixin")

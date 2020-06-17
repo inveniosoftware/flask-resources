@@ -41,13 +41,14 @@ class ListView(BaseView):
 
     def post(self, *args, **kwargs):
         """Create an item in the collection."""
-        resource_requestctx.request_args = self.create_parser.parse()
         _response_handler = self.response_handlers[resource_requestctx.accept_mimetype]
         _response_loader = self.request_loaders[resource_requestctx.payload_mimetype]
 
-        data = _response_loader.load_request()
+        resource_requestctx.request_args = self.create_parser.parse()
+        resource_requestctx.data = _response_loader.load_request()
+
         return _response_handler.make_response(
-            *self.resource.create(data, *args, **kwargs)
+            *self.resource.create(*args, **kwargs)
         )
 
 
@@ -71,17 +72,24 @@ class ItemView(BaseView):
         try:
             return _response_handler.make_response(*self.resource.read(*args, **kwargs))
         except HTTPException as error:
+            # TODO: 1) should this be here, or we use the blueprint error handlers?
+            #       records rest have something here.
+            #       2) we should check if e.g. a tombstone page is an error or
+            #       a normal response.
             return _response_handler.make_error_response(error)
 
     def put(self, *args, **kwargs):
         """Put."""
         _response_handler = self.response_handlers[resource_requestctx.accept_mimetype]
+        # TODO: If application/json is used for both put and post, then they have to
+        #       use the same response handler. Possibly this is ok, but need to be
+        #       checked. Probably the problems is delegated to partial_update()
         _response_loader = self.request_loaders[resource_requestctx.payload_mimetype]
 
         try:
-            data = _response_loader.load_request()
+            resource_requestctx.data = _response_loader.load_request()
             return _response_handler.make_response(
-                *self.resource.update(data, *args, **kwargs)
+                *self.resource.update(*args, **kwargs)
             )
         except HTTPException as error:
             return _response_handler.make_error_response(error)
@@ -92,9 +100,9 @@ class ItemView(BaseView):
         _response_loader = self.request_loaders[resource_requestctx.payload_mimetype]
 
         try:
-            data = _response_loader.load_request()
+            resource_requestctx.data = _response_loader.load_request()
             return _response_handler.make_response(
-                *self.resource.partial_update(data, *args, **kwargs)
+                *self.resource.partial_update(*args, **kwargs)
             )
         except HTTPException as error:
             return _response_handler.make_error_response(error)
@@ -102,6 +110,8 @@ class ItemView(BaseView):
     def delete(self, *args, **kwargs):
         """Delete."""
         _response_handler = self.response_handlers[resource_requestctx.accept_mimetype]
+        # TODO: Delete can potentially have a body - e.g. the tombstone messages.
+        #       HTTP spec seems to allow this, but not that common.
 
         try:
             return _response_handler.make_response(
