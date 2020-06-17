@@ -9,12 +9,8 @@
 
 from werkzeug.exceptions import HTTPException
 
-from ..args.parsers import (
-    create_request_parser,
-    item_request_parser,
-    search_request_parser,
-)
 from ..context import resource_requestctx
+from ..parsers import create_request_parser, item_request_parser, search_request_parser
 from .base import BaseView
 
 

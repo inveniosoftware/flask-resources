@@ -7,7 +7,7 @@
 
 """Flask Resources module to create REST APIs."""
 
-from ..args.parsers import item_request_parser
+from ..parsers import item_request_parser
 from .base import BaseView
 
 

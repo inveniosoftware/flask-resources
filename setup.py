@@ -20,11 +20,11 @@ tests_require = [
     # coverage pinned because of https://github.com/nedbat/coveragepy/issues/716
     "coverage>=4.0,<5.0.0",
     "isort>=4.3",
+    "pydocstyle~=5.0.0",
     "pytest>=4.6.1",
     "pytest-cov>=2.5.1",
     "pytest-flask>=0.15.1,<1.0.0",
-    "pytest-pep8>=1.0.6",
-    "pydocstyle~=5.0.0",
+    "pytest-mock>=1.6.0" "pytest-pep8>=1.0.6",
 ]
 
 extras_require = {
