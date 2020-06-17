@@ -12,7 +12,7 @@ from marshmallow.validate import Range, Regexp
 from webargs.fields import Int, String
 from webargs.flaskparser import parser
 
-from flask_resources.args.paginate import build_pagination
+from .paginate import build_pagination
 
 
 class RequestParser:
@@ -25,9 +25,7 @@ class RequestParser:
 
     def parse(self):
         """Parse."""
-        return self.post_process(
-            parser.parse(self.fields, request, locations=["view_args"])
-        )
+        return self.post_process(parser.parse(self.fields, request))
 
     def post_process(self, request_arguments):
         """Post process."""
@@ -41,7 +39,7 @@ search_request_parser = RequestParser(
         "page": Int(validate=Range(min=1),),
         "from": Int(load_from="from", validate=Range(min=1),),
         "size": Int(validate=Range(min=1), missing=10,),
-        "q": String(),  # TODO: allow getting it from "query" maybe a Function
+        "q": String(missing=""),
     },
     processors=[build_pagination],
 )

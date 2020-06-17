@@ -10,8 +10,8 @@
 from flask import Blueprint
 from werkzeug.exceptions import MethodNotAllowed
 
-from .args import create_request_parser, item_request_parser, search_request_parser
 from .loaders import JSONLoader, JSONPatchLoader
+from .parsers import create_request_parser, item_request_parser, search_request_parser
 from .response import ItemResponse, ListResponse
 from .serializers import JSONSerializer
 from .views import ItemView, ListView, SingletonView
