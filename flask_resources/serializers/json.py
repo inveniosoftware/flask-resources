@@ -22,3 +22,9 @@ class JSONSerializer(SerializerMixin):
     def serialize_object_list(self, object_list, response_ctx=None, *args, **kwargs):
         """Dump the object list into a json string."""
         return json.dumps(object_list)
+
+    def serialize_error(self, error, response_ctx=None, *args, **kwargs):
+        """Serialize an error reponse according to the response ctx."""
+        # NOTE: In non-overwritten exceptions (i.e. coming from Werkzeug)
+        # `get_description` returns HTML tags.
+        return json.dumps(error.description)

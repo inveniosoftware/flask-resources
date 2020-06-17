@@ -12,7 +12,7 @@ from functools import wraps
 from werkzeug.datastructures import MIMEAccept
 
 from .context import resource_requestctx
-from .errors import UnsupportedMediaRESTError
+from .errors import UnsupportedMimetypeError
 
 
 class ContentNegotiator(object):
@@ -96,11 +96,21 @@ def content_negotiation(f):
         # Check if content-type can be treated otherwise, fail fast
         # Serialization is checked per function due to lack of
         # knowledge at this point
-        if payload_mimetype not in self.request_loaders.keys():
-            raise UnsupportedMediaRESTError(payload_mimetype)
+        allowed_mimetypes = self.request_loaders.keys()
+        if payload_mimetype not in allowed_mimetypes:
+            raise UnsupportedMimetypeError(
+                header="Content-Type",
+                received_mimetype=payload_mimetype,
+                allowed_mimetypes=allowed_mimetypes,
+            )
 
-        if accept_mimetype not in self.response_handlers.keys():
-            raise UnsupportedMediaRESTError(accept_mimetype)
+        allowed_mimetypes = self.response_handlers.keys()
+        if accept_mimetype not in allowed_mimetypes:
+            raise UnsupportedMimetypeError(
+                header="Accept",
+                received_mimetype=accept_mimetype,
+                allowed_mimetypes=allowed_mimetypes,
+            )
 
         resource_requestctx.payload_mimetype = payload_mimetype
         resource_requestctx.accept_mimetype = accept_mimetype

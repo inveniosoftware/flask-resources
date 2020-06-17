@@ -7,12 +7,13 @@
 
 """Flask Resources module to create REST APIs."""
 
+from werkzeug.exceptions import HTTPException
+
 from ..args.parsers import (
     create_request_parser,
     item_request_parser,
     search_request_parser,
 )
-from ..content_negotiation import content_negotiation
 from ..context import resource_requestctx
 from .base import BaseView
 
@@ -67,30 +68,44 @@ class ItemView(BaseView):
         """Get."""
         _response_handler = self.response_handlers[resource_requestctx.accept_mimetype]
 
-        return _response_handler.make_response(*self.resource.read(*args, **kwargs))
+        try:
+            return _response_handler.make_response(*self.resource.read(*args, **kwargs))
+        except HTTPException as error:
+            return _response_handler.make_error_response(error)
 
     def put(self, *args, **kwargs):
         """Put."""
         _response_handler = self.response_handlers[resource_requestctx.accept_mimetype]
         _response_loader = self.request_loaders[resource_requestctx.payload_mimetype]
 
-        data = _response_loader.load_request()
-        return _response_handler.make_response(
-            *self.resource.update(data, *args, **kwargs)
-        )
+        try:
+            data = _response_loader.load_request()
+            return _response_handler.make_response(
+                *self.resource.update(data, *args, **kwargs)
+            )
+        except HTTPException as error:
+            return _response_handler.make_error_response(error)
 
     def patch(self, *args, **kwargs):
         """Patch."""
         _response_handler = self.response_handlers[resource_requestctx.accept_mimetype]
         _response_loader = self.request_loaders[resource_requestctx.payload_mimetype]
 
-        data = _response_loader.load_request()
-        return _response_handler.make_response(
-            *self.resource.partial_update(data, *args, **kwargs)
-        )
+        try:
+            data = _response_loader.load_request()
+            return _response_handler.make_response(
+                *self.resource.partial_update(data, *args, **kwargs)
+            )
+        except HTTPException as error:
+            return _response_handler.make_error_response(error)
 
     def delete(self, *args, **kwargs):
         """Delete."""
         _response_handler = self.response_handlers[resource_requestctx.accept_mimetype]
 
-        return _response_handler.make_response(*self.resource.delete(*args, **kwargs))
+        try:
+            return _response_handler.make_response(
+                *self.resource.delete(*args, **kwargs)
+            )
+        except HTTPException as error:
+            return _response_handler.make_error_response(error)

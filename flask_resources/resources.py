@@ -8,6 +8,7 @@
 """Resource view."""
 
 from flask import Blueprint
+from werkzeug.exceptions import MethodNotAllowed
 
 from .args import create_request_parser, item_request_parser, search_request_parser
 from .loaders import JSONLoader, JSONPatchLoader
@@ -47,27 +48,27 @@ class Resource:
     # Primary interface
     def search(self, request_context):
         """Perform a search over the items."""
-        return 405
+        raise MethodNotAllowed()
 
     def create(self):
         """Create an item."""
-        return 405
+        raise MethodNotAllowed()
 
     def read(self, *args, **kwargs):
         """Read an item."""
-        return 405
+        raise MethodNotAllowed()
 
     def update(self, data, *args, **kwargs):
         """Update an item."""
-        return 405
+        raise MethodNotAllowed()
 
     def partial_update(self, data, *args, **kwargs):
         """Partial update an item."""
-        return 405
+        raise MethodNotAllowed()
 
     def delete(self, *args, **kwargs):
         """Delete an item."""
-        return 405
+        raise MethodNotAllowed()
 
     # Secondary interface
     def as_blueprint(self, name, **bp_kwargs):

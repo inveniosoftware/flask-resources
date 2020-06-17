@@ -7,7 +7,7 @@
 
 """Response module."""
 
-from flask import abort, make_response
+from flask import make_response
 
 from .context import resource_requestctx
 
@@ -26,9 +26,9 @@ class ResponseMixin:
         """Builds a response."""
         raise NotImplementedError()
 
-    def make_error_response(self, reason, message):
+    def make_error_response(self, error):
         """Builds an error response."""
-        raise abort(405)
+        raise NotImplementedError()
 
 
 class ItemResponse(ResponseMixin):
@@ -50,6 +50,12 @@ class ItemResponse(ResponseMixin):
             self.serializer.serialize_object(content), code, self.make_header(),
         )
 
+    def make_error_response(self, error):
+        """Builds an error response."""
+        return make_response(
+            self.serializer.serialize_error(error), error.code, self.make_header()
+        )
+
 
 class ListResponse(ResponseMixin):
     """List response representation.
@@ -68,4 +74,12 @@ class ListResponse(ResponseMixin):
 
         return make_response(
             self.serializer.serialize_object_list(content), code, self.make_header(),
+        )
+
+    def make_error_response(self, error):
+        """Builds an error response."""
+        # FIXME: Repeated code with above. Is there a chance of having a
+        # Response w/o a serializer? If not this can refactor on parent mixin.
+        return make_response(
+            self.serializer.serialize_error(error), error.code, self.make_header()
         )
