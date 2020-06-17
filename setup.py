@@ -24,7 +24,8 @@ tests_require = [
     "pytest>=4.6.1",
     "pytest-cov>=2.5.1",
     "pytest-flask>=0.15.1,<1.0.0",
-    "pytest-mock>=1.6.0" "pytest-pep8>=1.0.6",
+    "pytest-mock>=1.6.0",
+    "pytest-pep8>=1.0.6",
 ]
 
 extras_require = {
