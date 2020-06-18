@@ -8,33 +8,6 @@
 """Serializers required interfaces."""
 
 
-class SerializableMixin:
-    """Serializable Interface.
-
-    Objects that will be serialized must implement it.
-    """
-
-    @property
-    def object():
-        """Returns the object itself."""
-        raise NotImplementedError()
-
-    @property
-    def id():
-        """Returns the object id."""
-        raise NotImplementedError()
-
-    @property
-    def version():
-        """Returns the object version or revision."""
-        raise NotImplementedError()
-
-    @property
-    def last_modified():
-        """Returns the date of the last modification."""
-        raise NotImplementedError()
-
-
 class SerializerMixin:
     """Serializer Interface."""
 
