@@ -46,12 +46,15 @@ class Resource:
         self.bp_name = None
 
     # Primary interface
-    def search(self, request_context):
+    def search(self, request_context, *args, **kwargs):
         """Perform a search over the items."""
         raise MethodNotAllowed()
 
-    def create(self):
-        """Create an item."""
+    def create(self, *args, **kwargs):
+        """Create an item.
+
+        The implementing method must return a serializable object.
+        """
         raise MethodNotAllowed()
 
     def read(self, *args, **kwargs):
