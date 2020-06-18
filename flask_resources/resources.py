@@ -29,7 +29,6 @@ class ResourceConfig:
         "application/json": RequestLoader(
             deserializer=JSONDeserializer(),
             item_args_parser=item_request_parser,
-            create_args_parser=create_request_parser,
             search_args_parser=search_request_parser,
         )
     }

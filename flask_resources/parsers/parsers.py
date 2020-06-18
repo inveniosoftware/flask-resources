@@ -44,6 +44,4 @@ search_request_parser = RequestParser(
     processors=[build_pagination],
 )
 
-create_request_parser = RequestParser()
-
 item_request_parser = RequestParser(fields={"id": String(required=True)})

@@ -36,7 +36,6 @@ class RequestLoader(LoaderMixin):
         self,
         deserializer=None,
         item_args_parser=None,
-        create_args_parser=None,
         search_args_parser=None,
         *args,
         **kwargs
@@ -44,7 +43,6 @@ class RequestLoader(LoaderMixin):
         """Constructor."""
         self.deserializer = deserializer
         self.item_args_parser = item_args_parser
-        self.create_args_parser = create_args_parser
         self.search_args_parser = search_args_parser
 
     def load_item_request(self, *args, **kwargs):
@@ -56,10 +54,7 @@ class RequestLoader(LoaderMixin):
 
     def load_create_request(self, *args, **kwargs):
         """Load an item creation request."""
-        return (
-            self.create_args_parser.parse(),
-            self.deserializer.deserialize_object(request.data),
-        )
+        return self.deserializer.deserialize_object(request.data)
 
     def load_search_request(self, *args, **kwargs):
         """Load a search request."""
