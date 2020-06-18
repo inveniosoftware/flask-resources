@@ -5,9 +5,9 @@
 # Flask-Resources is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
-"""Loaders."""
+"""Deserializers."""
 
-from .json import JSONLoader, JSONPatchLoader
-from .loaders import LoaderMixin
+from .json import JSONDeserializer
+from .deserializers import DeserializerMixin
 
-__all__ = ("JSONLoader", "JSONPatchLoader", "LoaderMixin")
+__all__ = ("JSONDeserializer", "DeserializerMixin")

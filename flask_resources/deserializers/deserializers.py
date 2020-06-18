@@ -5,12 +5,12 @@
 # Flask-Resources is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
-"""Loaders required interfaces."""
+"""Deserializers required interfaces."""
 
 
-class LoaderMixin:
-    """Loader Interface."""
+class DeserializerMixin:
+    """Deserializer Interface."""
 
-    def load_request(self, *args, **kwargs):
-        """Load the body of the request."""
+    def deserialize_object(self, obj, *args, **kwargs):
+        """Deserializes an object."""
         raise NotImplementedError()
