@@ -23,27 +23,23 @@ class ListView(BaseView):
     def __init__(self, *args, **kwargs):
         """Constructor."""
         super(ListView, self).__init__(*args, **kwargs)
-        self.response_handlers = self.resource.config.list_response_handlers
-        self.request_loaders = self.resource.config.request_loaders
+        self._response_handlers = self.resource.config.list_response_handlers
+        self._request_loaders = self.resource.config.request_loaders
 
     def get(self, *args, **kwargs):
         """Search the collection."""
-        _response_handler = self.response_handlers[resource_requestctx.accept_mimetype]
-        _request_loader = self.request_loaders[resource_requestctx.payload_mimetype]
+        resource_requestctx.request_loader.load_search_request()
 
-        resource_requestctx.request_args = _request_loader.load_search_request()
-
-        return _response_handler.make_response(*self.resource.search(*args, **kwargs))
+        return resource_requestctx.response_handler.make_response(
+            *self.resource.search(*args, **kwargs)
+        )
 
     def post(self, *args, **kwargs):
         """Create an item in the collection."""
-        _response_handler = self.response_handlers[resource_requestctx.accept_mimetype]
-        _request_loader = self.request_loaders[resource_requestctx.payload_mimetype]
+        resource_requestctx.request_loader.load_create_request()
 
-        resource_requestctx.request_args, data = _request_loader.load_create_request()
-
-        return _response_handler.make_response(
-            *self.resource.create(data, *args, **kwargs)
+        return resource_requestctx.response_handler.make_response(
+            *self.resource.create(*args, **kwargs)  # data is passed in the context
         )
 
 
@@ -56,71 +52,49 @@ class ItemView(BaseView):
     def __init__(self, *args, **kwargs):
         """Constructor."""
         super(ItemView, self).__init__(*args, **kwargs)
-        self.response_handlers = self.resource.config.item_response_handlers
-        self.request_loaders = self.resource.config.request_loaders
+        self._response_handlers = self.resource.config.item_response_handlers
+        self._request_loaders = self.resource.config.request_loaders
 
     def get(self, *args, **kwargs):
         """Get."""
-        _response_handler = self.response_handlers[resource_requestctx.accept_mimetype]
-        _request_loader = self.request_loaders[resource_requestctx.payload_mimetype]
-
         try:
-            (
-                resource_requestctx.request_args,  # Will give the id
-                data,  # Will be empty
-            ) = _request_loader.load_item_request()
+            resource_requestctx.request_loader.load_item_request(data=False)
 
-            return _response_handler.make_response(*self.resource.read(*args, **kwargs))
+            return resource_requestctx.response_handler.make_response(
+                *self.resource.read(*args, **kwargs)
+            )
         except HTTPException as error:
-            return _response_handler.make_error_response(error)
+            return resource_requestctx.response_handler.make_error_response(error)
 
     def put(self, *args, **kwargs):
         """Put."""
-        _response_handler = self.response_handlers[resource_requestctx.accept_mimetype]
-        _request_loader = self.request_loaders[resource_requestctx.payload_mimetype]
-
         try:
-            (
-                resource_requestctx.request_args,  # Will give the id
-                data,
-            ) = _request_loader.load_item_request()
+            resource_requestctx.request_loader.load_item_request()
 
-            return _response_handler.make_response(
-                *self.resource.update(data, *args, **kwargs)
+            return resource_requestctx.response_handler.make_response(
+                *self.resource.update(*args, **kwargs)  # data is passed in the context
             )
         except HTTPException as error:
-            return _response_handler.make_error_response(error)
+            return resource_requestctx.response_handler.make_error_response(error)
 
     def patch(self, *args, **kwargs):
         """Patch."""
-        _response_handler = self.response_handlers[resource_requestctx.accept_mimetype]
-        _request_loader = self.request_loaders[resource_requestctx.payload_mimetype]
-
         try:
-            (
-                resource_requestctx.request_args,  # Will give the id
-                data,
-            ) = _request_loader.load_item_request()
+            resource_requestctx.request_loader.load_item_request()
 
-            return _response_handler.make_response(
-                *self.resource.partial_update(data, *args, **kwargs)
+            return resource_requestctx.response_handler.make_response(
+                *self.resource.partial_update(*args, **kwargs)
             )
         except HTTPException as error:
-            return _response_handler.make_error_response(error)
+            return resource_requestctx.response_handler.make_error_response(error)
 
     def delete(self, *args, **kwargs):
         """Delete."""
-        _response_handler = self.response_handlers[resource_requestctx.accept_mimetype]
-        _request_loader = self.request_loaders[resource_requestctx.payload_mimetype]
-
         try:
-            (
-                resource_requestctx.request_args,  # Will give the id
-                data,  # Will be empty
-            ) = _request_loader.load_item_request()
+            resource_requestctx.request_loader.load_item_request(data=False)
 
-            return _response_handler.make_response(
+            return resource_requestctx.response_handler.make_response(
                 *self.resource.delete(*args, **kwargs)
             )
         except HTTPException as error:
-            return _response_handler.make_error_response(error)
+            return resource_requestctx.response_handler.make_error_response(error)

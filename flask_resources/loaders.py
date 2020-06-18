@@ -9,6 +9,8 @@
 
 from flask import request
 
+from .context import resource_requestctx
+
 
 class LoaderMixin:
     """Loader interface."""
@@ -45,17 +47,20 @@ class RequestLoader(LoaderMixin):
         self.item_args_parser = item_args_parser
         self.search_args_parser = search_args_parser
 
-    def load_item_request(self, *args, **kwargs):
+    def load_item_request(self, data=True, *args, **kwargs):
         """Build response headers."""
-        return (
-            self.item_args_parser.parse(),
-            self.deserializer.deserialize_object(request.data),
-        )
+        resource_requestctx.request_args = self.item_args_parser.parse()
+        if data:
+            resource_requestctx.request_content = self.deserializer.deserialize_object(
+                request.data
+            )
 
     def load_create_request(self, *args, **kwargs):
         """Load an item creation request."""
-        return self.deserializer.deserialize_object(request.data)
+        resource_requestctx.request_content = self.deserializer.deserialize_object(
+            request.data
+        )
 
     def load_search_request(self, *args, **kwargs):
         """Load a search request."""
-        return self.search_args_parser.parse()
+        resource_requestctx.request_args = self.search_args_parser.parse()

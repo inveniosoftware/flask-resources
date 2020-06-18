@@ -45,8 +45,9 @@ class CustomResource(CollectionResource):
 
         return 200, resp
 
-    def create(self, obj):
+    def create(self):
         """Create."""
+        obj = resource_requestctx.request_content
         self.db[obj["id"]] = obj["content"]
 
         return 201, self.db

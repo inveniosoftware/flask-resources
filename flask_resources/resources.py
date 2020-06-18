@@ -59,11 +59,11 @@ class Resource:
         """Read an item."""
         raise MethodNotAllowed()
 
-    def update(self, data, *args, **kwargs):
+    def update(self, *args, **kwargs):
         """Update an item."""
         raise MethodNotAllowed()
 
-    def partial_update(self, data, *args, **kwargs):
+    def partial_update(self, *args, **kwargs):
         """Partial update an item."""
         raise MethodNotAllowed()
 

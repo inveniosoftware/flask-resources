@@ -96,7 +96,7 @@ def content_negotiation(f):
         # Check if content-type can be treated otherwise, fail fast
         # Serialization is checked per function due to lack of
         # knowledge at this point
-        allowed_mimetypes = self.request_loaders.keys()
+        allowed_mimetypes = self._request_loaders.keys()
         if payload_mimetype not in allowed_mimetypes:
             raise UnsupportedMimetypeError(
                 header="Content-Type",
@@ -104,7 +104,7 @@ def content_negotiation(f):
                 allowed_mimetypes=allowed_mimetypes,
             )
 
-        allowed_mimetypes = self.response_handlers.keys()
+        allowed_mimetypes = self._response_handlers.keys()
         if accept_mimetype not in allowed_mimetypes:
             raise UnsupportedMimetypeError(
                 header="Accept",
@@ -113,7 +113,9 @@ def content_negotiation(f):
             )
 
         resource_requestctx.payload_mimetype = payload_mimetype
+        resource_requestctx.request_loader = self._request_loaders[payload_mimetype]
         resource_requestctx.accept_mimetype = accept_mimetype
+        resource_requestctx.response_handler = self._response_handlers[accept_mimetype]
 
         return f(self, *args, **kwargs)
 
