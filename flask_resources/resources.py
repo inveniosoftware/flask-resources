@@ -10,7 +10,8 @@
 from flask import Blueprint
 from werkzeug.exceptions import MethodNotAllowed
 
-from .loaders import JSONLoader, JSONPatchLoader
+from .deserializers import JSONDeserializer
+from .loaders import RequestLoader
 from .parsers import create_request_parser, item_request_parser, search_request_parser
 from .response import ItemResponse, ListResponse
 from .serializers import JSONSerializer
@@ -24,17 +25,18 @@ SINGLETON_VIEW_SUFFIX = "_singleton_view"
 class ResourceConfig:
     """Base resource configuration."""
 
-    item_request_loaders = {
-        "application/json": JSONLoader(),
-        "application/json+patch": JSONPatchLoader(),
+    request_loaders = {
+        "application/json": RequestLoader(
+            deserializer=JSONDeserializer(),
+            item_args_parser=item_request_parser,
+            create_args_parser=create_request_parser,
+            search_args_parser=search_request_parser,
+        )
     }
     item_response_handlers = {"application/json": ItemResponse(JSONSerializer())}
     item_route = "/resources/<id>"
     list_response_handlers = {"application/json": ListResponse(JSONSerializer())}
     list_route = "/resources/"
-    create_request_parser = create_request_parser
-    item_request_parser = item_request_parser
-    search_request_parser = search_request_parser
 
 
 class Resource:

@@ -7,7 +7,9 @@
 
 """JSON Deserializer."""
 
-from .deserializer import DeserializerMixin
+import json
+
+from .deserializers import DeserializerMixin
 
 
 class JSONDeserializer(DeserializerMixin):

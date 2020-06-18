@@ -13,8 +13,16 @@ from flask import request
 class LoaderMixin:
     """Loader interface."""
 
-    def load_request(self, *args, **kwargs):
-        """Build response headers."""
+    def load_item_request(self, *args, **kwargs):
+        """Load a request concerning an existing item."""
+        raise NotImplementedError()
+
+    def load_create_request(self, *args, **kwargs):
+        """Load an item creation request."""
+        raise NotImplementedError()
+
+    def load_search_request(self, *args, **kwargs):
+        """Load a search request."""
         raise NotImplementedError()
 
 
@@ -24,11 +32,35 @@ class RequestLoader(LoaderMixin):
     Loads the content from the request.
     """
 
-    def __init__(self, serializer=None, args_parser=None, *args, **kwargs):
+    def __init__(
+        self,
+        deserializer=None,
+        item_args_parser=None,
+        create_args_parser=None,
+        search_args_parser=None,
+        *args,
+        **kwargs
+    ):
         """Constructor."""
         self.deserializer = deserializer
-        self.args_parser = args_parser
+        self.item_args_parser = item_args_parser
+        self.create_args_parser = create_args_parser
+        self.search_args_parser = search_args_parser
 
-    def load_request(self, *args, **kwargs):
+    def load_item_request(self, *args, **kwargs):
         """Build response headers."""
-        return self.args_parser.parse(), self.deserializer.deserialize_object()
+        return (
+            self.item_args_parser.parse(),
+            self.deserializer.deserialize_object(request.data),
+        )
+
+    def load_create_request(self, *args, **kwargs):
+        """Load an item creation request."""
+        return (
+            self.create_args_parser.parse(),
+            self.deserializer.deserialize_object(request.data),
+        )
+
+    def load_search_request(self, *args, **kwargs):
+        """Load a search request."""
+        return self.search_args_parser.parse()
