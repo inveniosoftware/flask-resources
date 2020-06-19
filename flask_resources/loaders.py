@@ -42,13 +42,13 @@ class RequestLoader(LoaderMixin):
     def load_item_request(self, data=True, *args, **kwargs):
         """Build response headers."""
         if data:
-            resource_requestctx.request_content = self.deserializer.deserialize_object(
+            resource_requestctx.request_content = self.deserializer.deserialize_data(
                 request.data
             )
 
     def load_create_request(self, *args, **kwargs):
         """Load an item creation request."""
-        resource_requestctx.request_content = self.deserializer.deserialize_object(
+        resource_requestctx.request_content = self.deserializer.deserialize_data(
             request.data
         )
 

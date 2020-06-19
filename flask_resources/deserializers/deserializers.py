@@ -11,6 +11,6 @@
 class DeserializerMixin:
     """Deserializer Interface."""
 
-    def deserialize_object(self, obj, *args, **kwargs):
+    def deserialize_data(self, data, *args, **kwargs):
         """Deserializes an object."""
         raise NotImplementedError()

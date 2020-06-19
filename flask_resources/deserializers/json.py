@@ -15,6 +15,6 @@ from .deserializers import DeserializerMixin
 class JSONDeserializer(DeserializerMixin):
     """JSON Deserializer."""
 
-    def deserialize_object(self, obj, *args, **kwargs):
-        """Deserializes an object into json."""
-        return json.loads(obj)
+    def deserialize_data(self, data, *args, **kwargs):
+        """Deserializes the input data into json."""
+        return json.loads(data)
