@@ -87,29 +87,6 @@ def test_search_request_parser_validation_errors(app):
 
 
 #
-# Create Request Parser
-#
-
-
-def test_create_request_parser(app):
-    """Test default create request parser."""
-    with app.test_request_context(
-        "/", method="get", content_type="application/json",
-    ):
-        parsed_args = create_request_parser.parse()
-        assert len(parsed_args) == 0
-
-
-def test_create_request_parser_validation_errors(app):
-    """Test default search request parser."""
-    with app.test_request_context(
-        "/?foo=foo", method="get", content_type="application/json",
-    ):
-        parsed_args = create_request_parser.parse()
-        assert len(parsed_args) == 0
-
-
-#
 # Item Request Parser
 #
 

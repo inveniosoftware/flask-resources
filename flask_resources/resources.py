@@ -12,7 +12,7 @@ from werkzeug.exceptions import MethodNotAllowed
 
 from .deserializers import JSONDeserializer
 from .loaders import RequestLoader
-from .parsers import create_request_parser, item_request_parser, search_request_parser
+from .parsers import item_request_parser, search_request_parser
 from .response import ItemResponse, ListResponse
 from .serializers import JSONSerializer
 from .views import ItemView, ListView, SingletonView
