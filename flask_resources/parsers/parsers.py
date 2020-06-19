@@ -43,5 +43,3 @@ search_request_parser = RequestParser(
     },
     processors=[build_pagination],
 )
-
-item_request_parser = RequestParser(fields={"id": String(required=True)})

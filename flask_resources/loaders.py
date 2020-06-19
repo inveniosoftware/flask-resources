@@ -34,22 +34,13 @@ class RequestLoader(LoaderMixin):
     Loads the content from the request.
     """
 
-    def __init__(
-        self,
-        deserializer=None,
-        item_args_parser=None,
-        search_args_parser=None,
-        *args,
-        **kwargs
-    ):
+    def __init__(self, deserializer=None, args_parser=None, *args, **kwargs):
         """Constructor."""
         self.deserializer = deserializer
-        self.item_args_parser = item_args_parser
-        self.search_args_parser = search_args_parser
+        self.args_parser = args_parser
 
     def load_item_request(self, data=True, *args, **kwargs):
         """Build response headers."""
-        resource_requestctx.request_args = self.item_args_parser.parse()
         if data:
             resource_requestctx.request_content = self.deserializer.deserialize_object(
                 request.data
@@ -63,4 +54,4 @@ class RequestLoader(LoaderMixin):
 
     def load_search_request(self, *args, **kwargs):
         """Load a search request."""
-        resource_requestctx.request_args = self.search_args_parser.parse()
+        resource_requestctx.request_args = self.args_parser.parse()

@@ -12,7 +12,7 @@ from werkzeug.exceptions import MethodNotAllowed
 
 from .deserializers import JSONDeserializer
 from .loaders import RequestLoader
-from .parsers import item_request_parser, search_request_parser
+from .parsers import search_request_parser
 from .response import ItemResponse, ListResponse
 from .serializers import JSONSerializer
 from .views import ItemView, ListView, SingletonView
@@ -27,9 +27,7 @@ class ResourceConfig:
 
     request_loaders = {
         "application/json": RequestLoader(
-            deserializer=JSONDeserializer(),
-            item_args_parser=item_request_parser,
-            search_args_parser=search_request_parser,
+            deserializer=JSONDeserializer(), args_parser=search_request_parser,
         )
     }
     item_response_handlers = {"application/json": ItemResponse(JSONSerializer())}

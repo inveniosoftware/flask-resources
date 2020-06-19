@@ -7,7 +7,6 @@
 
 """Flask Resources module to create REST APIs."""
 
-from ..parsers import item_request_parser
 from .base import BaseView
 
 
@@ -17,10 +16,9 @@ class SingletonView(BaseView):
     Note that the resource route should contain the `<id>` param.
     """
 
-    def __init__(self, resource=None, item_parser=item_request_parser, *args, **kwargs):
+    def __init__(self, resource=None, *args, **kwargs):
         """Constructor."""
         super(SingletonView, self).__init__(resource=resource, *args, **kwargs)
-        self.item_parser = item_parser
 
     def post(self, *args, **kwargs):
         """Post."""

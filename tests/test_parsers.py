@@ -11,11 +11,7 @@ import pytest
 from marshmallow.exceptions import ValidationError
 from werkzeug.exceptions import HTTPException
 
-from flask_resources.parsers import (
-    create_request_parser,
-    item_request_parser,
-    search_request_parser,
-)
+from flask_resources.parsers import search_request_parser
 
 
 def assert_validation_error(error, message=None):
@@ -30,11 +26,6 @@ def assert_validation_error(error, message=None):
 
     if message:
         assert message in str(error.value.exc.messages)
-
-
-#
-# Search Request Parser
-#
 
 
 def test_search_request_parser_default_values(app):
@@ -84,29 +75,3 @@ def test_search_request_parser_validation_errors(app):
         with pytest.raises(HTTPException) as error:
             parsed_args = search_request_parser.parse()
         assert_validation_error(error, "from")
-
-
-#
-# Item Request Parser
-#
-
-
-def test_item_request_parser(app):
-    """Test default search request parser."""
-    with app.test_request_context(
-        "/?id=abcd", method="get", content_type="application/json",
-    ):
-        parsed_args = item_request_parser.parse()
-        # validation corrected it, it has min=1
-        assert parsed_args.get("id") == "abcd"
-
-
-def test_item_request_parser_validation_error(app):
-    """Test default item request parser."""
-    with app.test_request_context(
-        "/", method="get", content_type="application/json",
-    ):
-        # this test includes validation error becuase the field is required
-        with pytest.raises(HTTPException) as error:
-            parsed_args = item_request_parser.parse()
-        assert_validation_error(error, "id")
