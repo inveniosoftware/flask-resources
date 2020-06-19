@@ -19,10 +19,6 @@ class LoaderMixin:
         """Load a request concerning an existing item."""
         raise NotImplementedError()
 
-    def load_create_request(self, *args, **kwargs):
-        """Load an item creation request."""
-        raise NotImplementedError()
-
     def load_search_request(self, *args, **kwargs):
         """Load a search request."""
         raise NotImplementedError()
@@ -39,19 +35,10 @@ class RequestLoader(LoaderMixin):
         self.deserializer = deserializer
         self.args_parser = args_parser
 
-    def load_item_request(self, data=True, *args, **kwargs):
+    def load_item_request(self, *args, **kwargs):
         """Build response headers."""
-        if data:
-            resource_requestctx.request_content = self.deserializer.deserialize_data(
-                request.data
-            )
-
-    def load_create_request(self, *args, **kwargs):
-        """Load an item creation request."""
-        resource_requestctx.request_content = self.deserializer.deserialize_data(
-            request.data
-        )
+        {"request_content": self.deserializer.deserialize_data(request.data)}
 
     def load_search_request(self, *args, **kwargs):
         """Load a search request."""
-        resource_requestctx.request_args = self.args_parser.parse()
+        {"request_args": self.args_parser.parse()}

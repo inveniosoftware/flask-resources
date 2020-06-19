@@ -36,7 +36,7 @@ class ListView(BaseView):
 
     def post(self, *args, **kwargs):
         """Create an item in the collection."""
-        resource_requestctx.request_loader.load_create_request()
+        resource_requestctx.request_loader.load_item_request()
 
         return resource_requestctx.response_handler.make_response(
             *self.resource.create(*args, **kwargs)  # data is passed in the context
@@ -58,8 +58,6 @@ class ItemView(BaseView):
     def get(self, *args, **kwargs):
         """Get."""
         try:
-            resource_requestctx.request_loader.load_item_request(data=False)
-
             return resource_requestctx.response_handler.make_response(
                 *self.resource.read(*args, **kwargs)
             )
@@ -91,8 +89,6 @@ class ItemView(BaseView):
     def delete(self, *args, **kwargs):
         """Delete."""
         try:
-            resource_requestctx.request_loader.load_item_request(data=False)
-
             return resource_requestctx.response_handler.make_response(
                 *self.resource.delete(*args, **kwargs)
             )
