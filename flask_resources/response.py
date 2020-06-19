@@ -17,10 +17,7 @@ class ResponseMixin:
 
     def make_header(self, content=None):
         """Build response headers."""
-        return {
-            "content-type": resource_requestctx.payload_mimetype,
-            "accept": resource_requestctx.accept_mimetype,
-        }
+        return {"content-type": resource_requestctx.payload_mimetype}
 
     def make_response(self, code, content):
         """Builds a response."""
@@ -37,7 +34,7 @@ class ItemResponse(ResponseMixin):
     Builds up a reponse for a single object.
     """
 
-    def __init__(self, serializer=None, *args, **kwargs):
+    def __init__(self, serializer=None):
         """Constructor."""
         self.serializer = serializer
 
@@ -63,7 +60,7 @@ class ListResponse(ResponseMixin):
     Builds up a reponse for a list of objects.
     """
 
-    def __init__(self, serializer=None, *args, **kwargs):
+    def __init__(self, serializer=None):
         """Constructor."""
         self.serializer = serializer
 
