@@ -47,8 +47,7 @@ class ResourceRequestCtx(object):
         self.accept_mimetype = accept_mimetype
         self.payload_mimetype = payload_mimetype  # Content-Type
         self.request_args = request_args
-        self.data = data
-        self.permission_acton = None  # FIXME: Unused at the moment
+        self.request_content = data
 
     def __enter__(self):
         """Push the resource context manager on the current request."""
