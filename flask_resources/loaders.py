@@ -37,8 +37,8 @@ class RequestLoader(LoaderMixin):
 
     def load_item_request(self, *args, **kwargs):
         """Build response headers."""
-        {"request_content": self.deserializer.deserialize_data(request.data)}
+        return {"request_content": self.deserializer.deserialize_data(request.data)}
 
     def load_search_request(self, *args, **kwargs):
         """Load a search request."""
-        {"request_args": self.args_parser.parse()}
+        return {"request_args": self.args_parser.parse()}

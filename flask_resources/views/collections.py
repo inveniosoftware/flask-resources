@@ -28,7 +28,9 @@ class ListView(BaseView):
 
     def get(self, *args, **kwargs):
         """Search the collection."""
-        resource_requestctx.request_loader.load_search_request()
+        resource_requestctx.update(
+            resource_requestctx.request_loader.load_search_request()
+        )
 
         return resource_requestctx.response_handler.make_response(
             *self.resource.search(*args, **kwargs)
@@ -36,7 +38,9 @@ class ListView(BaseView):
 
     def post(self, *args, **kwargs):
         """Create an item in the collection."""
-        resource_requestctx.request_loader.load_item_request()
+        resource_requestctx.update(
+            resource_requestctx.request_loader.load_item_request()
+        )
 
         return resource_requestctx.response_handler.make_response(
             *self.resource.create(*args, **kwargs)  # data is passed in the context
@@ -67,8 +71,9 @@ class ItemView(BaseView):
     def put(self, *args, **kwargs):
         """Put."""
         try:
-            resource_requestctx.request_loader.load_item_request()
-
+            resource_requestctx.update(
+                resource_requestctx.request_loader.load_item_request()
+            )
             return resource_requestctx.response_handler.make_response(
                 *self.resource.update(*args, **kwargs)  # data is passed in the context
             )
@@ -78,8 +83,9 @@ class ItemView(BaseView):
     def patch(self, *args, **kwargs):
         """Patch."""
         try:
-            resource_requestctx.request_loader.load_item_request()
-
+            resource_requestctx.update(
+                resource_requestctx.request_loader.load_item_request()
+            )
             return resource_requestctx.response_handler.make_response(
                 *self.resource.partial_update(*args, **kwargs)
             )

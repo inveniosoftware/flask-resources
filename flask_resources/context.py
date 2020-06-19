@@ -57,6 +57,11 @@ class ResourceRequestCtx(object):
         """Pop the resource context manager from the current request."""
         del g.resource_requestctx
 
+    def update(self, values):
+        """Update the context fields present in the received dictionary `values`."""
+        for field, value in values.items():
+            self.__setattr__(field, value)
+
 
 def with_resource_requestctx(f):
     """Wrap in resource request context."""
