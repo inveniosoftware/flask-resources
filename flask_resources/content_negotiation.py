@@ -9,6 +9,7 @@
 
 from functools import wraps
 
+from flask import request
 from werkzeug.datastructures import MIMEAccept
 
 from .context import resource_requestctx
@@ -81,21 +82,11 @@ def content_negotiation(f):
 
     @wraps(f)
     def inner(self, *args, **kwargs):
-        # resource_requestctx.payload_mimetype = ContentNegotiator.match(
-        #     self.item_loaders.keys(),
-        #     request.content_type,
-        #     {},  # self.formats,
-        #     request.args.get("format", None),
-        #     None,  # self.default_mimetype,
-        # )
-
-        # FIXME: content negotiation
-        payload_mimetype = "application/json"  # Content-Type
-        accept_mimetype = "application/json"
-
+        # Content-Type
         # Check if content-type can be treated otherwise, fail fast
         # Serialization is checked per function due to lack of
         # knowledge at this point
+        payload_mimetype = request.content_type
         allowed_mimetypes = self._request_loaders.keys()
         if payload_mimetype not in allowed_mimetypes:
             raise UnsupportedMimetypeError(
@@ -104,7 +95,15 @@ def content_negotiation(f):
                 allowed_mimetypes=allowed_mimetypes,
             )
 
+        # Accept
         allowed_mimetypes = self._response_handlers.keys()
+        accept_mimetype = ContentNegotiator.match(
+            allowed_mimetypes,
+            request.accept_mimetypes,
+            {},
+            request.args.get("format", None),
+        )
+
         if accept_mimetype not in allowed_mimetypes:
             raise UnsupportedMimetypeError(
                 header="Accept",
