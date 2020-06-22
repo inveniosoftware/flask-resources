@@ -43,26 +43,25 @@ class CustomResource(CollectionResource):
             if query in key or query in value:
                 resp.append({"id": key, "content": value})
 
-        return 200, resp
+        return resp, 200
 
     def create(self):
         """Create."""
         obj = resource_requestctx.request_content
         self.db[obj["id"]] = obj["content"]
-
-        return 201, self.db
+        return self.db, 201
 
     def read(self):
         """Read."""
         _id = resource_requestctx.route["id"]
-        return 200, {"id": _id, "content": self.db[_id]}
+        return {"id": _id, "content": self.db[_id]}, 200
 
     def delete(self):
         """Delete."""
         _id = resource_requestctx.route["id"]
         if _id in self.db:
             del self.db[_id]
-        return 200, {}
+        return {}, 200
 
 
 @pytest.fixture(scope="module")
