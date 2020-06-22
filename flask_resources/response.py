@@ -15,11 +15,11 @@ from .context import resource_requestctx
 class ResponseMixin:
     """Response interface."""
 
-    def make_header(self, content=None):
+    def make_headers(self, content=None):
         """Build response headers."""
         return {"content-type": resource_requestctx.payload_mimetype}
 
-    def make_response(self, code, content):
+    def make_response(self, content, code):
         """Builds a response."""
         raise NotImplementedError()
 
@@ -38,19 +38,19 @@ class ItemResponse(ResponseMixin):
         """Constructor."""
         self.serializer = serializer
 
-    def make_response(self, code, content):
+    def make_response(self, content, code=200):
         """Builds a response for a single object."""
         # https://flask.palletsprojects.com/en/1.1.x/api/#flask.Flask.make_response
         # (body, status, header)
 
         return make_response(
-            self.serializer.serialize_object(content), code, self.make_header(),
+            self.serializer.serialize_object(content), code, self.make_headers(),
         )
 
     def make_error_response(self, error):
         """Builds an error response."""
         return make_response(
-            self.serializer.serialize_error(error), error.code, self.make_header()
+            self.serializer.serialize_error(error), error.code, self.make_headers()
         )
 
 
@@ -64,13 +64,13 @@ class ListResponse(ResponseMixin):
         """Constructor."""
         self.serializer = serializer
 
-    def make_response(self, code, content):
+    def make_response(self, content, code=200):
         """Builds a response for a list of objects."""
         # https://flask.palletsprojects.com/en/1.1.x/api/#flask.Flask.make_response
         # (body, status, header)
 
         return make_response(
-            self.serializer.serialize_object_list(content), code, self.make_header(),
+            self.serializer.serialize_object_list(content), code, self.make_headers(),
         )
 
     def make_error_response(self, error):
@@ -78,5 +78,5 @@ class ListResponse(ResponseMixin):
         # FIXME: Repeated code with above. Is there a chance of having a
         # Response w/o a serializer? If not this can refactor on parent mixin.
         return make_response(
-            self.serializer.serialize_error(error), error.code, self.make_header()
+            self.serializer.serialize_error(error), error.code, self.make_headers()
         )

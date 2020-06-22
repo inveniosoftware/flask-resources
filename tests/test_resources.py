@@ -12,7 +12,7 @@ import json
 method_not_allowed_str = "The method is not allowed for the requested URL."
 
 
-def test_base_resourece(client):
+def test_base_resource(client):
     """Test the default resource."""
     headers = {"content-type": "application/json", "accept": "application/json"}
 
