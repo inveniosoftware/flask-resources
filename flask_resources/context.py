@@ -48,6 +48,7 @@ class ResourceRequestCtx(object):
         self.payload_mimetype = payload_mimetype  # Content-Type
         self.request_args = request_args
         self.request_content = data
+        self.route = {}
 
     def __enter__(self):
         """Push the resource context manager on the current request."""
@@ -70,5 +71,21 @@ def with_resource_requestctx(f):
     def inner(*args, **kwargs):
         with ResourceRequestCtx():
             return f(*args, **kwargs)
+
+    return inner
+
+
+def with_route(f):
+    """Wrapper to extract route arguments into resource context.
+
+    NOTE: This removes the need for *args, **kwargs passing in Resource methods
+    TODO: This should be temporary because the whole decorator approach should be
+          revisited.
+    """
+
+    @wraps(f)
+    def inner(*args, **kwargs):
+        resource_requestctx.route = kwargs
+        return f(*args)
 
     return inner

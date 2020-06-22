@@ -17,4 +17,4 @@ class JSONDeserializer(DeserializerMixin):
 
     def deserialize_data(self, data, *args, **kwargs):
         """Deserializes the input data into json."""
-        return json.loads(data)
+        return json.loads(data) if data else {}

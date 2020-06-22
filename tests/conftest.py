@@ -52,9 +52,17 @@ class CustomResource(CollectionResource):
 
         return 201, self.db
 
-    def read(self, id):
+    def read(self):
         """Read."""
-        return 200, {"id": id, "content": self.db[id]}
+        _id = resource_requestctx.route["id"]
+        return 200, {"id": _id, "content": self.db[_id]}
+
+    def delete(self):
+        """Delete."""
+        _id = resource_requestctx.route["id"]
+        if _id in self.db:
+            del self.db[_id]
+        return 200, {}
 
 
 @pytest.fixture(scope="module")

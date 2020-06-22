@@ -15,13 +15,15 @@ The views responsabilities are:
 from flask.views import MethodView
 
 from ..content_negotiation import content_negotiation
-from ..context import with_resource_requestctx
+from ..context import with_resource_requestctx, with_route
 
 
 class BaseView(MethodView):
     """Base view."""
 
-    resource_decorators = [content_negotiation, with_resource_requestctx]
+    resource_decorators = [
+        content_negotiation, with_route, with_resource_requestctx
+    ]
     """Resource-specific decorators to be applied to the views."""
 
     def __init__(self, resource, *args, **kwargs):
