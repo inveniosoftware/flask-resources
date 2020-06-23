@@ -7,9 +7,27 @@
 
 """Response module."""
 
+from functools import wraps
+
 from flask import make_response
 
 from .context import resource_requestctx
+
+
+def response_handler(f):
+    """Decorator that sets the response_handler on the view."""
+    @wraps(f)
+    def wrapper(self, *args, **kwargs):
+        """Wrapping method.
+
+        :params self: ItemView or ListView class
+        """
+        accept_mimetype = resource_requestctx.accept_mimetype
+        # NOTE: accept_mimetype is in handlers for sure at this point
+        handlers = self.resource.config.response_handlers
+        self.response_handler = handlers[accept_mimetype]
+        return f(self, *args, **kwargs)
+    return wrapper
 
 
 class ResponseMixin:

@@ -11,6 +11,7 @@ from functools import wraps
 
 from flask import request
 from werkzeug.datastructures import MIMEAccept
+from werkzeug.exceptions import NotAcceptable
 
 from .context import resource_requestctx
 from .errors import UnsupportedMimetypeError
@@ -82,39 +83,23 @@ def content_negotiation(f):
 
     @wraps(f)
     def inner(self, *args, **kwargs):
-        # Content-Type
-        # Check if content-type can be treated otherwise, fail fast
-        # Serialization is checked per function due to lack of
-        # knowledge at this point
-        payload_mimetype = request.content_type
-        allowed_mimetypes = self._request_loaders.keys()
-        if payload_mimetype not in allowed_mimetypes:
-            raise UnsupportedMimetypeError(
-                header="Content-Type",
-                received_mimetype=payload_mimetype,
-                allowed_mimetypes=allowed_mimetypes,
-            )
+        """Wrapping method.
 
-        # Accept
-        allowed_mimetypes = self._response_handlers.keys()
+        :params self: ItemView or ListView class
+        """
+        # Check Accept header i.e. can we even respond to the request in a common
+        # mimetype?
         accept_mimetype = ContentNegotiator.match(
-            allowed_mimetypes,
+            self._response_handlers.keys(),
             request.accept_mimetypes,
-            {},
+            {},  # TODO: Rely on config to populate this formats_map
             request.args.get("format", None),
         )
 
-        if accept_mimetype not in allowed_mimetypes:
-            raise UnsupportedMimetypeError(
-                header="Accept",
-                received_mimetype=accept_mimetype,
-                allowed_mimetypes=allowed_mimetypes,
-            )
+        if not accept_mimetype:
+            raise NotAcceptable()
 
-        resource_requestctx.payload_mimetype = payload_mimetype
-        resource_requestctx.request_loader = self._request_loaders[payload_mimetype]
         resource_requestctx.accept_mimetype = accept_mimetype
-        resource_requestctx.response_handler = self._response_handlers[accept_mimetype]
 
         return f(self, *args, **kwargs)
 
