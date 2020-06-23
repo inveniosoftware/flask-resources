@@ -59,14 +59,15 @@ def test_custom_resource(client):
     # Search for the previously created obj
     resource_obj = client.get("/custom/", headers=headers)
     assert resource_obj.status_code == 200
-
-    resource_obj_json = resource_obj.json
     assert len(resource_obj.json) == 1
-    assert resource_obj_json[0]["id"] == "1234-ABCD"
+    assert resource_obj.json[0]["id"] == "1234-ABCD"
 
     # Get the previously created obj
     resource_obj = client.get("/custom/1234-ABCD", headers=headers)
     assert resource_obj.status_code == 200
+    assert resource_obj.json["id"] == "1234-ABCD"
 
-    resource_obj_json = resource_obj.json
-    assert resource_obj_json["id"] == "1234-ABCD"
+    # Delete the previously created obj
+    resource_obj = client.delete("/custom/1234-ABCD", headers=headers)
+    assert resource_obj.status_code == 200
+    assert resource_obj.json == {}

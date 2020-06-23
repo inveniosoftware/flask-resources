@@ -15,13 +15,13 @@ from .serializers import SerializerMixin
 class JSONSerializer(SerializerMixin):
     """JSON serializer implementation."""
 
-    def serialize_object(self, object, response_ctx=None, *args, **kwargs):
+    def serialize_object(self, obj, response_ctx=None, *args, **kwargs):
         """Dump the object into a json string."""
-        return json.dumps(object)
+        return json.dumps(obj)
 
-    def serialize_object_list(self, object_list, response_ctx=None, *args, **kwargs):
+    def serialize_object_list(self, obj_list, response_ctx=None, *args, **kwargs):
         """Dump the object list into a json string."""
-        return json.dumps(object_list)
+        return json.dumps(obj_list)
 
     def serialize_error(self, error, response_ctx=None, *args, **kwargs):
         """Serialize an error reponse according to the response ctx."""
