@@ -19,7 +19,7 @@ def test_base_resource(client):
     # GET/Read a resource
     resource_obj = client.get("/resources/1234-ABCD", headers=headers)
     assert resource_obj.status_code == 405
-    assert resource_obj.json == method_not_allowed_str
+    assert resource_obj.json == {"error": method_not_allowed_str}
 
     # PUT/Edit a resource
     obj_json = json.dumps({"id": "1234-ABCD", "content": "something new"})

@@ -45,27 +45,27 @@ class Resource:
     # Primary interface
     def search(self, *args, **kwargs):
         """Perform a search over the items."""
-        raise MethodNotAllowed()
+        return "", 200
 
     def create(self, *args, **kwargs):
         """Create an item."""
-        raise MethodNotAllowed()
+        return "", 200
 
     def read(self, *args, **kwargs):
         """Read an item."""
-        raise MethodNotAllowed()
+        return "", 200
 
     def update(self, *args, **kwargs):
         """Update an item."""
-        raise MethodNotAllowed()
+        return "", 200
 
     def partial_update(self, *args, **kwargs):
         """Partial update an item."""
-        raise MethodNotAllowed()
+        return "", 200
 
     def delete(self, *args, **kwargs):
         """Delete an item."""
-        raise MethodNotAllowed()
+        return "", 200
 
     # Secondary interface
     def as_blueprint(self, name, **bp_kwargs):

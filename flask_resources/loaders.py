@@ -7,9 +7,32 @@
 
 """Loader module."""
 
+from functools import wraps
+
 from flask import request
+from werkzeug.exceptions import UnsupportedMediaType
 
 from .context import resource_requestctx
+
+
+def request_loader(f):
+    """Decorator that sets the request_loader on the view."""
+    @wraps(f)
+    def wrapper(self, *args, **kwargs):
+        """Wrapping method.
+
+        :params self: ItemView or ListView class
+        """
+        # Checking Content-Type is the responsibility of the deserializer/loader
+        loaders = self.resource.config.request_loaders
+
+        if request.content_type not in loaders:
+            raise UnsupportedMediaType()
+
+        self.request_loader = loaders[request.content_type]
+
+        return f(self, *args, **kwargs)
+    return wrapper
 
 
 class LoaderMixin:
