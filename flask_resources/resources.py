@@ -29,9 +29,13 @@ class ResourceConfig:
             deserializer=JSONDeserializer(), args_parser=search_request_parser,
         )
     }
-    item_response_handlers = {"application/json": ItemResponse(JSONSerializer())}
+    response_handlers = {
+        "application/json": {
+            "item": ItemResponse(JSONSerializer()),
+            "list": ListResponse(JSONSerializer()),
+        }
+    }
     item_route = "/resources/<id>"
-    list_response_handlers = {"application/json": ListResponse(JSONSerializer())}
     list_route = "/resources/"
 
 
@@ -104,13 +108,15 @@ class CollectionResource(Resource):
             {
                 "rule": self.config.item_route,
                 "view_func": ItemView.as_view(
-                    name="{}{}".format(bp_name, ITEM_VIEW_SUFFIX), resource=self,
+                    name="{}{}".format(bp_name, ITEM_VIEW_SUFFIX),
+                    resource=self,
                 ),
             },
             {
                 "rule": self.config.list_route,
                 "view_func": ListView.as_view(
-                    name="{}{}".format(bp_name, LIST_VIEW_SUFFIX), resource=self,
+                    name="{}{}".format(bp_name, LIST_VIEW_SUFFIX),
+                    resource=self,
                 ),
             },
         ]
