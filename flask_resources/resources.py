@@ -13,7 +13,7 @@ from werkzeug.exceptions import MethodNotAllowed
 from .deserializers import JSONDeserializer
 from .loaders import RequestLoader
 from .parsers import search_request_parser
-from .response import ItemResponse, ListResponse
+from .responses import Response
 from .serializers import JSONSerializer
 from .views import ItemView, ListView, SingletonView
 
@@ -29,9 +29,8 @@ class ResourceConfig:
             deserializer=JSONDeserializer(), args_parser=search_request_parser,
         )
     }
-    item_response_handlers = {"application/json": ItemResponse(JSONSerializer())}
+    response_handlers = {"application/json": Response(JSONSerializer())}
     item_route = "/resources/<id>"
-    list_response_handlers = {"application/json": ListResponse(JSONSerializer())}
     list_route = "/resources/"
 
 
