@@ -45,27 +45,27 @@ class Resource:
     # Primary interface
     def search(self, *args, **kwargs):
         """Perform a search over the items."""
-        return "", 200
+        return {}, 200
 
     def create(self, *args, **kwargs):
         """Create an item."""
-        return "", 200
+        return {}, 200
 
     def read(self, *args, **kwargs):
         """Read an item."""
-        return "", 200
+        return {}, 200
 
     def update(self, *args, **kwargs):
         """Update an item."""
-        return "", 200
+        return {}, 200
 
     def partial_update(self, *args, **kwargs):
         """Partial update an item."""
-        return "", 200
+        return {}, 200
 
     def delete(self, *args, **kwargs):
         """Delete an item."""
-        return "", 200
+        return {}, 200
 
     # Secondary interface
     def as_blueprint(self, name, **bp_kwargs):

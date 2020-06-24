@@ -16,6 +16,7 @@ from .context import resource_requestctx
 
 def response_handler(f):
     """Decorator that sets the response_handler on the view."""
+
     @wraps(f)
     def wrapper(self, *args, **kwargs):
         """Wrapping method.
@@ -27,6 +28,7 @@ def response_handler(f):
         handlers = self.resource.config.response_handlers
         self.response_handler = handlers[accept_mimetype]
         return f(self, *args, **kwargs)
+
     return wrapper
 
 
@@ -35,7 +37,7 @@ class ResponseMixin:
 
     def make_headers(self, content=None):
         """Build response headers."""
-        return {"content-type": resource_requestctx.payload_mimetype}
+        return {"content-type": resource_requestctx.accept_mimetype}
 
     def make_item_response(self, content, code):
         """Builds a response."""
