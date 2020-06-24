@@ -90,7 +90,7 @@ def content_negotiation(f):
         # Check Accept header i.e. can we even respond to the request in a common
         # mimetype?
         accept_mimetype = ContentNegotiator.match(
-            self._response_handlers.keys(),
+            self.resource.config.response_handlers.keys(),
             request.accept_mimetypes,
             {},  # TODO: Rely on config to populate this formats_map
             request.args.get("format", None),

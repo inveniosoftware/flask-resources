@@ -55,10 +55,12 @@ def test_404_if_no_route(client):
     assert response.status_code == 404
 
 
-# TODO: Only implement endpoint for defined Resource methods, then test that all
-#       methods return 405 and not just the ones we don't define in our MethodViews
 def test_405_if_route_but_no_method(client):
-    # NOTE: For now we just test the methods that we don't implicitly implement
+    # TODO: Only implement MethodView methods for defined Resource methods. Only then
+    #       can we test that all methods return 405 (and not just the ones this library
+    #       didn't define in its MethodViews
+    # NOTE: For now we just test the methods that this library
+    #       didn't define in its MethodViews
     # List-level
     response = client.put("/custom/")
     assert response.status_code == 405
@@ -98,10 +100,7 @@ def test_406_if_route_method_but_unsupported_accept(client):
 
 def test_415_if_route_method_accept_but_unsupported_content_type(client):
     # NOTE: Right now, we rely entirely on headers for payload assessment.
-    headers = {
-        "accept": "application/json",
-        "content-type": "application/json+garbage"
-    }
+    headers = {"accept": "application/json", "content-type": "application/json+garbage"}
 
     # NOTE: We only test methods that accept a payload
     # List-level

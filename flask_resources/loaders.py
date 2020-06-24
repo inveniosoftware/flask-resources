@@ -17,6 +17,7 @@ from .context import resource_requestctx
 
 def request_loader(f):
     """Decorator that sets the request_loader on the view."""
+
     @wraps(f)
     def wrapper(self, *args, **kwargs):
         """Wrapping method.
@@ -32,6 +33,7 @@ def request_loader(f):
         self.request_loader = loaders[request.content_type]
 
         return f(self, *args, **kwargs)
+
     return wrapper
 
 

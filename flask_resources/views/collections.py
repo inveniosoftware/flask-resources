@@ -23,26 +23,24 @@ class ListView(BaseView):
     def __init__(self, *args, **kwargs):
         """Constructor."""
         super(ListView, self).__init__(*args, **kwargs)
-        self._response_handlers = self.resource.config.response_handlers
-        self._request_loaders = self.resource.config.request_loaders
+        # is defined by response_handler decorator
+        self.response_handler = None
+        # is defined by response_loader decorator
+        self.request_loader = None
 
     def get(self, *args, **kwargs):
         """Search the collection."""
-        resource_requestctx.update(
-            resource_requestctx.request_loader.load_search_request()
-        )
+        resource_requestctx.update(self.request_loader.load_search_request())
 
-        return resource_requestctx.response_handler.make_list_response(
+        return self.response_handler.make_list_response(
             *self.resource.search(*args, **kwargs)
         )
 
     def post(self, *args, **kwargs):
         """Create an item in the collection."""
-        resource_requestctx.update(
-            resource_requestctx.request_loader.load_item_request()
-        )
+        resource_requestctx.update(self.request_loader.load_item_request())
 
-        return resource_requestctx.response_handler.make_item_response(
+        return self.response_handler.make_item_response(
             *self.resource.create(*args, **kwargs)  # data is passed in the context
         )
 
@@ -56,47 +54,45 @@ class ItemView(BaseView):
     def __init__(self, *args, **kwargs):
         """Constructor."""
         super(ItemView, self).__init__(*args, **kwargs)
-        self._response_handlers = self.resource.config.response_handlers
-        self._request_loaders = self.resource.config.request_loaders
+        # is defined by response_handler decorator
+        self.response_handler = None
+        # is defined by response_loader decorator
+        self.request_loader = None
 
     def get(self, *args, **kwargs):
         """Get."""
         try:
-            return resource_requestctx.response_handler.make_item_response(
+            return self.response_handler.make_item_response(
                 *self.resource.read(*args, **kwargs)
             )
         except HTTPException as error:
-            return resource_requestctx.response_handler.make_error_response(error)
+            return self.response_handler.make_error_response(error)
 
     def put(self, *args, **kwargs):
         """Put."""
         try:
-            resource_requestctx.update(
-                resource_requestctx.request_loader.load_item_request()
-            )
-            return resource_requestctx.response_handler.make_item_response(
+            resource_requestctx.update(self.request_loader.load_item_request())
+            return self.response_handler.make_item_response(
                 *self.resource.update(*args, **kwargs)  # data is passed in the context
             )
         except HTTPException as error:
-            return resource_requestctx.response_handler.make_error_response(error)
+            return self.response_handler.make_error_response(error)
 
     def patch(self, *args, **kwargs):
         """Patch."""
         try:
-            resource_requestctx.update(
-                resource_requestctx.request_loader.load_item_request()
-            )
-            return resource_requestctx.response_handler.make_item_response(
+            resource_requestctx.update(self.request_loader.load_item_request())
+            return self.response_handler.make_item_response(
                 *self.resource.partial_update(*args, **kwargs)
             )
         except HTTPException as error:
-            return resource_requestctx.response_handler.make_error_response(error)
+            return self.response_handler.make_error_response(error)
 
     def delete(self, *args, **kwargs):
         """Delete."""
         try:
-            return resource_requestctx.response_handler.make_item_response(
+            return self.response_handler.make_item_response(
                 *self.resource.delete(*args, **kwargs)
             )
         except HTTPException as error:
-            return resource_requestctx.response_handler.make_error_response(error)
+            return self.response_handler.make_error_response(error)

@@ -24,8 +24,11 @@ class BaseView(MethodView):
     """Base view."""
 
     resource_decorators = [
-        request_loader, response_handler, content_negotiation, with_route,
-        with_resource_requestctx
+        request_loader,
+        response_handler,
+        content_negotiation,
+        with_route,
+        with_resource_requestctx,
     ]
     """Resource-specific decorators to be applied to the views."""
 

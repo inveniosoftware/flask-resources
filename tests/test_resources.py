@@ -9,36 +9,37 @@
 
 import json
 
-method_not_allowed_str = "The method is not allowed for the requested URL."
-
 
 def test_base_resource(client):
     """Test the default resource."""
+    # TODO: Only implement MethodView methods for defined Resource methods. Only then
+    #       can we test that all methods return 405 (and not just the ones this library
+    #       didn't define in its MethodViews
     headers = {"content-type": "application/json", "accept": "application/json"}
 
     # GET/Read a resource
-    resource_obj = client.get("/resources/1234-ABCD", headers=headers)
-    assert resource_obj.status_code == 405
-    assert resource_obj.json == {"error": method_not_allowed_str}
+    response = client.get("/resources/1234-ABCD", headers=headers)
+    assert response.status_code == 200
+    assert response.json == {}
 
     # PUT/Edit a resource
     obj_json = json.dumps({"id": "1234-ABCD", "content": "something new"})
-    resource_obj = client.put("/resources/1234-ABCD", data=obj_json, headers=headers)
-    assert resource_obj.status_code == 405
-    assert resource_obj.json == method_not_allowed_str
+    response = client.put("/resources/1234-ABCD", data=obj_json, headers=headers)
+    assert response.status_code == 200
+    assert response.json == {}
 
     # PATCH/Partial edit a resource
     ops_json = json.dumps(
         {"op": "replace", "path": "/content", "value": "something patched"}
     )
-    resource_obj = client.patch("/resources/1234-ABCD", data=obj_json, headers=headers)
-    assert resource_obj.status_code == 405
-    assert resource_obj.json == method_not_allowed_str
+    response = client.patch("/resources/1234-ABCD", data=obj_json, headers=headers)
+    assert response.status_code == 200
+    assert response.json == {}
 
     # DELETE/remove a resource
-    resource_obj = client.delete("/resources/1234-ABCD", headers=headers)
-    assert resource_obj.status_code == 405
-    assert resource_obj.json == method_not_allowed_str
+    response = client.delete("/resources/1234-ABCD", headers=headers)
+    assert response.status_code == 200
+    assert response.json == {}
 
 
 def test_custom_resource(client):
