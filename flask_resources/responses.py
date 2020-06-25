@@ -21,7 +21,7 @@ def response_handler(f):
     def wrapper(self, *args, **kwargs):
         """Wrapping method.
 
-        :params self: ItemView or ListView class
+        :params self: Item/List/SingletonView instance
         """
         accept_mimetype = resource_requestctx.accept_mimetype
         # NOTE: accept_mimetype is in handlers for sure at this point

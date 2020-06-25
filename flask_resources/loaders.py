@@ -22,9 +22,9 @@ def request_loader(f):
     def wrapper(self, *args, **kwargs):
         """Wrapping method.
 
-        :params self: ItemView or ListView class
+        :params self: Item/List/SingletonView instance
         """
-        # Checking Content-Type is the responsibility of the deserializer/loader
+        # Checking Content-Type is the responsibility of the loader
         loaders = self.resource.config.request_loaders
 
         if request.content_type not in loaders:

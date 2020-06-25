@@ -14,7 +14,6 @@ from werkzeug.datastructures import MIMEAccept
 from werkzeug.exceptions import NotAcceptable
 
 from .context import resource_requestctx
-from .errors import UnsupportedMimetypeError
 
 
 class ContentNegotiator(object):
@@ -85,7 +84,7 @@ def content_negotiation(f):
     def inner(self, *args, **kwargs):
         """Wrapping method.
 
-        :params self: ItemView or ListView class
+        :params self: Item/List/SingletonView instance
         """
         # Check Accept header i.e. can we even respond to the request in a common
         # mimetype?
