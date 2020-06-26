@@ -16,6 +16,7 @@ from flask.views import MethodView
 
 from ..content_negotiation import content_negotiation
 from ..context import with_resource_requestctx, with_route
+from ..errors import error_handler
 from ..loaders import request_loader
 from ..responses import response_handler
 
@@ -25,9 +26,10 @@ class BaseView(MethodView):
 
     resource_decorators = [
         request_loader,
+        with_route,
+        error_handler,
         response_handler,
         content_negotiation,
-        with_route,
         with_resource_requestctx,
     ]
     """Resource-specific decorators to be applied to the views."""

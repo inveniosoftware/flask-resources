@@ -32,6 +32,7 @@ class ListView(BaseView):
         """Search the collection."""
         resource_requestctx.update(self.request_loader.load_search_request())
 
+        # TODO: Make it so that you don't have to return a tuple. See issue #55
         return self.response_handler.make_list_response(
             *self.resource.search(*args, **kwargs)
         )
@@ -61,38 +62,26 @@ class ItemView(BaseView):
 
     def get(self, *args, **kwargs):
         """Get."""
-        try:
-            return self.response_handler.make_item_response(
-                *self.resource.read(*args, **kwargs)
-            )
-        except HTTPException as error:
-            return self.response_handler.make_error_response(error)
+        return self.response_handler.make_item_response(
+            *self.resource.read(*args, **kwargs)
+        )
 
     def put(self, *args, **kwargs):
         """Put."""
-        try:
-            resource_requestctx.update(self.request_loader.load_item_request())
-            return self.response_handler.make_item_response(
-                *self.resource.update(*args, **kwargs)  # data is passed in the context
-            )
-        except HTTPException as error:
-            return self.response_handler.make_error_response(error)
+        resource_requestctx.update(self.request_loader.load_item_request())
+        return self.response_handler.make_item_response(
+            *self.resource.update(*args, **kwargs)  # data is passed in the context
+        )
 
     def patch(self, *args, **kwargs):
         """Patch."""
-        try:
-            resource_requestctx.update(self.request_loader.load_item_request())
-            return self.response_handler.make_item_response(
-                *self.resource.partial_update(*args, **kwargs)
-            )
-        except HTTPException as error:
-            return self.response_handler.make_error_response(error)
+        resource_requestctx.update(self.request_loader.load_item_request())
+        return self.response_handler.make_item_response(
+            *self.resource.partial_update(*args, **kwargs)
+        )
 
     def delete(self, *args, **kwargs):
         """Delete."""
-        try:
-            return self.response_handler.make_item_response(
-                *self.resource.delete(*args, **kwargs)
-            )
-        except HTTPException as error:
-            return self.response_handler.make_error_response(error)
+        return self.response_handler.make_item_response(
+            *self.resource.delete(*args, **kwargs)
+        )

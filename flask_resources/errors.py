@@ -8,10 +8,29 @@
 """Exceptions used in Flask Resources module."""
 
 import json
+from functools import wraps
 
 from flask import g
 from werkzeug.exceptions import HTTPException
-from werkzeug.http import http_date
+
+from .context import resource_requestctx
+
+
+def error_handler(f):
+    """Decorator that handles error serialization from here on out."""
+
+    @wraps(f)
+    def wrapper(self, *args, **kwargs):
+        """Wrapping method.
+
+        :params self: Item/List/SingletonView instance
+        """
+        try:
+            return f(self, *args, **kwargs)
+        except HTTPException as error:
+            return self.response_handler.make_error_response(error)
+
+    return wrapper
 
 
 class RESTException(HTTPException):
@@ -33,44 +52,27 @@ class RESTException(HTTPException):
         return [e.to_dict() for e in self.errors] if self.errors else None
 
     def get_description(self, environ=None):
-        """Get the description."""
+        """Returns an unescaped description."""
         return self.description
+
+    def get_headers(self, environ=None):
+        """Get a list of headers."""
+        return [("Content-Type", resource_requestctx.accept_mimetype)]
 
     def get_body(self, environ=None):
         """Get the request body."""
-        body = dict(status=self.code, message=self.get_description(environ),)
+        body = {"status": self.code, "message": self.get_description(environ)}
 
         errors = self.get_errors()
-        if self.errors:
+        if errors:
             body["errors"] = errors
 
+        # TODO: Revisit how to integrate error monitoring services. See issue #56
+        # Temporarily kept for expediency and backward-compatibility
         if self.code and (self.code >= 500) and hasattr(g, "sentry_event_id"):
             body["error_id"] = str(g.sentry_event_id)
 
         return body
-
-
-#
-# Loading/Serializing
-#
-class UnsupportedMimetypeError(RESTException):
-    """The request content or accepts a MIMEType that the application cannot serialize.
-
-    It applies to both `Content-Type` and `Accept` headers. Potentially to any other
-    passed as the `header` parameter.
-    """
-
-    code = 415
-
-    def __init__(self, header, received_mimetype, allowed_mimetypes, *args, **kwargs):
-        """Initialize exception."""
-        super(UnsupportedMimetypeError, self).__init__(*args, **kwargs)
-        self.description = (
-            "Invalid '{}' header. "
-            "Received '{}'. Expected one of: {}".format(
-                header, received_mimetype, ", ".join(allowed_mimetypes)
-            )
-        )
 
 
 # FIXME: From here down need review
