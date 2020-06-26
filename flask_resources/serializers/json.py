@@ -27,4 +27,4 @@ class JSONSerializer(SerializerMixin):
         """Serialize an error reponse according to the response ctx."""
         # NOTE: In non-overwritten exceptions (i.e. coming from Werkzeug)
         # `get_description` returns HTML tags.
-        return json.dumps(error.description)
+        return {"status": error.code, "message": error.description}

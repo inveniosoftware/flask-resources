@@ -8,7 +8,7 @@
 """Resource view."""
 
 from flask import Blueprint
-from werkzeug.exceptions import MethodNotAllowed
+from werkzeug.exceptions import HTTPException
 
 from .deserializers import JSONDeserializer
 from .loaders import RequestLoader
@@ -39,13 +39,14 @@ class Resource:
 
     def __init__(self, config=ResourceConfig):
         """Initialize the base resource."""
+        # TODO: The config should be checked to see that it is consistent. See isse #57
         self.config = config
         self.bp_name = None
 
     # Primary interface
     def search(self, *args, **kwargs):
         """Perform a search over the items."""
-        return {}, 200
+        return [], 200
 
     def create(self, *args, **kwargs):
         """Create an item."""

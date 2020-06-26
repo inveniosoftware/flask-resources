@@ -83,5 +83,5 @@ class Response(ResponseMixin):
     def make_error_response(self, error):
         """Builds an error response."""
         return make_response(
-            self.serializer.serialize_error(error), error.code, self.make_headers(),
+            self.serializer.serialize_error(error), error.code, self.make_headers()
         )
