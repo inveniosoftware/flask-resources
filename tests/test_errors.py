@@ -23,10 +23,7 @@ class CustomConfig(ResourceConfig):
 
 class CustomResource(CollectionResource):
     """Custom resource implementation."""
-
-    def __init__(self, *args, **kwargs):
-        """Constructor."""
-        super(CustomResource, self).__init__(config=CustomConfig, *args, **kwargs)
+    default_config = CustomConfig
 
 
 @pytest.fixture(scope="module")
