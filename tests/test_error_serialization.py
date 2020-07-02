@@ -15,10 +15,7 @@ class ErrorConfig(ResourceConfig):
 
 class ErrorResource(CollectionResource):
     """Error returning resource implementation."""
-
-    def __init__(self, *args, **kwargs):
-        """Constructor."""
-        super(ErrorResource, self).__init__(config=ErrorConfig, *args, **kwargs)
+    default_config = ErrorConfig
 
     def item_error(self):
         """Raise an error."""

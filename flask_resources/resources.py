@@ -23,7 +23,7 @@ LIST_VIEW_SUFFIX = "_list"
 
 class ResourceConfig:
     """Base resource configuration."""
-
+    # Existing
     request_loaders = {
         "application/json": RequestLoader(
             deserializer=JSONDeserializer(), args_parser=search_request_parser,
@@ -33,14 +33,44 @@ class ResourceConfig:
     item_route = "/resources/<id>"
     list_route = "/resources/"
 
+    # Suggested
+    # incoming = {
+    #     "item_route": "/resources/<id>",
+    #     "list_route": "/resources/",
+
+    #     "args": Parser(),
+    #     # or
+    #     "args": {
+    #         "create": Parser()  # any of the resource method can be listed
+    #     },
+    #     # both are possible (One-for-all 1st)
+    #     "body": [JSONDeserializer(mimetype="application/json"),],
+    #     # or
+    #     "body": {
+    #         "create": [JSONDeserializer(mimetype="application/json"),]
+    #     }
+    #     # both are possible
+    # }
+
+    # outgoing = {
+    #     "headers": MakeHeaderFunction(override=False)  # Optional
+    #     "body": [JSONSerializer(mimetype="application/json"),]
+    #     # or
+    #     "body": {
+    #         "create": [JSONDeserializer(mimetype="application/json"),]
+    #     }
+    #     # both are possible
+    # }
+
 
 class Resource:
     """Resource controller interface."""
+    default_config = ResourceConfig
 
-    def __init__(self, config=ResourceConfig):
+    def __init__(self, config=None):
         """Initialize the base resource."""
-        # TODO: The config should be checked to see that it is consistent. See isse #57
-        self.config = config
+        # TODO: The config should be checked to see that it is consistent. See issue #57
+        self.config = config or self.default_config
         self.bp_name = None
 
     # Primary interface

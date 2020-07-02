@@ -27,12 +27,11 @@ class CustomResourceConfig(ResourceConfig):
 
 class CustomResource(CollectionResource):
     """Custom resource implementation."""
+    default_config = CustomResourceConfig
 
     def __init__(self, *args, **kwargs):
         """Constructor."""
-        super(CustomResource, self).__init__(
-            config=CustomResourceConfig, *args, **kwargs
-        )
+        super(CustomResource, self).__init__(*args, **kwargs)
         self.db = {}
 
     def search(self):
