@@ -12,9 +12,9 @@ fixtures are available.
 """
 
 import pytest
-from flask import Flask
+from flask import Flask, request
 
-from flask_resources.context import resource_requestctx
+from flask_resources.context import resource_requestctx, ResourceRequestCtx
 from flask_resources.resources import CollectionResource, Resource, ResourceConfig
 
 
@@ -25,13 +25,32 @@ class CustomResourceConfig(ResourceConfig):
     list_route = "/custom/"
 
 
+class CustomResourceRequestContext(ResourceRequestCtx):
+    """Custom resouce request context."""
+
+    def inject_original_request(self):
+        """."""
+        super(CustomResourceRequestContext, self).inject_original_request()
+        self.original_request.update({
+            'content_type': "application/json"
+        })
+
+
+class CustomResourceWithContextConfig(CustomResourceConfig):
+    """Custom resource configuration with custom context."""
+
+    item_route = "/only-json-content/<id>"
+    list_route = "/only-json-content/"
+    context_class = CustomResourceRequestContext
+
+
 class CustomResource(CollectionResource):
     """Custom resource implementation."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, config=None, **kwargs):
         """Constructor."""
         super(CustomResource, self).__init__(
-            config=CustomResourceConfig, *args, **kwargs
+            config=config or CustomResourceConfig, **kwargs
         )
         self.db = {}
 
@@ -64,6 +83,16 @@ class CustomResource(CollectionResource):
         return {}, 200
 
 
+class AcceptOnlyJsonResource(CustomResource):
+    """Custom resource implementation with custom context."""
+
+    def __init__(self, *args, **kwargs):
+        """Constructor."""
+        super(AcceptOnlyJsonResource, self).__init__(
+            config=CustomResourceWithContextConfig, **kwargs
+        )
+
+
 @pytest.fixture(scope="module")
 def app():
     """Application factory fixture."""
@@ -73,5 +102,8 @@ def app():
     app_.register_blueprint(default_bp)
     custom_bp = CustomResource().as_blueprint("custom_resource")
     app_.register_blueprint(custom_bp)
+    custom_bp_with_context = AcceptOnlyJsonResource().as_blueprint(
+        "custom_resource_with_context")
+    app_.register_blueprint(custom_bp_with_context)
 
     return app_

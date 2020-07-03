@@ -9,7 +9,7 @@
 
 from functools import wraps
 
-from flask import g
+from flask import g, request
 from werkzeug.local import LocalProxy
 
 
@@ -49,6 +49,8 @@ class ResourceRequestCtx(object):
         self.request_args = request_args
         self.request_content = data
         self.route = {}
+        # Inject original request information into the context
+        self.inject_original_request()
 
     def __enter__(self):
         """Push the resource context manager on the current request."""
@@ -57,6 +59,15 @@ class ResourceRequestCtx(object):
     def __exit__(self, type, value, traceback):
         """Pop the resource context manager from the current request."""
         del g.resource_requestctx
+
+    def inject_original_request(self):
+        """."""
+        self.original_request = {
+            'accept_mimetypes': request.accept_mimetypes,
+            'args': request.args,
+            'content_type': request.content_type,
+            'data': request.data,
+        }
 
     def update(self, values):
         """Update the context fields present in the received dictionary `values`."""
@@ -68,9 +79,11 @@ def with_resource_requestctx(f):
     """Wrap in resource request context."""
 
     @wraps(f)
-    def inner(*args, **kwargs):
-        with ResourceRequestCtx():
-            return f(*args, **kwargs)
+    def inner(self, *args, **kwargs):
+        resource_request_context = getattr(
+            self.resource.config, "context_class", ResourceRequestCtx)
+        with resource_request_context():
+            return f(self, *args, **kwargs)
 
     return inner
 

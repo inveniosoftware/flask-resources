@@ -9,7 +9,6 @@
 
 from functools import wraps
 
-from flask import request
 from werkzeug.exceptions import UnsupportedMediaType
 
 from .context import resource_requestctx
@@ -26,11 +25,12 @@ def request_loader(f):
         """
         # Checking Content-Type is the responsibility of the loader
         loaders = self.resource.config.request_loaders
+        original_request = resource_requestctx.original_request
 
-        if request.content_type not in loaders:
+        if original_request['content_type'] not in loaders:
             raise UnsupportedMediaType()
 
-        self.request_loader = loaders[request.content_type]
+        self.request_loader = loaders[original_request['content_type']]
 
         return f(self, *args, **kwargs)
 
@@ -62,7 +62,9 @@ class RequestLoader(LoaderMixin):
 
     def load_item_request(self, *args, **kwargs):
         """Build response headers."""
-        return {"request_content": self.deserializer.deserialize_data(request.data)}
+        return {
+            "request_content": self.deserializer.deserialize_data(
+                                resource_requestctx.original_request['data'])}
 
     def load_search_request(self, *args, **kwargs):
         """Load a search request."""

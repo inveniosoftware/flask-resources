@@ -72,3 +72,37 @@ def test_custom_resource(client):
     resource_obj = client.delete("/custom/1234-ABCD", headers=headers)
     assert resource_obj.status_code == 200
     assert resource_obj.json == {}
+
+
+def test_custom_resource_only_json_content(client):
+    """Test a custom resource forcing json content-type."""
+    headers = {"content-type": "application/xml", "accept": "application/json"}
+
+    # The resource returns a list, empty for now
+    resource_obj = client.get("/only-json-content/", headers=headers)
+    assert resource_obj.status_code == 200
+    assert len(resource_obj.json) == 0
+
+    # Create a resource object
+    obj_content = {"id": "1234-ABCD", "content": "test resource obj content"}
+    obj_json = json.dumps(obj_content)
+    resource_obj = client.post(
+        "/only-json-content/", data=obj_json, headers=headers)
+    assert resource_obj.status_code == 201
+
+    # Search for the previously created obj
+    resource_obj = client.get("/only-json-content/", headers=headers)
+    assert resource_obj.status_code == 200
+    assert len(resource_obj.json) == 1
+    assert resource_obj.json[0]["id"] == "1234-ABCD"
+
+    # Get the previously created obj
+    resource_obj = client.get("/only-json-content/1234-ABCD", headers=headers)
+    assert resource_obj.status_code == 200
+    assert resource_obj.json["id"] == "1234-ABCD"
+
+    # Delete the previously created obj
+    resource_obj = client.delete(
+        "/only-json-content/1234-ABCD", headers=headers)
+    assert resource_obj.status_code == 200
+    assert resource_obj.json == {}

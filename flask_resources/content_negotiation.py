@@ -9,7 +9,6 @@
 
 from functools import wraps
 
-from flask import request
 from werkzeug.datastructures import MIMEAccept
 from werkzeug.exceptions import NotAcceptable
 
@@ -90,9 +89,9 @@ def content_negotiation(f):
         # mimetype?
         accept_mimetype = ContentNegotiator.match(
             self.resource.config.response_handlers.keys(),
-            request.accept_mimetypes,
+            resource_requestctx.original_request['accept_mimetypes'],
             {},  # TODO: Rely on config to populate this formats_map
-            request.args.get("format", None),
+            resource_requestctx.original_request['args'].get("format", None),
         )
 
         if not accept_mimetype:

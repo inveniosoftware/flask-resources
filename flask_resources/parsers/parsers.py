@@ -7,7 +7,6 @@
 
 """Library for easily implementing REST APIs."""
 
-from flask import request
 from marshmallow.validate import Range, Regexp
 from webargs.fields import Int, String
 from webargs.flaskparser import parser
@@ -25,7 +24,7 @@ class RequestParser:
 
     def parse(self, *args, **kwargs):
         """Parse."""
-        return self.post_process(parser.parse(self.fields, request, *args, **kwargs))
+        return self.post_process(parser.parse(self.fields, *args, **kwargs))
 
     def post_process(self, request_arguments, *args, **kwargs):
         """Post process."""
