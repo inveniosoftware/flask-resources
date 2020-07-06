@@ -26,9 +26,7 @@ class ResourceConfig:
 
     # Existing
     request_loaders = {
-        "application/json": RequestLoader(
-            deserializer=JSONDeserializer()
-        )
+        "application/json": RequestLoader(deserializer=JSONDeserializer())
     }
     response_handlers = {"application/json": Response(JSONSerializer())}
     item_route = "/resources/<id>"
