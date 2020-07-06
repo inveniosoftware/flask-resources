@@ -12,7 +12,7 @@ from werkzeug.exceptions import HTTPException
 
 from .deserializers import JSONDeserializer
 from .loaders import RequestLoader
-from .parsers import search_request_parser
+from .parsers import ArgsParser, search_request_parser
 from .responses import Response
 from .serializers import JSONSerializer
 from .views import ItemView, ListView, SingletonView
@@ -23,10 +23,11 @@ LIST_VIEW_SUFFIX = "_list"
 
 class ResourceConfig:
     """Base resource configuration."""
+
     # Existing
     request_loaders = {
         "application/json": RequestLoader(
-            deserializer=JSONDeserializer(), args_parser=search_request_parser,
+            deserializer=JSONDeserializer()
         )
     }
     response_handlers = {"application/json": Response(JSONSerializer())}
@@ -34,6 +35,7 @@ class ResourceConfig:
     list_route = "/resources/"
 
     # Suggested
+    request_url_args_parser = ArgsParser()
     # incoming = {
     #     "item_route": "/resources/<id>",
     #     "list_route": "/resources/",
@@ -65,6 +67,7 @@ class ResourceConfig:
 
 class Resource:
     """Resource controller interface."""
+
     default_config = ResourceConfig
 
     def __init__(self, config=None):

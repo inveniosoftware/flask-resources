@@ -23,6 +23,7 @@ class CustomConfig(ResourceConfig):
 
 class CustomResource(CollectionResource):
     """Custom resource implementation."""
+
     default_config = CustomConfig
 
 

@@ -27,6 +27,7 @@ class CustomResourceConfig(ResourceConfig):
 
 class CustomResource(CollectionResource):
     """Custom resource implementation."""
+
     default_config = CustomResourceConfig
 
     def __init__(self, *args, **kwargs):

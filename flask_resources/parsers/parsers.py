@@ -6,15 +6,81 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """Library for easily implementing REST APIs."""
+from functools import wraps
 
 from flask import request
 from marshmallow.validate import Range, Regexp
 from webargs.fields import Int, String
-from webargs.flaskparser import parser
+from webargs.flaskparser import FlaskParser
 
+from ..context import resource_requestctx
 from .paginate import build_pagination
 
 
+class ResourceFlaskParser(FlaskParser):
+    """Customized FlaskParser for our needs."""
+
+    DEFAULT_VALIDATION_STATUS = 400
+
+
+def select_args_parser(methodview, config_parser_or_parsers):
+    """Returns ArgsParser corresponding to situation."""
+    if isinstance(config_parser_or_parsers, ArgsParser):
+        return config_parser_or_parsers
+
+    # TODO: Remove this check and rely on config validation to know that the only
+    #       other possibility is a dict
+    if not isinstance(config_parser_or_parsers, dict):
+        return
+
+    return config_parser_or_parsers.get(
+        methodview.resource_method, ArgsParser()  # default "parse nothing" parser
+    )
+
+
+def url_args_parser(f):
+    """Decorator that parses the URL query string for the view.
+
+    NOTE: Flask captures the query string on ``request.args`` ergo the compact name.
+    """
+
+    @wraps(f)
+    def wrapper(self, *args, **kwargs):
+        """Wrapping method.
+
+        NOTE: To extract request args from any endpoint and not repeat ourselves,
+              extraction is done here and inspects self + request.method to get
+              endpoint.
+
+        :params self: Item/List/SingletonView instance
+        """
+        # TODO: Create interfaces to not have to break Demeter's law here
+        parser = select_args_parser(self, self.resource.config.request_url_args_parser)
+        resource_requestctx.request_args = parser.parse()
+        return f(self, *args, **kwargs)
+
+    return wrapper
+
+
+class ArgsParser(object):
+    """URL query string parser."""
+
+    def __init__(self, argmap=None):
+        """Constructor."""
+        self.argmap = argmap
+
+    def parse(self):
+        """Parse."""
+        # WARNING: This interface changes from webargs 5.5.3 (version we use) to
+        # webargs 6.X (most recent webargs version). In 6.x it is
+        # flaskparser.parse(self.argmap, request, location="querystring")
+        if self.argmap is None:
+            return {}
+        flaskparser = ResourceFlaskParser()
+        return flaskparser.parse(self.argmap, request, locations=("querystring",))
+
+
+# TODO: Remove
 class RequestParser:
     """RequestParser."""
 
@@ -25,7 +91,10 @@ class RequestParser:
 
     def parse(self, *args, **kwargs):
         """Parse."""
-        return self.post_process(parser.parse(self.fields, request, *args, **kwargs))
+        flaskparser = ResourceFlaskParser()
+        return self.post_process(
+            flaskparser.parse(self.fields, request, *args, **kwargs)
+        )
 
     def post_process(self, request_arguments, *args, **kwargs):
         """Post process."""

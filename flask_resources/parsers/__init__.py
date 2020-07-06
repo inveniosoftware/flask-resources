@@ -7,9 +7,11 @@
 
 """Library for easily implementing REST APIs."""
 
-from .parsers import RequestParser, search_request_parser
+from .parsers import ArgsParser, RequestParser, search_request_parser, url_args_parser
 
 __all__ = (
+    "ArgsParser",
     "RequestParser",
     "search_request_parser",
+    "url_args_parser",
 )

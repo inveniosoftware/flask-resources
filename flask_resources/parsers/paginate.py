@@ -7,13 +7,6 @@
 
 """Library for easily implementing REST APIs."""
 
-from functools import wraps
-
-from webargs import ValidationError as WebargsValidationError
-from webargs import fields, validate
-from webargs.flaskparser import parser
-from werkzeug.exceptions import BadRequest
-
 from ..errors import SearchPaginationRESTError
 
 
