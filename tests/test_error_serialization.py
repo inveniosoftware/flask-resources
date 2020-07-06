@@ -15,6 +15,7 @@ class ErrorConfig(ResourceConfig):
 
 class ErrorResource(CollectionResource):
     """Error returning resource implementation."""
+
     default_config = ErrorConfig
 
     def item_error(self):

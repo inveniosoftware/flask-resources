@@ -68,9 +68,9 @@ def with_resource_requestctx(f):
     """Wrap in resource request context."""
 
     @wraps(f)
-    def inner(*args, **kwargs):
+    def inner(self, *args, **kwargs):
         with ResourceRequestCtx():
-            return f(*args, **kwargs)
+            return f(self, *args, **kwargs)
 
     return inner
 

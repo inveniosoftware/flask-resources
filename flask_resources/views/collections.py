@@ -7,10 +7,10 @@
 
 """Flask Resources module to create REST APIs."""
 
+from flask import request
 from werkzeug.exceptions import HTTPException
 
 from ..context import resource_requestctx
-from ..parsers import search_request_parser
 from .base import BaseView
 
 
@@ -28,10 +28,17 @@ class ListView(BaseView):
         # is defined by response_loader decorator
         self.request_loader = None
 
+    @property
+    def resource_method(self):
+        """Returns string of resource method according to request.method."""
+        if request.method == "GET":
+            return "search"
+        if request.method == "POST":
+            return "create"
+        return ""
+
     def get(self, *args, **kwargs):
         """Search the collection."""
-        resource_requestctx.update(self.request_loader.load_search_request())
-
         # TODO: Make it so that you don't have to return a tuple. See issue #55
         return self.response_handler.make_list_response(
             *self.resource.search(*args, **kwargs)
@@ -59,6 +66,19 @@ class ItemView(BaseView):
         self.response_handler = None
         # is defined by response_loader decorator
         self.request_loader = None
+
+    @property
+    def resource_method(self):
+        """Returns string of resource method according to request.method."""
+        if request.method == "GET":
+            return "read"
+        if request.method == "PUT":
+            return "update"
+        if request.method == "PATCH":
+            return "partial_update"
+        if request.method == "DELETE":
+            return "delete"
+        return ""
 
     def get(self, *args, **kwargs):
         """Get."""
