@@ -7,7 +7,7 @@
 
 """Deserializers."""
 
-from .deserializers import DeserializerMixin
+from .deserializers import DeserializerMixin, NullDeserializer
 from .json import JSONDeserializer
 
-__all__ = ("JSONDeserializer", "DeserializerMixin")
+__all__ = ("JSONDeserializer", "DeserializerMixin", "NullDeserializer")
