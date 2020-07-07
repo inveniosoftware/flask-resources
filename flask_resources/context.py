@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2020 CERN.
+# Copyright (C) 2020 Northwestern University.
 #
 # Flask-Resources is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -40,12 +41,9 @@ class ResourceRequestCtx(object):
     - The content type of the request payload
     """
 
-    def __init__(
-        self, accept_mimetype=None, payload_mimetype=None, request_args=None, data=None,
-    ):
+    def __init__(self, accept_mimetype=None, request_args=None, data=None):
         """Initialize the resource context."""
         self.accept_mimetype = accept_mimetype
-        self.payload_mimetype = payload_mimetype  # Content-Type
         self.request_args = request_args
         self.request_content = data
         self.route = {}
