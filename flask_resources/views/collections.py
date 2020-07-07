@@ -25,8 +25,6 @@ class ListView(BaseView):
         super(ListView, self).__init__(*args, **kwargs)
         # is defined by response_handler decorator
         self.response_handler = None
-        # is defined by response_loader decorator
-        self.request_loader = None
 
     @property
     def resource_method(self):
@@ -46,8 +44,6 @@ class ListView(BaseView):
 
     def post(self, *args, **kwargs):
         """Create an item in the collection."""
-        resource_requestctx.update(self.request_loader.load_item_request())
-
         return self.response_handler.make_item_response(
             *self.resource.create(*args, **kwargs)  # data is passed in the context
         )
@@ -64,8 +60,6 @@ class ItemView(BaseView):
         super(ItemView, self).__init__(*args, **kwargs)
         # is defined by response_handler decorator
         self.response_handler = None
-        # is defined by response_loader decorator
-        self.request_loader = None
 
     @property
     def resource_method(self):
@@ -88,14 +82,12 @@ class ItemView(BaseView):
 
     def put(self, *args, **kwargs):
         """Put."""
-        resource_requestctx.update(self.request_loader.load_item_request())
         return self.response_handler.make_item_response(
             *self.resource.update(*args, **kwargs)  # data is passed in the context
         )
 
     def patch(self, *args, **kwargs):
         """Patch."""
-        resource_requestctx.update(self.request_loader.load_item_request())
         return self.response_handler.make_item_response(
             *self.resource.partial_update(*args, **kwargs)
         )

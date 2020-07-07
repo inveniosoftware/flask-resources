@@ -13,10 +13,23 @@ from flask import request
 from werkzeug.exceptions import UnsupportedMediaType
 
 from .context import resource_requestctx
+from .deserializers import NullDeserializer
+
+
+def select_deserializer(resource_method, loader_or_loaders):
+    """Returns deserializer corresponding to situation."""
+    if isinstance(loader_or_loaders, RequestLoader):
+        return loader_or_loaders.deserializer
+
+    loader = loader_or_loaders.get(resource_method)
+    if loader:
+        return loader.deserializer
+    else:
+        return NullDeserializer()
 
 
 def request_loader(f):
-    """Decorator that sets the request_loader on the view."""
+    """Decorator that loads/deserializes the request data."""
 
     @wraps(f)
     def wrapper(self, *args, **kwargs):
@@ -30,7 +43,13 @@ def request_loader(f):
         if request.content_type not in loaders:
             raise UnsupportedMediaType()
 
-        self.request_loader = loaders[request.content_type]
+        deserializer = select_deserializer(
+            self.resource_method, loaders[request.content_type]
+        )
+
+        resource_requestctx.request_content = deserializer.deserialize_data(
+            request.data
+        )
 
         return f(self, *args, **kwargs)
 
