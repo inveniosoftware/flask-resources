@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2020 CERN.
+# Copyright (C) 2020 Northwestern University.
 #
 # Flask-Resources is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -27,4 +28,4 @@ class JSONSerializer(SerializerMixin):
         """Serialize an error reponse according to the response ctx."""
         # NOTE: In non-overwritten exceptions (i.e. coming from Werkzeug)
         # `get_description` returns HTML tags.
-        return {"status": error.code, "message": error.description}
+        return json.dumps({"status": error.code, "message": error.description})
