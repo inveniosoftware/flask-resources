@@ -24,43 +24,13 @@ LIST_VIEW_SUFFIX = "_list"
 class ResourceConfig:
     """Base resource configuration."""
 
-    # Existing
     request_loaders = {
         "application/json": RequestLoader(deserializer=JSONDeserializer())
     }
     response_handlers = {"application/json": Response(JSONSerializer())}
     item_route = "/resources/<id>"
     list_route = "/resources/"
-
-    # Suggested
     request_url_args_parser = ArgsParser()
-    # incoming = {
-    #     "item_route": "/resources/<id>",
-    #     "list_route": "/resources/",
-
-    #     "args": Parser(),
-    #     # or
-    #     "args": {
-    #         "create": Parser()  # any of the resource method can be listed
-    #     },
-    #     # both are possible (One-for-all 1st)
-    #     "body": [JSONDeserializer(mimetype="application/json"),],
-    #     # or
-    #     "body": {
-    #         "create": [JSONDeserializer(mimetype="application/json"),]
-    #     }
-    #     # both are possible
-    # }
-
-    # outgoing = {
-    #     "headers": MakeHeaderFunction(override=False)  # Optional
-    #     "body": [JSONSerializer(mimetype="application/json"),]
-    #     # or
-    #     "body": {
-    #         "create": [JSONDeserializer(mimetype="application/json"),]
-    #     }
-    #     # both are possible
-    # }
 
 
 class Resource:

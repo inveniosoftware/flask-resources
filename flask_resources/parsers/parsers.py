@@ -23,19 +23,13 @@ class ResourceFlaskParser(FlaskParser):
     DEFAULT_VALIDATION_STATUS = 400
 
 
-def select_args_parser(methodview, config_parser_or_parsers):
+def select_args_parser(resource_method, config_parser_or_parsers):
     """Returns ArgsParser corresponding to situation."""
     if isinstance(config_parser_or_parsers, ArgsParser):
         return config_parser_or_parsers
 
-    # TODO: Remove this check and rely on config validation to know that the only
-    #       other possibility is a dict
-    if not isinstance(config_parser_or_parsers, dict):
-        return
-
-    return config_parser_or_parsers.get(
-        methodview.resource_method, ArgsParser()  # default "parse nothing" parser
-    )
+    # default "parse nothing" parser
+    return config_parser_or_parsers.get(resource_method, ArgsParser())
 
 
 def url_args_parser(f):
@@ -55,7 +49,9 @@ def url_args_parser(f):
         :params self: Item/List/SingletonView instance
         """
         # TODO: Create interfaces to not have to break Demeter's law here
-        parser = select_args_parser(self, self.resource.config.request_url_args_parser)
+        parser = select_args_parser(
+            self.resource_method, self.resource.config.request_url_args_parser
+        )
         resource_requestctx.request_args = parser.parse()
         return f(self, *args, **kwargs)
 
