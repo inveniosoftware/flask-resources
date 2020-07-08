@@ -110,7 +110,6 @@ def test_method_deserializer_deserializes_search_only(client):
 
     response = client.delete("/method/1", json={"tombstone": "baz"}, headers=headers)
 
-    assert response.status_code == 200
-    assert response.json is None  # NOTE: this result is non-trivial
-    # serialization from app: None -> 'null'
-    # deserialization from Flask: null -> None
+    assert response.status_code == 415
+    assert response.json["status"] == 415
+    assert response.json["message"] is not None

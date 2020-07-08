@@ -15,11 +15,3 @@ class DeserializerMixin:
     def deserialize_data(self, data, *args, **kwargs):
         """Deserializes an object."""
         raise NotImplementedError()
-
-
-class NullDeserializer(DeserializerMixin):
-    """Deserializes nothing."""
-
-    def deserialize_data(self, data, *args, **kwargs):
-        """Default deserializer. It returns nothing."""
-        return None
