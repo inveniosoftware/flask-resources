@@ -9,9 +9,10 @@
 """Resource view."""
 
 from flask import Blueprint
-from werkzeug.exceptions import HTTPException
+from marshmallow import ValidationError
 
 from .deserializers import JSONDeserializer
+from .errors import create_errormap_handler
 from .loaders import RequestLoader
 from .parsers import ArgsParser
 from .responses import Response
@@ -79,6 +80,9 @@ class Resource:
         for rule in self.create_url_rules(name):
             blueprint.add_url_rule(**rule)
 
+        for exc_or_code, error_handler in self.create_errormap_handlers():
+            blueprint.register_error_handler(exc_or_code, error_handler)
+
         return blueprint
 
     def create_url_rules(self, bp_name):
@@ -92,9 +96,10 @@ class Resource:
             }
         ]
 
-    def create_error_handlers(self):
+    def create_errormap_handlers(self):
         """Create error handlers."""
-        return []
+        error_map = getattr(self.config, "error_map", {})
+        return error_map.items()
 
 
 class CollectionResource(Resource):

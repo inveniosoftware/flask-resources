@@ -11,9 +11,9 @@ from functools import wraps
 
 from flask import request
 from werkzeug.datastructures import MIMEAccept
-from werkzeug.exceptions import NotAcceptable
 
 from .context import resource_requestctx
+from .errors import MIMETypeNotAccepted
 
 
 class ContentNegotiator(object):
@@ -96,7 +96,9 @@ def content_negotiation(f):
         )
 
         if not accept_mimetype:
-            raise NotAcceptable()
+            raise MIMETypeNotAccepted(
+                allowed_mimetypes=self.resource.config.response_handlers.keys()
+            )
 
         resource_requestctx.accept_mimetype = accept_mimetype
 
