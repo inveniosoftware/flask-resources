@@ -10,76 +10,11 @@
 
 import pytest
 from flask import Flask
-from marshmallow.exceptions import ValidationError
 from webargs import fields
-from werkzeug.exceptions import HTTPException
 
 from flask_resources.context import resource_requestctx
-from flask_resources.parsers import ArgsParser, search_request_parser
+from flask_resources.parsers import ArgsParser
 from flask_resources.resources import CollectionResource, ResourceConfig
-
-
-def assert_validation_error(error, message=None):
-    """Validates that the error was risen from a ValidationError.
-
-    Optionally checks the ValidationError message for a specific string.
-    """
-    # Check that is a validation error
-    assert type(error.value.exc) == ValidationError
-    # The abort error is a 422 UnprocessableEntity
-    assert error.value.code == 400
-
-    if message:
-        assert message in str(error.value.exc.messages)
-
-
-def test_search_request_parser_default_values(app):
-    """Test default search request parser."""
-    with app.test_request_context(
-        "/", method="get", content_type="application/json",
-    ):
-        parsed_args = search_request_parser.parse()
-
-        assert parsed_args.get("size") == 10
-        assert parsed_args.get("page") == 1
-        assert parsed_args.get("q") == ""
-        # pagination values themselves are tested independently
-        assert parsed_args.get("pagination") is not None
-
-
-def test_search_request_parser_custom_values(app):
-    """Test default search request parser."""
-    with app.test_request_context(
-        "/?size=5&page=10&q=test", method="get", content_type="application/json",
-    ):
-        parsed_args = search_request_parser.parse()
-        assert parsed_args.get("page") == 10
-        assert parsed_args.get("size") == 5
-        assert parsed_args.get("q") == "test"
-
-
-def test_search_request_parser_validation_errors(app):
-    """Test default search request parser."""
-    with app.test_request_context(
-        "/?page=-1", method="get", content_type="application/json",
-    ):
-        with pytest.raises(HTTPException) as error:
-            parsed_args = search_request_parser.parse()
-        assert_validation_error(error, "page")
-
-    with app.test_request_context(
-        "/?size=-1", method="get", content_type="application/json",
-    ):
-        with pytest.raises(HTTPException) as error:
-            parsed_args = search_request_parser.parse()
-        assert_validation_error(error, "size")
-
-    with app.test_request_context(
-        "/?from=-1", method="get", content_type="application/json",
-    ):
-        with pytest.raises(HTTPException) as error:
-            parsed_args = search_request_parser.parse()
-        assert_validation_error(error, "from")
 
 
 # These classes are in the file because they are under test too
