@@ -14,7 +14,6 @@ from flask import request
 from werkzeug.exceptions import UnsupportedMediaType
 
 from .context import resource_requestctx
-from .deserializers import NullDeserializer
 
 
 def select_deserializer(resource_method, loader_or_loaders):
@@ -26,7 +25,7 @@ def select_deserializer(resource_method, loader_or_loaders):
     if loader:
         return loader.deserializer
     else:
-        return NullDeserializer()
+        raise UnsupportedMediaType()
 
 
 def request_loader(f):
