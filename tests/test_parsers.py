@@ -11,8 +11,14 @@
 import pytest
 from flask import Flask
 from webargs import fields
+from werkzeug.exceptions import HTTPException
 
 from flask_resources.context import resource_requestctx
+from flask_resources.errors import (
+    HTTPJSONException,
+    create_errormap_handler,
+    handle_http_exception,
+)
 from flask_resources.parsers import ArgsParser
 from flask_resources.resources import CollectionResource, ResourceConfig
 
@@ -78,6 +84,7 @@ def app():
     app_.register_blueprint(custom_bp)
     custom_bp = ParserResource(MethodParserConfig).as_blueprint("method_resource")
     app_.register_blueprint(custom_bp)
+    app_.register_error_handler(HTTPException, handle_http_exception)
     return app_
 
 

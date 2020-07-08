@@ -7,18 +7,19 @@
 
 """Library for easily implementing REST APIs."""
 
-from ..errors import SearchPaginationRESTError
+from werkzeug.exceptions import BadRequest
 
 
 def build_pagination(request_args):
     """Build pagination."""
     pagination = {}
     if request_args.get("page") and request_args.get("from"):
-        raise SearchPaginationRESTError(
-            messages="The query parameters from and page must not be "
-            "used at the same time.",
-            description="Invalid pagination parameters.",
-            field_names=["page", "from"],
+        raise BadRequest(
+            description=(
+                "Invalid pagination parameters. "
+                "The query parameters 'from' and 'page' must not be "
+                "used at the same time."
+            ),
         )
 
     # Default if neither page nor from is specified

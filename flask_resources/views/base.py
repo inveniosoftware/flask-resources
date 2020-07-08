@@ -17,7 +17,6 @@ from flask.views import MethodView
 
 from ..content_negotiation import content_negotiation
 from ..context import with_resource_requestctx, with_route
-from ..errors import error_handler
 from ..loaders import request_loader
 from ..parsers import url_args_parser
 from ..responses import response_handler
@@ -30,7 +29,6 @@ class BaseView(MethodView):
         request_loader,
         url_args_parser,
         with_route,
-        error_handler,
         response_handler,
         content_negotiation,
         with_resource_requestctx,

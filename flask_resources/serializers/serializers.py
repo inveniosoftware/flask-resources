@@ -24,7 +24,3 @@ class SerializerMixin:
         Each object type of the list should implement ``SerializableMixin``.
         """
         raise NotImplementedError()
-
-    def serialize_error(self, error, response_ctx=None, *args, **kwargs):
-        """Serialize an error reponse according to the response ctx."""
-        raise NotImplementedError()

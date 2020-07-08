@@ -11,9 +11,9 @@
 from functools import wraps
 
 from flask import request
-from werkzeug.exceptions import UnsupportedMediaType
 
 from .context import resource_requestctx
+from .errors import InvalidContentType
 
 
 def select_deserializer(resource_method, loader_or_loaders):
@@ -25,7 +25,7 @@ def select_deserializer(resource_method, loader_or_loaders):
     if loader:
         return loader.deserializer
     else:
-        raise UnsupportedMediaType()
+        raise InvalidContentType(allowed_mimetypes=loader_or_loaders.keys())
 
 
 def request_loader(f):
@@ -41,7 +41,7 @@ def request_loader(f):
         loaders = self.resource.config.request_loaders
 
         if request.content_type not in loaders:
-            raise UnsupportedMediaType()
+            raise InvalidContentType(allowed_mimetypes=loaders.keys())
 
         deserializer = select_deserializer(
             self.resource_method, loaders[request.content_type]

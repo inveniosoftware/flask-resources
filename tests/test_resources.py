@@ -49,6 +49,7 @@ def test_custom_resource(client):
 
     # The resource returns a list, empty for now
     resource_obj = client.get("/custom/", headers=headers)
+
     assert resource_obj.status_code == 200
     assert len(resource_obj.json) == 0
 
