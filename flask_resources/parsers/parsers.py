@@ -14,7 +14,6 @@ from webargs.fields import Int, String
 from webargs.flaskparser import FlaskParser
 
 from ..context import resource_requestctx
-from .paginate import build_pagination
 
 
 class ResourceFlaskParser(FlaskParser):
@@ -74,37 +73,3 @@ class ArgsParser(object):
             return {}
         flaskparser = ResourceFlaskParser()
         return flaskparser.parse(self.argmap, request, locations=("querystring",))
-
-
-# TODO: Remove
-class RequestParser:
-    """RequestParser."""
-
-    def __init__(self, fields=None, processors=None, *args, **kwargs):
-        """Constructor."""
-        self.fields = fields or {}
-        self.processors = processors or []
-
-    def parse(self, *args, **kwargs):
-        """Parse."""
-        flaskparser = ResourceFlaskParser()
-        return self.post_process(
-            flaskparser.parse(self.fields, request, *args, **kwargs)
-        )
-
-    def post_process(self, request_arguments, *args, **kwargs):
-        """Post process."""
-        for func in self.processors:
-            func(request_arguments)
-        return request_arguments
-
-
-search_request_parser = RequestParser(
-    fields={
-        "page": Int(validate=Range(min=1), missing=1),
-        "from": Int(validate=Range(min=1)),
-        "size": Int(validate=Range(min=1), missing=10),
-        "q": String(missing=""),
-    },
-    processors=[build_pagination],
-)

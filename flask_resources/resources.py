@@ -13,7 +13,7 @@ from werkzeug.exceptions import HTTPException
 
 from .deserializers import JSONDeserializer
 from .loaders import RequestLoader
-from .parsers import ArgsParser, search_request_parser
+from .parsers import ArgsParser
 from .responses import Response
 from .serializers import JSONSerializer
 from .views import ItemView, ListView, SingletonView
