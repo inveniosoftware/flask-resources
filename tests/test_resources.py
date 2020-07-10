@@ -73,3 +73,14 @@ def test_custom_resource(client):
     resource_obj = client.delete("/custom/1234-ABCD", headers=headers)
     assert resource_obj.status_code == 200
     assert resource_obj.json == {}
+
+    # PUT/Edit a list of resource units
+    obj_json = json.dumps([{"id": "1234-ABCD", "content": "updated content"}])
+    response = client.put("/custom/", data=obj_json, headers=headers)
+    assert response.status_code == 200
+    assert response.json == [{"id": "1234-ABCD", "content": "updated content"}]
+
+    # DELETE/remove a list of resource units
+    response = client.delete("/custom/", headers=headers)
+    assert response.status_code == 200
+    assert response.json == []
