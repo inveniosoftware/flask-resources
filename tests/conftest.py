@@ -63,6 +63,12 @@ class CustomResource(CollectionResource):
             del self.db[_id]
         return {}, 200
 
+    def update_all(self):
+        """Delete."""
+        for obj in resource_requestctx.request_content:
+            self.db[obj["id"]] = obj["content"]
+        return resource_requestctx.request_content, 200
+
 
 @pytest.fixture(scope="module")
 def app():

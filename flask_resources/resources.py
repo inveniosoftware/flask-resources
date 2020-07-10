@@ -100,6 +100,14 @@ class Resource:
 class CollectionResource(Resource):
     """CollectionResource."""
 
+    def update_all(self, *args, **kwargs):
+        """Delete an item."""
+        return [], 200
+
+    def delete_all(self, *args, **kwargs):
+        """Delete an item."""
+        return [], 200
+
     def create_url_rules(self, bp_name):
         """Create url rules."""
         return [

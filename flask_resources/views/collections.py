@@ -49,6 +49,18 @@ class ListView(BaseView):
             *self.resource.create(*args, **kwargs)  # data is passed in the context
         )
 
+    def put(self, *args, **kwargs):
+        """Update the collection."""
+        return self.response_handler.make_list_response(
+            *self.resource.update_all(*args, **kwargs)
+        )
+
+    def delete(self, *args, **kwargs):
+        """Delete the collection."""
+        return self.response_handler.make_list_response(
+            *self.resource.delete_all(*args, **kwargs)
+        )
+
 
 class ItemView(BaseView):
     """Item view representation.

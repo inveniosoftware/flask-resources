@@ -59,13 +59,6 @@ def test_405_if_route_but_no_method(client):
     #       didn't define in its MethodViews
     # NOTE: For now we just test the methods that this library
     #       didn't define in its MethodViews
-    # List-level
-    response = client.put("/custom/")
-    assert response.status_code == 405
-
-    response = client.delete("/custom/")
-    assert response.status_code == 405
-
     # Item-level
     response = client.post("/custom/1")
     assert response.status_code == 405
