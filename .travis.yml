@@ -43,13 +43,12 @@ script:
 after_success:
   - coveralls
 
-# TODO: Fill me for deployment
-# deploy:
-#   provider: pypi
-#   user: lnielsen
-#   password:
-#     secure:
-#   distributions: "sdist bdist_wheel"
-#   skip_existing: true
-#   on:
-#     tags: true
+deploy:
+  provider: pypi
+  user: inveniosoftware
+  password:
+    secure: "xOhCSY+j8wKqzOJ8ZlZaYS+Rgq5vMspvarxDtadHxWJlfhP7qxiAgTOwR1rX4Me6MLFd3x64uOVwzxhqSXgi9dQYJmqktMrYiDZDCx/SWWoJNRcGogRl2NQf6bYuGd2sxHMcdo2q+OiO1NPZWtS69ql0gvbOGaW4o6aZgnR2yYf+Hkaxz2dOyGhnHh7sAxKene6FouIY6GJbQyYr6/3WlYt4kyEzyeeODBZ5XXQl438pRGr0OHKYl4op363nA5AbL00ZqT3Mw2W9zlfQfB8Dnem6gYTR98Wf72uB3/P9KiR+jVVnTtr4TnIEpKEnWVbeleXCAIIq8ySec0Zxd8zAiyRrtx4RnqDvGtS2dVVvStTjWuX7CLXwCnbl1t3VQaz9xLhC2XNzEiN2ot8TwT0EtQEngkd7ehEUatg7aqefJwPAuijJS9tMfk8UbNEWUOzkTymQhrNnJ4884OcaDJFB8Dk0nVe98L+ZobPwtZ32XRM0vJqPqDMmivJEaBoUb/YzLTYvhJGPFOWPbobZHFIwQO1aSxT+T8ZFNGkWgxsioRHim4BRBX7zR+mMaZLiyDI58N/bcZ85Rr9h0iCjBgp/bueUKvXfzjIAgUInkK8F8SIpp77RW2l/kVdtjdmKGroW7s95hDiGnbNXdXTn/V9icEjafRvChyjw0seQbhqmVB4="
+  distributions: "sdist bdist_wheel"
+  skip_existing: true
+  on:
+    tags: true
