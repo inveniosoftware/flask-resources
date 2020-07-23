@@ -33,6 +33,8 @@ class ResourceConfig:
     item_route = "/resources/<id>"
     list_route = "/resources/"
     request_url_args_parser = ArgsParser()
+    default_content_type = "application/json"
+    default_accept_mimetype = "application/json"
 
 
 class Resource:

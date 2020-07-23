@@ -70,6 +70,11 @@ def test_custom_resource(client):
     assert resource_obj.status_code == 200
     assert resource_obj.json["id"] == "1234-ABCD"
 
+    # Get the previously created obj using default headers
+    resource_obj = client.get("/custom/1234-ABCD")
+    assert resource_obj.status_code == 200
+    assert resource_obj.json["id"] == "1234-ABCD"
+
     # Delete the previously created obj
     resource_obj = client.delete("/custom/1234-ABCD", headers=headers)
     assert resource_obj.status_code == 200

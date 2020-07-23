@@ -93,6 +93,7 @@ def content_negotiation(f):
             request.accept_mimetypes,
             {},  # TODO: Rely on config to populate this formats_map
             request.args.get("format", None),
+            self.resource.config.default_accept_mimetype,
         )
 
         if not accept_mimetype:
