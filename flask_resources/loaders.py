@@ -40,11 +40,16 @@ def request_loader(f):
         # Checking Content-Type is the responsibility of the loader
         loaders = self.resource.config.request_loaders
 
-        if request.content_type not in loaders:
+        request_content_type = request.content_type
+
+        if not request_content_type:
+            request_content_type = self.resource.config.default_content_type
+
+        if request_content_type not in loaders:
             raise InvalidContentType(allowed_mimetypes=loaders.keys())
 
         deserializer = select_deserializer(
-            self.resource_method, loaders[request.content_type]
+            self.resource_method, loaders[request_content_type]
         )
 
         resource_requestctx.request_content = deserializer.deserialize_data(
