@@ -49,27 +49,27 @@ class Resource:
         self.bp_name = None
 
     # Primary interface
-    def search(self, *args, **kwargs):
+    def search(self):
         """Perform a search over the items."""
         return [], 200
 
-    def create(self, *args, **kwargs):
+    def create(self):
         """Create an item."""
         return {}, 200
 
-    def read(self, *args, **kwargs):
+    def read(self):
         """Read an item."""
         return {}, 200
 
-    def update(self, *args, **kwargs):
+    def update(self):
         """Update an item."""
         return {}, 200
 
-    def partial_update(self, *args, **kwargs):
+    def partial_update(self):
         """Partial update an item."""
         return {}, 200
 
-    def delete(self, *args, **kwargs):
+    def delete(self):
         """Delete an item."""
         return {}, 200
 
@@ -107,11 +107,11 @@ class Resource:
 class CollectionResource(Resource):
     """CollectionResource."""
 
-    def update_all(self, *args, **kwargs):
+    def update_all(self):
         """Delete an item."""
         return [], 200
 
-    def delete_all(self, *args, **kwargs):
+    def delete_all(self):
         """Delete an item."""
         return [], 200
 
