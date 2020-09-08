@@ -28,8 +28,10 @@ def select_args_parser(resource_method, config_parser_or_parsers):
     if isinstance(config_parser_or_parsers, ArgsParser):
         return config_parser_or_parsers
 
-    # default "parse nothing" parser
-    return config_parser_or_parsers.get(resource_method, ArgsParser())
+    return config_parser_or_parsers.get(
+        resource_method,
+        ArgsParser(allow_unknown=False),  # default "parse nothing" parser
+    )
 
 
 def url_args_parser(f):
@@ -61,16 +63,33 @@ def url_args_parser(f):
 class ArgsParser(object):
     """URL query string parser."""
 
-    def __init__(self, argmap=None):
-        """Constructor."""
-        self.argmap = argmap
+    def __init__(self, argmap=None, allow_unknown=True):
+        """Constructor.
+
+        :params argmap: dict or Schema of URL querystring arguments
+        :params allow_unknown: bool allow unknown URL querystring arguments or not
+        """
+        self.argmap = argmap or {}
+        self.allow_unknown = allow_unknown
 
     def parse(self):
         """Parse."""
-        # WARNING: This interface changes from webargs 5.5.3 (version we use) to
-        # webargs 6.X (most recent webargs version). In 6.x it is
-        # flaskparser.parse(self.argmap, request, location="querystring")
-        if self.argmap is None:
-            return {}
+        # NOTE: This has to be done bc webargs 5.X < 6.X doesn't obey schemas that
+        #       allow unknown fields. webargs 6.X does, so this can be changed when
+        #       upgrading dependencies
+        if self.allow_unknown:
+            raw_args = {
+                k: v[0] if len(v) == 1 else v
+                for k, v in request.args.to_dict(flat=False).items()
+            }
+        else:
+            raw_args = {}
+
         flaskparser = ResourceFlaskParser()
-        return flaskparser.parse(self.argmap, request, locations=("querystring",))
+        # WARNING: This interface changes from webargs 5.5.3 (version we use) to
+        #          webargs 6.X (most recent webargs version). In 6.x it is
+        #          flaskparser.parse(self.argmap, request, location="querystring")
+        parsed_args = flaskparser.parse(
+            self.argmap, request, locations=("querystring",)
+        )
+        return {**raw_args, **parsed_args}

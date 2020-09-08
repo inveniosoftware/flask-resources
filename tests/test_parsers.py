@@ -22,6 +22,11 @@ from flask_resources.errors import (
 from flask_resources.parsers import ArgsParser
 from flask_resources.resources import CollectionResource, ResourceConfig
 
+# NOTE: mimetype headers have to be provided in general, but the args parsing is not
+#       dependent on them specifically directly i.e. it could have been xml if xml
+#       were implemented
+HEADERS = {"content-type": "application/json", "accept": "application/json"}
+
 
 # These classes are in the file because they are under test too
 class UniversalParserConfig(ResourceConfig):
@@ -31,7 +36,7 @@ class UniversalParserConfig(ResourceConfig):
     list_route = "/universal"
     # Because an ArgsParser is passed directly, it is applied to all endpoints
     request_url_args_parser = ArgsParser(
-        {"num": fields.Int(), "lang": fields.String(missing="")}
+        {"num": fields.Int(), "lang": fields.String(missing="")}, allow_unknown=False
     )
 
 
@@ -89,12 +94,7 @@ def app():
 
 
 def test_universal_parser_parses_one_endpoint(client):
-    # NOTE: mimetype headers have to be provided in general, but the args parsing is not
-    #       dependent on them specifically directly i.e. it could have been xml if xml
-    #       were implemented
-    headers = {"content-type": "application/json", "accept": "application/json"}
-
-    response = client.get("/universal/1?num=10", headers=headers)
+    response = client.get("/universal/1?num=10", headers=HEADERS)
 
     assert response.status_code == 200
     assert response.json["num"] == 10
@@ -102,16 +102,14 @@ def test_universal_parser_parses_one_endpoint(client):
 
 
 def test_universal_parser_parses_all_endpoints(client):
-    headers = {"accept": "application/json", "content-type": "application/json"}
-
     # search
-    response = client.get("/universal?num=10", headers=headers)
+    response = client.get("/universal?num=10", headers=HEADERS)
     assert response.status_code == 200
     assert response.json["num"] == 10
     assert response.json["lang"] == ""
 
     # create
-    response = client.post("/universal?num=10", headers=headers)
+    response = client.post("/universal?num=10", headers=HEADERS)
     assert response.status_code == 200
     assert response.json["num"] == 10
     assert response.json["lang"] == ""
@@ -119,67 +117,74 @@ def test_universal_parser_parses_all_endpoints(client):
     # read -- covered above
 
     # update
-    response = client.put("/universal/1?num=10", headers=headers)
+    response = client.put("/universal/1?num=10", headers=HEADERS)
     assert response.status_code == 200
     assert response.json["num"] == 10
     assert response.json["lang"] == ""
 
     # partial update
-    response = client.patch("/universal/1?num=10", headers=headers)
+    response = client.patch("/universal/1?num=10", headers=HEADERS)
     assert response.status_code == 200
     assert response.json["num"] == 10
     assert response.json["lang"] == ""
 
     # delete
-    response = client.delete("/universal/1?num=10", headers=headers)
+    response = client.delete("/universal/1?num=10", headers=HEADERS)
     assert response.status_code == 200
     assert response.json["num"] == 10
     assert response.json["lang"] == ""
 
 
 def test_method_parser_parses_only_method_endpoint(client):
-    headers = {"accept": "application/json", "content-type": "application/json"}
-
     # search
-    response = client.get("/method?num=10", headers=headers)
+    response = client.get("/method?num=10", headers=HEADERS)
     assert response.status_code == 200
     assert response.json["num"] == 10
     assert response.json["lang"] == ""
 
     # Other methods should return an empty json
     # Passing query strings when no parser for them is totally fine
-    # they are just not extracted. (could make it that they are too...)
+    # they are just not extracted.
 
     # create
-    response = client.post("/method?num=10", headers=headers)
+    response = client.post("/method?num=10", headers=HEADERS)
     assert response.status_code == 200
     assert response.json == {}
 
     # read
-    response = client.put("/method/1?num=10", headers=headers)
+    response = client.put("/method/1?num=10", headers=HEADERS)
     assert response.status_code == 200
     assert response.json == {}
 
     # update
-    response = client.put("/method/1?num=10", headers=headers)
+    response = client.put("/method/1?num=10", headers=HEADERS)
     assert response.status_code == 200
     assert response.json == {}
 
     # partial update
-    response = client.patch("/method/1?num=10", headers=headers)
+    response = client.patch("/method/1?num=10", headers=HEADERS)
     assert response.status_code == 200
     assert response.json == {}
 
     # delete
-    response = client.delete("/method/1?num=10", headers=headers)
+    response = client.delete("/method/1?num=10", headers=HEADERS)
     assert response.status_code == 200
     assert response.json == {}
 
 
 def test_parser_raises_400(client):
-    headers = {"accept": "application/json", "content-type": "application/json"}
+    response = client.get("/method?num=NotANumber", headers=HEADERS)
 
-    response = client.get("/method?num=NotANumber", headers=headers)
     assert response.status_code == 400
     assert response.json["status"] == 400
     assert response.json["message"] is not None
+
+
+def test_parser_includes_or_excludes_unknown_args(client):
+    response = client.get("/method?num=10&foo=20&bar=1&foo=10", headers=HEADERS)
+    assert response.status_code == 200
+    assert response.json == {"num": 10, "lang": "", "foo": ["20", "10"], "bar": "1"}
+
+    response = client.get("/universal?num=10&foo=20&bar=1&foo=10", headers=HEADERS)
+    assert response.status_code == 200
+    assert response.json == {"num": 10, "lang": ""}
