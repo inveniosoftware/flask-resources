@@ -93,7 +93,8 @@ class Resource:
             {
                 "rule": self.config.item_route,
                 "view_func": ItemView.as_view(
-                    name="{}".format(bp_name), resource=self,
+                    name=f"{bp_name}",
+                    resource=self,
                 ),
             }
         ]
@@ -121,13 +122,15 @@ class CollectionResource(Resource):
             {
                 "rule": self.config.item_route,
                 "view_func": ItemView.as_view(
-                    name="{}{}".format(bp_name, ITEM_VIEW_SUFFIX), resource=self,
+                    name=f"{bp_name}{ITEM_VIEW_SUFFIX}",
+                    resource=self,
                 ),
             },
             {
                 "rule": self.config.list_route,
                 "view_func": ListView.as_view(
-                    name="{}{}".format(bp_name, LIST_VIEW_SUFFIX), resource=self,
+                    name=f"{bp_name}{LIST_VIEW_SUFFIX}",
+                    resource=self,
                 ),
             },
         ]
@@ -142,7 +145,8 @@ class SingletonResource(Resource):
             {
                 "rule": self.config.list_route,
                 "view_func": SingletonView.as_view(
-                    name="{}".format(bp_name), resource=self,
+                    name=f"{bp_name}",
+                    resource=self,
                 ),
             }
         ]

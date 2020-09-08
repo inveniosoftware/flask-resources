@@ -36,6 +36,7 @@ before_install:
 install:
   - "travis_retry pip install -r .travis-${REQUIREMENTS}-requirements.txt"
   - "travis_retry pip install -e .[all]"
+  - pip freeze
 
 script:
   - ./run-tests.sh

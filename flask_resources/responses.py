@@ -68,7 +68,9 @@ class Response(ResponseMixin):
         # (body, status, header)
 
         return make_response(
-            self.serializer.serialize_object(content), code, self.make_headers(),
+            self.serializer.serialize_object(content),
+            code,
+            self.make_headers(),
         )
 
     def make_list_response(self, content, code=200):
@@ -77,5 +79,7 @@ class Response(ResponseMixin):
         # (body, status, header)
 
         return make_response(
-            self.serializer.serialize_object_list(content), code, self.make_headers(),
+            self.serializer.serialize_object_list(content),
+            code,
+            self.make_headers(),
         )
