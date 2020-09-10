@@ -15,7 +15,7 @@ readme = open("README.rst").read()
 history = open("CHANGES.rst").read()
 
 tests_require = [
-    "black>=19.10b0",
+    "black>=20.8b1,<20.9b0",
     "check-manifest>=0.25",
     # coverage pinned because of https://github.com/nedbat/coveragepy/issues/716
     "coverage>=4.0,<5.0.0",
