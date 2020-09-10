@@ -77,14 +77,7 @@ class ArgsParser(object):
         # NOTE: This has to be done bc webargs 5.X < 6.X doesn't obey schemas that
         #       allow unknown fields. webargs 6.X does, so this can be changed when
         #       upgrading dependencies
-        if self.allow_unknown:
-            raw_args = {
-                k: v[0] if len(v) == 1 else v
-                for k, v in request.args.to_dict(flat=False).items()
-            }
-        else:
-            raw_args = {}
-
+        raw_args = request.args.to_dict(flat=False) if self.allow_unknown else {}
         flaskparser = ResourceFlaskParser()
         # WARNING: This interface changes from webargs 5.5.3 (version we use) to
         #          webargs 6.X (most recent webargs version). In 6.x it is

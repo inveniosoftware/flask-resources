@@ -183,7 +183,7 @@ def test_parser_raises_400(client):
 def test_parser_includes_or_excludes_unknown_args(client):
     response = client.get("/method?num=10&foo=20&bar=1&foo=10", headers=HEADERS)
     assert response.status_code == 200
-    assert response.json == {"num": 10, "lang": "", "foo": ["20", "10"], "bar": "1"}
+    assert response.json == {"num": 10, "lang": "", "foo": ["20", "10"], "bar": ["1"]}
 
     response = client.get("/universal?num=10&foo=20&bar=1&foo=10", headers=HEADERS)
     assert response.status_code == 200
