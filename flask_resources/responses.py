@@ -68,7 +68,7 @@ class Response(ResponseMixin):
         # (body, status, header)
 
         return make_response(
-            self.serializer.serialize_object(content),
+            "" if content is None else self.serializer.serialize_object(content),
             code,
             self.make_headers(),
         )
@@ -79,7 +79,7 @@ class Response(ResponseMixin):
         # (body, status, header)
 
         return make_response(
-            self.serializer.serialize_object_list(content),
+            "" if content is None else self.serializer.serialize_object_list(content),
             code,
             self.make_headers(),
         )
