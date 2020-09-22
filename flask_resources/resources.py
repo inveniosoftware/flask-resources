@@ -14,7 +14,7 @@ from marshmallow import ValidationError
 from .deserializers import JSONDeserializer
 from .errors import create_errormap_handler
 from .loaders import RequestLoader
-from .parsers import ArgsParser
+from .parsers import HeadersParser, URLArgsParser
 from .responses import Response
 from .serializers import JSONSerializer
 from .views import ItemView, ListView, SingletonView
@@ -32,7 +32,8 @@ class ResourceConfig:
     response_handlers = {"application/json": Response(JSONSerializer())}
     item_route = "/resources/<id>"
     list_route = "/resources/"
-    request_url_args_parser = ArgsParser()
+    request_url_args_parser = URLArgsParser()
+    request_headers_parser = HeadersParser()
     default_content_type = "application/json"
     default_accept_mimetype = "application/json"
 
