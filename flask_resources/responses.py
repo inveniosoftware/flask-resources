@@ -70,7 +70,7 @@ class Response(ResponseMixin):
         return make_response(
             "" if content is None else self.serializer.serialize_object(content),
             code,
-            self.make_headers(),
+            self.make_headers(content=content),
         )
 
     def make_list_response(self, content, code=200):

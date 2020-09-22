@@ -37,7 +37,7 @@ class CustomResource(CollectionResource):
 
     def search(self):
         """Search."""
-        query = resource_requestctx.request_args.get("q", "")
+        query = resource_requestctx.url_args.get("q", "")
         resp = []
         for key, value in self.db.items():
             if query in key or query in value:
