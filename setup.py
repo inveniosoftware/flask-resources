@@ -16,20 +16,19 @@ history = open("CHANGES.rst").read()
 
 tests_require = [
     "black>=20.8b1,<20.9b0",
-    "check-manifest>=0.25",
-    # coverage pinned because of https://github.com/nedbat/coveragepy/issues/716
-    "coverage>=4.0,<5.0.0",
-    "isort>=5.0,<6.0",
-    "pydocstyle~=5.0.0",
-    "pytest>=4.6.1",
-    "pytest-cov>=2.5.1",
-    "pytest-flask>=0.15.1,<1.0.0",
+    "check-manifest>=0.42",
+    "coverage>=5.3,<6",
+    "pytest>=6,<7",
+    "pytest-cov>=2.10.1",
+    "pytest-flask>=1.0.0",
+    "pytest-isort>=1.2.0",
     "pytest-mock>=1.6.0",
-    "pytest-pep8>=1.0.6",
+    "pytest-pycodestyle>=2.2.0",
+    "pytest-pydocstyle>=2.2.0",
 ]
 
 extras_require = {
-    "docs": ["Sphinx>=1.5.1,<3",],
+    "docs": ["Sphinx>=3",],
     "tests": tests_require,
 }
 
