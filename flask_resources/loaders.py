@@ -19,11 +19,11 @@ from .errors import InvalidContentType
 def select_deserializer(resource_method, loader_or_loaders):
     """Returns deserializer corresponding to situation."""
     if isinstance(loader_or_loaders, RequestLoader):
-        return loader_or_loaders.deserializer
+        return loader_or_loaders, loader_or_loaders.deserializer
 
     loader = loader_or_loaders.get(resource_method)
     if loader:
-        return loader.deserializer
+        return loader, loader.deserializer
     else:
         raise InvalidContentType(allowed_mimetypes=loader_or_loaders.keys())
 
@@ -48,12 +48,12 @@ def request_loader(f):
         if request_content_type not in loaders:
             raise InvalidContentType(allowed_mimetypes=loaders.keys())
 
-        deserializer = select_deserializer(
+        loader, deserializer = select_deserializer(
             self.resource_method, loaders[request_content_type]
         )
 
         resource_requestctx.request_content = deserializer.deserialize_data(
-            request.data
+            loader.load_data()
         )
 
         return f(self, *args, **kwargs)
@@ -63,6 +63,10 @@ def request_loader(f):
 
 class LoaderMixin:
     """Loader interface."""
+
+    def load_data(self):
+        """Return request data."""
+        raise NotImplementedError()
 
     def load_item_request(self, *args, **kwargs):
         """Load a request concerning an existing item."""
@@ -84,6 +88,10 @@ class RequestLoader(LoaderMixin):
         self.deserializer = deserializer
         self.args_parser = args_parser
 
+    def load_data(self):
+        """Return request data."""
+        return request.data
+
     def load_item_request(self, *args, **kwargs):
         """Build response headers."""
-        return {"request_content": self.deserializer.deserialize_data(request.data)}
+        return {"request_content": self.deserializer.deserialize_data(self.data)}
