@@ -36,6 +36,7 @@ class ResourceConfig:
     request_headers_parser = HeadersParser()
     default_content_type = "application/json"
     default_accept_mimetype = "application/json"
+    error_map = {}
 
 
 class Resource:
@@ -102,8 +103,7 @@ class Resource:
 
     def create_errormap_handlers(self):
         """Create error handlers."""
-        error_map = getattr(self.config, "error_map", {})
-        return error_map.items()
+        return self.config.error_map.items()
 
 
 class CollectionResource(Resource):
