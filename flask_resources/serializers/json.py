@@ -10,7 +10,22 @@
 
 import json
 
+from speaklater import is_lazy_string
+
 from .serializers import SerializerMixin
+
+
+class CustomJSONEncoder(json.JSONEncoder):
+    """JSONEncoder for our custom needs.
+
+    - Knows to force translate lazy translation strings
+    """
+
+    def default(self, obj):
+        """Override parent's default."""
+        if is_lazy_string(obj):
+            return str(obj)
+        return super().default(obj)
 
 
 class JSONSerializer(SerializerMixin):
@@ -18,8 +33,8 @@ class JSONSerializer(SerializerMixin):
 
     def serialize_object(self, obj, response_ctx=None, *args, **kwargs):
         """Dump the object into a json string."""
-        return json.dumps(obj)
+        return json.dumps(obj, cls=CustomJSONEncoder)
 
     def serialize_object_list(self, obj_list, response_ctx=None, *args, **kwargs):
         """Dump the object list into a json string."""
-        return json.dumps(obj_list)
+        return json.dumps(obj_list, cls=CustomJSONEncoder)
