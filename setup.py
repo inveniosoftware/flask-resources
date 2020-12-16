@@ -41,6 +41,7 @@ setup_requires = ["Babel>=1.3"]
 install_requires = [
     "Flask~=1.1.2",
     "webargs~=5.5.0",
+    "speaklater>=1.3,<2.0",
 ]
 
 packages = find_packages()
