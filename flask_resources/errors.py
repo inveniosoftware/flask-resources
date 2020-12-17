@@ -8,12 +8,11 @@
 """Exceptions used in Flask Resources module."""
 
 import json
-from functools import update_wrapper, wraps
 
 from flask import g
 from werkzeug.exceptions import HTTPException
 
-from .context import resource_requestctx
+from .json_encoder import CustomJSONEncoder
 
 
 def create_errormap_handler(map_func_or_exception):
@@ -89,7 +88,7 @@ class HTTPJSONException(HTTPException):
         if self.code and (self.code >= 500) and hasattr(g, "sentry_event_id"):
             body["error_id"] = str(g.sentry_event_id)
 
-        return json.dumps(body)
+        return json.dumps(body, cls=CustomJSONEncoder)
 
 
 class MIMETypeException(HTTPJSONException):
