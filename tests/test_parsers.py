@@ -10,7 +10,7 @@
 
 import pytest
 from flask import Flask
-from webargs import fields
+from marshmallow import ValidationError, fields
 from werkzeug.exceptions import HTTPException
 
 from flask_resources.context import resource_requestctx
@@ -36,11 +36,9 @@ class UniversalParserConfig(ResourceConfig):
     list_route = "/universal"
     # Because an URLArgsParser is passed directly, it is applied to all endpoints
     request_url_args_parser = URLArgsParser(
-        {"num": fields.Int(), "lang": fields.String(missing="")}, allow_unknown=False
+        {"num": fields.Int(), "lang": fields.String(missing="")}
     )
-    request_headers_parser = HeadersParser(
-        {"content_type": fields.String()}, allow_unknown=False
-    )
+    request_headers_parser = HeadersParser({"content_type": fields.String()})
 
 
 class MethodParserConfig(ResourceConfig):
@@ -52,12 +50,21 @@ class MethodParserConfig(ResourceConfig):
     # to that endpoint
     request_url_args_parser = {
         "search": URLArgsParser(
-            {"num": fields.Int(), "lang": fields.String(missing="")}
+            {"num": fields.Int(), "lang": fields.String(missing="")}, allow_unknown=True
         )
     }
 
     request_headers_parser = {
-        "update": HeadersParser({"content_type": fields.String()}, allow_unknown=False)
+        "update": HeadersParser({"content_type": fields.String()})
+    }
+
+    error_map = {
+        ValidationError: create_errormap_handler(
+            HTTPJSONException(
+                code=400,
+                description="Validation error.",
+            )
+        )
     }
 
 

@@ -9,11 +9,13 @@
 """Library for easily implementing REST APIs."""
 
 from .headers import HeadersParser, headers_parser
+from .schema import MultiDictSchema
 from .url_args import URLArgsParser, url_args_parser
 
 __all__ = (
-    "HeadersParser",
     "headers_parser",
-    "URLArgsParser",
+    "HeadersParser",
+    "MultiDictSchema",
     "url_args_parser",
+    "URLArgsParser",
 )

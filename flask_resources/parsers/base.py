@@ -8,16 +8,12 @@
 
 """Library for easily implementing REST APIs."""
 
+import warnings
 from functools import wraps
 
-from flask import request
-from webargs.flaskparser import FlaskParser
+import marshmallow as ma
 
 from ..context import resource_requestctx
-
-
-def _raw_args(*args, **kwargs):
-    return {}
 
 
 def select_request_parser(
@@ -52,49 +48,68 @@ def request_parser_decorator(parser_cls, config_attr, context_attr):
     return decorator
 
 
-class ResourceFlaskParser(FlaskParser):
-    """Customized FlaskParser for our needs."""
+class _ExcludeSchema(ma.Schema):
+    class Meta:
+        unknown = ma.EXCLUDE
 
-    DEFAULT_VALIDATION_STATUS = 400
 
-
-class RequestParser(object):
+class RequestParser:
     """Request parser.
 
-    The class is defining the following attributes:
-    str location: Where on the request to search for values.
-        Can include one of ``('json', 'querystring', 'form',
-        'headers', 'cookies', 'files')``.
-    raw_args_fn: Function to return raw arguments from the current request
-        object being parsed.
+    Base class for parsing request.
     """
 
-    location = None
-    raw_args_fn = _raw_args
+    DEFAULT_SCHEMA_CLASS = _ExcludeSchema
+    """The schema class to use if a dictionary is passed."""
 
-    def __init__(self, argmap=None, allow_unknown=True):
+    def __init__(self, schema=None, allow_unknown=None):
         """Constructor.
 
-        :param argmap: Either a `marshmallow.Schema`, a `dict`
-            of argname -> `marshmallow.fields.Field` pairs, or a callable
-            which accepts a request and returns a `marshmallow.Schema`.
-        :params bool allow_unknown: Allow unknown fields i.e not declared to
-            the `argsmap`, to be parsed.
+        :param schema: A marshmallow schema class or a mapping from keys to
+        fields.
         """
-        self.argmap = argmap or {}
+        self._schema = schema
         self.allow_unknown = allow_unknown
+        if allow_unknown is not None:
+            warnings.warn(
+                "The allow_unknown keyword argument is deprecated and has no "
+                "effect. Use unknown values control on marshmallow instead.",
+                DeprecationWarning,
+            )
+
+    @property
+    def schema(self):
+        """Build the schema class."""
+        if self._schema is None:
+            return None
+        if isinstance(self._schema, dict):
+            cls_ = self.DEFAULT_SCHEMA_CLASS
+            if self.allow_unknown is True:
+                # allow_unknown is deprecated (see __init__ above). Here we
+                # add backward compatibility, so that when you pass a dict
+                # you can use the allow_unknown keyword. Instead of using
+                # allow_unknown you should now simply create a schema instead
+                # and add the Meta class as show below:
+                class _IncludeSchema(cls_):
+                    class Meta:
+                        unknown = ma.INCLUDE
+
+                cls_ = _IncludeSchema
+
+            return cls_.from_dict(self._schema)()
+        else:
+            return self._schema()
+
+    def load_data(self):
+        """Load data from request.
+
+        This should be overwritten in subclasses to implement loading of data
+        from the querystring, form values, headers etc.
+        """
+        raise NotImplementedError
 
     def parse(self):
-        """Parse."""
-        # NOTE: This has to be done bc webargs 5.X < 6.X doesn't obey schemas that
-        #       allow unknown fields. webargs 6.X does, so this can be changed when
-        #       upgrading dependencies
-        raw_args = self.raw_args_fn() if self.allow_unknown else {}
-        flaskparser = ResourceFlaskParser()
-        # WARNING: This interface changes from webargs 5.5.3 (version we use) to
-        #          webargs 6.X (most recent webargs version). In 6.x it is
-        #          flaskparser.parse(self.argmap, request, location="querystring")
-        parsed_args = flaskparser.parse(
-            self.argmap, request, locations=(self.location,)
-        )
-        return {**raw_args, **parsed_args}
+        """Parse the request data."""
+        if self.schema is None:
+            return {}
+        return self.schema.load(self.load_data())

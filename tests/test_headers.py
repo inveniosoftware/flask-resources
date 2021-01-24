@@ -10,8 +10,10 @@
 
 import pytest
 from flask import Flask
+from marshmallow import fields
 
 from flask_resources.context import resource_requestctx
+from flask_resources.parsers import HeadersParser
 from flask_resources.resources import CollectionResource, ResourceConfig
 
 # NOTE: mimetype headers have to be provided in general, but the args parsing is not
@@ -26,6 +28,12 @@ class HeaderParserConfig(ResourceConfig):
 
     item_route = "/headers/<id>"
     list_route = "/headers"
+    request_headers_parser = HeadersParser(
+        {
+            "content_type": fields.String(),
+            "accept": fields.String(),
+        }
+    )
 
 
 class HeadersResource(CollectionResource):
@@ -74,10 +82,8 @@ def app():
 @pytest.fixture(scope="module")
 def expected_headers():
     return {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-        "Host": "localhost",
-        "User-Agent": "werkzeug/1.0.1",
+        "accept": "application/json",
+        "content_type": "application/json",
     }
 
 

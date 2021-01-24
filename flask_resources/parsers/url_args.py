@@ -11,21 +11,38 @@
 from flask import request
 
 from .base import RequestParser, request_parser_decorator
-
-
-def _raw_args(*args, **kwargs):
-    return request.args.to_dict(flat=False)
+from .schema import MultiDictSchema
 
 
 class URLArgsParser(RequestParser):
     """URL query string parser."""
 
-    location = "querystring"
-    raw_args_fn = _raw_args
+    DEFAULT_SCHEMA_CLASS = MultiDictSchema
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the arguments parser.
+
+        :param schema: The marshmallow schema class or a dictionary of fields.
+        :param as_dict: If ``False``, the schema is passed a MultiDict object and
+            must be able to handle it (see
+            ``flask_resources.parsers.MultiDictSchema``). If True, the schema
+            is passed a dictionary where the values are lists.
+        """
+        self.as_dict = kwargs.pop("as_dict", False)
+        super().__init__(*args, **kwargs)
+
+    def load_data(self):
+        """Load data from the request args."""
+        if self.as_dict:
+            return request.args.to_dict(flat=False)
+        else:
+            return request.args
 
 
 url_args_parser = request_parser_decorator(
     URLArgsParser,
+    # Attribute name on the resource config
     "request_url_args_parser",
+    # Attribute name on the resource_requestctx
     "url_args",
 )
