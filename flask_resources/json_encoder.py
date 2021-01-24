@@ -8,12 +8,12 @@
 
 """Custom JSON encoder."""
 
-import json
 
+from flask.json import JSONEncoder
 from speaklater import is_lazy_string
 
 
-class CustomJSONEncoder(json.JSONEncoder):
+class CustomJSONEncoder(JSONEncoder):
     """JSONEncoder for our custom needs.
 
     - Knows to force translate lazy translation strings
