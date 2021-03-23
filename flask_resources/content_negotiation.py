@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020 CERN.
+# Copyright (C) 2020-2021 CERN.
+# Copyright (C) 2020-2021 Northwestern University.
 #
 # Flask-Resources is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -12,6 +13,7 @@ from functools import wraps
 from flask import request
 from werkzeug.datastructures import MIMEAccept
 
+from .config import resolve_from_conf
 from .context import resource_requestctx
 from .errors import MIMETypeNotAccepted
 
@@ -77,32 +79,42 @@ class ContentNegotiator(object):
         return formats_map.get(fmt)
 
 
-def content_negotiation(f):
-    """Decorator to perform content negotiation."""
+def with_content_negotiation(
+    response_handlers=None,
+    default_accept_mimetype=None,
+):
+    """Decorator to perform content negotiation.
 
-    @wraps(f)
-    def inner(self, *args, **kwargs):
-        """Wrapping method.
+    The result of the content negotiation is stored in the resources request
+    context.
+    """
 
-        :params self: Item/List/SingletonView instance
-        """
-        # Check Accept header i.e. can we even respond to the request in a common
-        # mimetype?
-        accept_mimetype = ContentNegotiator.match(
-            self.resource.config.response_handlers.keys(),
-            request.accept_mimetypes,
-            {},  # TODO: Rely on config to populate this formats_map
-            request.args.get("format", None),
-            self.resource.config.default_accept_mimetype,
-        )
-
-        if not accept_mimetype:
-            raise MIMETypeNotAccepted(
-                allowed_mimetypes=self.resource.config.response_handlers.keys()
+    def decorator(f):
+        @wraps(f)
+        def inner_content_negotiation(*args, **kwargs):
+            # Check Accept header i.e. can we even respond to the request in a common
+            # mimetype?
+            handlers = resolve_from_conf(response_handlers, resource_requestctx.config)
+            default_mimetype = resolve_from_conf(
+                default_accept_mimetype, resource_requestctx.config
             )
 
-        resource_requestctx.accept_mimetype = accept_mimetype
+            accept_mimetype = ContentNegotiator.match(
+                handlers.keys(),
+                request.accept_mimetypes,
+                {},  # TODO: Rely on config to populate this formats_map
+                request.args.get("format", None),
+                default_mimetype,
+            )
 
-        return f(self, *args, **kwargs)
+            if not accept_mimetype:
+                raise MIMETypeNotAccepted(allowed_mimetypes=handlers.keys())
 
-    return inner
+            resource_requestctx.accept_mimetype = accept_mimetype
+            resource_requestctx.response_handler = handlers[accept_mimetype]
+
+            return f(*args, **kwargs)
+
+        return inner_content_negotiation
+
+    return decorator

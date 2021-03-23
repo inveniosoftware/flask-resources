@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020 CERN.
+# Copyright (C) 2020-2021 CERN.
+# Copyright (C) 2020-2021 Northwestern University.
 #
 # Flask-Resources is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -12,22 +13,24 @@ import json
 from flask import g
 from werkzeug.exceptions import HTTPException
 
-from .json_encoder import CustomJSONEncoder
+from .serializers.json import JSONEncoder
 
 
-def create_errormap_handler(map_func_or_exception):
-    """Creates a resource errormap handler.
+def create_error_handler(map_func_or_exception):
+    """Creates a resource error handler.
 
     The handler is used to map business logic exceptions to
     REST exceptions. The original exceptions is being stored
     in the `__original_exc__` attribute of the mapped exception.
 
-    :param map_func_or_exception: Function or exception to map orginally
-    raised exception to a `flask_resources.errors.HTTPJSONException`.
+    :param map_func_or_exception: Function or exception to map originally
+        raised exception to a `flask_resources.errors.HTTPJSONException`.
     """
 
     def error_handler(e):
-        if isinstance(map_func_or_exception, HTTPJSONException):
+        if isinstance(e, HTTPJSONException):
+            mapped_exc = e
+        elif isinstance(map_func_or_exception, HTTPJSONException):
             mapped_exc = map_func_or_exception
         else:
             mapped_exc = map_func_or_exception(e)
@@ -37,7 +40,7 @@ def create_errormap_handler(map_func_or_exception):
     return error_handler
 
 
-handle_http_exception = create_errormap_handler(
+handle_http_exception = create_error_handler(
     lambda exc: HTTPJSONException(code=exc.code, description=exc.description)
 )
 
@@ -88,7 +91,7 @@ class HTTPJSONException(HTTPException):
         if self.code and (self.code >= 500) and hasattr(g, "sentry_event_id"):
             body["error_id"] = str(g.sentry_event_id)
 
-        return json.dumps(body, cls=CustomJSONEncoder)
+        return json.dumps(body, cls=JSONEncoder)
 
 
 class MIMETypeException(HTTPJSONException):
