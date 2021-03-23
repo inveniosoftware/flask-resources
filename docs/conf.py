@@ -58,9 +58,7 @@ author = u"CERN"
 # Get the version string. Cannot be done with import!
 g = {}
 with open(
-    os.path.join(
-        os.path.dirname(__file__), "..", "flask_resources", "version.py"
-    ),
+    os.path.join(os.path.dirname(__file__), "..", "flask_resources", "version.py"),
     "rt",
 ) as fp:
     exec(fp.read(), g)

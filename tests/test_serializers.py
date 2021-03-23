@@ -41,6 +41,6 @@ def test_marhsmallow_serializer():
     class TestSchema(ma.Schema):
         title = ma.fields.Str(data_key="test")
 
-    s = MarshmallowJSONSerializer(item_schema=TestSchema, list_schema=TestSchema)
+    s = MarshmallowJSONSerializer(schema_cls=TestSchema)
     assert s.serialize_object({"title": "a"}) == '{"test": "a"}'
-    assert s.serialize_object_list({"title": "a"}) == '{"test": "a"}'
+    assert s.serialize_object_list([{"title": "a"}]) == '[{"test": "a"}]'

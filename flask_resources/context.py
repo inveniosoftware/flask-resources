@@ -1,14 +1,25 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020 CERN.
-# Copyright (C) 2020 Northwestern University.
+# Copyright (C) 2020-2021 CERN.
+# Copyright (C) 2020-2021 Northwestern University.
 #
 # Flask-Resources is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
-"""Resource Request context."""
+"""Resource request context.
+
+The purpose of the resource request context is similar to the Flask request
+context. The main difference is it serves as a state object that can hold
+validated request data as well as the result of e.g. content negotiation.
+
+The resource request context is used by default, and when it is used it
+consumes all the view arguments. These can either be retrieved via a request
+parser (preferably), or accessing ``request.view_args``. The goal of this
+is to ensure that the view function access only validated data.
+"""
 
 from functools import wraps
+from inspect import ismethod
 
 from flask import g
 from werkzeug.local import LocalProxy
@@ -41,12 +52,15 @@ class ResourceRequestCtx(object):
     - The content type of the request payload
     """
 
-    def __init__(self, accept_mimetype=None, request_args=None, data=None):
+    def __init__(self, config):
         """Initialize the resource context."""
-        self.accept_mimetype = accept_mimetype
-        self.request_args = request_args
-        self.request_content = data
-        self.route = {}
+        self.config = config
+        self.args = None
+        self.headers = None
+        self.data = None
+        self.view_args = None
+        self.accept_mimetype = None
+        self.response_handler = None
 
     def __enter__(self):
         """Push the resource context manager on the current request."""
@@ -60,30 +74,3 @@ class ResourceRequestCtx(object):
         """Update the context fields present in the received dictionary `values`."""
         for field, value in values.items():
             self.__setattr__(field, value)
-
-
-def with_resource_requestctx(f):
-    """Wrap in resource request context."""
-
-    @wraps(f)
-    def inner(self, *args, **kwargs):
-        with ResourceRequestCtx():
-            return f(self, *args, **kwargs)
-
-    return inner
-
-
-def with_route(f):
-    """Wrapper to extract route arguments into resource context.
-
-    NOTE: This removes the need for *args, **kwargs passing in Resource methods
-    TODO: This should be temporary because the whole decorator approach should be
-          revisited.
-    """
-
-    @wraps(f)
-    def inner(*args, **kwargs):
-        resource_requestctx.route = kwargs
-        return f(*args)
-
-    return inner

@@ -28,7 +28,9 @@ tests_require = [
 ]
 
 extras_require = {
-    "docs": ["Sphinx>=3",],
+    "docs": [
+        "Sphinx>=3",
+    ],
     "tests": tests_require,
 }
 
@@ -36,7 +38,6 @@ extras_require["all"] = []
 for reqs in extras_require.values():
     extras_require["all"].extend(reqs)
 
-setup_requires = ["Babel>=1.3"]
 
 install_requires = [
     "Flask~=1.1.2",
@@ -70,7 +71,6 @@ setup(
     entry_points={},
     extras_require=extras_require,
     install_requires=install_requires,
-    setup_requires=setup_requires,
     tests_require=tests_require,
     classifiers=[
         "Environment :: Web Environment",

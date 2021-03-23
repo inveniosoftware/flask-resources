@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020 CERN.
-# Copyright (C) 2020 Northwestern University.
+# Copyright (C) 2020-2021 CERN.
+# Copyright (C) 2020-2021 Northwestern University.
 #
 # Flask-Resources is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -11,9 +11,10 @@
 import json
 
 from flask import request
+from flask.json import JSONEncoder as JSONEncoderBase
+from speaklater import is_lazy_string
 
-from ..json_encoder import CustomJSONEncoder
-from .serializers import SerializerMixin
+from .base import SerializerMixin
 
 
 def flask_request_options():
@@ -26,13 +27,26 @@ def flask_request_options():
     return {}
 
 
+class JSONEncoder(JSONEncoderBase):
+    """JSONEncoder for our custom needs.
+
+    - Knows to force translate lazy translation strings.
+    """
+
+    def default(self, obj):
+        """Override parent's default."""
+        if is_lazy_string(obj):
+            return str(obj)
+        return super().default(obj)
+
+
 class JSONSerializer(SerializerMixin):
     """JSON serializer implementation."""
 
     def __init__(self, encoder=None, options=None):
         """Initialize the JSONSerializer."""
         self._options = options or flask_request_options
-        self._encoder = encoder or CustomJSONEncoder
+        self._encoder = encoder or JSONEncoder
 
     @property
     def dumps_options(self):
@@ -51,8 +65,7 @@ class JSONSerializer(SerializerMixin):
 
     def serialize_object(self, obj):
         """Dump the object into a json string."""
-        encoder = self.encoder
-        return json.dumps(obj, cls=encoder, **self.dumps_options)
+        return json.dumps(obj, cls=self.encoder, **self.dumps_options)
 
     def serialize_object_list(self, obj_list):
         """Dump the object list into a json string."""
@@ -62,27 +75,30 @@ class JSONSerializer(SerializerMixin):
 class MarshmallowJSONSerializer(JSONSerializer):
     """JSON serializing using Marshmallow to transform output."""
 
-    def __init__(self, item_schema=None, list_schema=None, **kwargs):
+    def __init__(self, schema_cls, many_schema_cls=None, **options):
         """Initialize the serializer."""
-        self._item_schema_cls = item_schema
-        self._list_schema_cls = list_schema
-        super().__init__(**kwargs)
+        self._schema_cls = schema_cls
+        self._many_schema_cls = many_schema_cls
+        super().__init__(**options)
 
     def serialize_object(self, obj):
         """Dump the object into a JSON string."""
-        return super().serialize_object(self.dump_item(obj))
+        return super().serialize_object(self.dump_one(obj))
 
     def serialize_object_list(self, obj_list):
         """Dump the object list into a JSON string."""
-        return super().serialize_object_list(self.dump_list(obj_list))
+        return super().serialize_object_list(self.dump_many(obj_list))
 
-    def dump_item(self, obj):
+    def dump_one(self, obj):
         """Dump the object with extra information."""
-        return self._item_schema_cls().dump(obj)
+        return self._schema_cls().dump(obj)
 
-    def dump_list(self, obj_list):
+    def dump_many(self, obj_list):
         """Dump the list of objects with extra information."""
-        ctx = {
-            "item_schema_cls": self._item_schema_cls,
-        }
-        return self._list_schema_cls(context=ctx).dump(obj_list)
+        if self._many_schema_cls is None:
+            return self._schema_cls().dump(obj_list, many=True)
+        else:
+            ctx = {
+                "schema_cls": self._schema_cls,
+            }
+            return self._many_schema_cls(context=ctx).dump(obj_list)

@@ -1,21 +1,22 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020 CERN.
-# Copyright (C) 2020 Northwestern University.
+# Copyright (C) 2020-2021 CERN.
+# Copyright (C) 2020-2021 Northwestern University.
 #
 # Flask-Resources is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
-"""Library for easily implementing REST APIs."""
+"""Request parser for the body, headers, query string and view args."""
 
-from .headers import HeadersParser, headers_parser
+from .base import RequestParser
+from .body import RequestBodyParser
+from .decorators import request_body_parser, request_parser
 from .schema import MultiDictSchema
-from .url_args import URLArgsParser, url_args_parser
 
 __all__ = (
-    "headers_parser",
-    "HeadersParser",
     "MultiDictSchema",
-    "url_args_parser",
-    "URLArgsParser",
+    "request_body_parser",
+    "request_parser",
+    "RequestBodyParser",
+    "RequestParser",
 )
