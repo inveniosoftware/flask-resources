@@ -24,7 +24,7 @@
 .. image:: https://img.shields.io/github/license/inveniosoftware/flask-resources.svg
         :target: https://github.com/inveniosoftware/flask-resources/blob/master/LICENSE
 
-Flask Resources module to create REST APIs.
+A small library for implementing configurable REST APIs.
 
 Further documentation is available on
 https://flask-resources.readthedocs.io/
