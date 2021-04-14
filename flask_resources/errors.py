@@ -10,7 +10,7 @@
 
 import json
 
-from flask import g
+from flask import current_app, g
 from werkzeug.exceptions import HTTPException
 
 from .serializers.json import JSONEncoder
@@ -35,6 +35,9 @@ def create_error_handler(map_func_or_exception):
         else:
             mapped_exc = map_func_or_exception(e)
         mapped_exc.__original_exc__ = e
+        current_app.logger.debug(
+            "A resource error handler caught the following exception:", exc_info=True
+        )
         return mapped_exc.get_response()
 
     return error_handler
