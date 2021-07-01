@@ -40,7 +40,7 @@ for reqs in extras_require.values():
 
 
 install_requires = [
-    "Flask~=1.1.2",
+    "Flask>=1.1.4,<2.0.0",
     "marshmallow~=3.0",
     "speaklater>=1.3,<2.0",
 ]
