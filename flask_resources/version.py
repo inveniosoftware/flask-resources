@@ -12,4 +12,4 @@ This file is imported by ``flask_resources.__init__``,
 and parsed by ``setup.py``.
 """
 
-__version__ = "0.7.3"
+__version__ = "0.8.0"
