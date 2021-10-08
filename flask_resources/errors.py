@@ -73,15 +73,15 @@ class HTTPJSONException(HTTPException):
         """
         return [e for e in self.errors] if self.errors else None
 
-    def get_description(self, environ=None):
+    def get_description(self, environ=None, scope=None):
         """Returns an unescaped description."""
         return self.description
 
-    def get_headers(self, environ=None):
+    def get_headers(self, environ=None, scope=None):
         """Get a list of headers."""
         return [("Content-Type", "application/json")]
 
-    def get_body(self, environ=None):
+    def get_body(self, environ=None, scope=None):
         """Get the request body."""
         body = {"status": self.code, "message": self.get_description(environ)}
 

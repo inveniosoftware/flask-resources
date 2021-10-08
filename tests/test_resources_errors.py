@@ -21,6 +21,7 @@ from flask_resources.errors import HTTPJSONException
 @pytest.fixture(scope="module")
 def resource():
     class Config(ResourceConfig):
+        blueprint_name = "hello_world"
         error_handlers = {
             403: create_error_handler(
                 HTTPJSONException(code=403, description="Overwrite existing")
