@@ -7,9 +7,9 @@
 
 """Sphinx configuration."""
 
-from flask_resources import __version__
-
 import sphinx.environment
+
+from flask_resources import __version__
 
 # -- General configuration ------------------------------------------------
 
@@ -45,9 +45,9 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = u"Flask-Resources"
-copyright = u"2020, CERN"
-author = u"CERN"
+project = "Flask-Resources"
+copyright = "2020, CERN"
+author = "CERN"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -242,8 +242,8 @@ latex_documents = [
     (
         master_doc,
         "flask-resources.tex",
-        u"flask-resources Documentation",
-        u"CERN",
+        "flask-resources Documentation",
+        "CERN",
         "manual",
     ),
 ]
@@ -277,7 +277,7 @@ man_pages = [
     (
         master_doc,
         "flask-resources",
-        u"flask-resources Documentation",
+        "flask-resources Documentation",
         [author],
         1,
     )
@@ -296,7 +296,7 @@ texinfo_documents = [
     (
         master_doc,
         "flask-resources",
-        u"Flask-Resources Documentation",
+        "Flask-Resources Documentation",
         author,
         "flask-resources",
         "Flask Resources module to create REST APIs",
