@@ -10,7 +10,6 @@
 
 import marshmallow as ma
 import pytest
-from flask import Flask
 
 from flask_resources import (
     Resource,

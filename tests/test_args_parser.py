@@ -8,8 +8,6 @@
 
 """Resources test module."""
 
-import json
-
 import marshmallow as ma
 import pytest
 

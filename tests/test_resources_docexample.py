@@ -8,8 +8,6 @@
 
 """Resources test module."""
 
-import json
-
 import pytest
 from flask import Flask
 
