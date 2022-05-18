@@ -8,11 +8,8 @@
 
 """Resources test module."""
 
-import json
-
 import pytest
-from flask import Flask, abort
-from werkzeug.exceptions import HTTPException
+from flask import abort
 
 from flask_resources import Resource, ResourceConfig, create_error_handler, route
 from flask_resources.errors import HTTPJSONException

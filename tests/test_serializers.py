@@ -9,7 +9,7 @@
 """Test deserialization."""
 
 import marshmallow as ma
-from flask import Flask, request
+from flask import Flask
 from speaklater import make_lazy_string
 
 from flask_resources.serializers import JSONSerializer, MarshmallowJSONSerializer

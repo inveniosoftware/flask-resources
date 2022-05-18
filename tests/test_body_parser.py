@@ -10,7 +10,6 @@
 
 import json
 
-import marshmallow as ma
 import pytest
 
 from flask_resources import (
