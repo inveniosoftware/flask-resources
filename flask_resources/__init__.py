@@ -158,7 +158,8 @@ from .parsers import (
 from .resources import Resource, ResourceConfig, route
 from .responses import ResponseHandler, response_handler
 from .serializers import JSONSerializer, MarshmallowJSONSerializer
-from .version import __version__
+
+__version__ = "0.8.1"
 
 __all__ = (
     "__version__",
