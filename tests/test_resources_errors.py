@@ -27,6 +27,9 @@ def resource():
 
     class HelloWorldResource(Resource):
         error_handlers = {
+            Exception: create_error_handler(
+                HTTPJSONException(code=500, description="Internal Server Error")
+            ),
             RuntimeError: create_error_handler(
                 HTTPJSONException(code=400, description="Bad request")
             ),
