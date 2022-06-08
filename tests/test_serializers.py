@@ -8,15 +8,25 @@
 
 """Test deserialization."""
 
-import marshmallow as ma
 from flask import Flask
+from marshmallow import Schema, fields
 from speaklater import make_lazy_string
 
-from flask_resources.serializers import JSONSerializer, MarshmallowJSONSerializer
+from flask_resources import (
+    BaseListSchema,
+    BaseObjectSchema,
+    MarshmallowJSONSerializer,
+    MarshmallowSerializer,
+)
+from flask_resources.serializers import JSONSerializer
 
 
 def _(s):
     return make_lazy_string(lambda: s)
+
+
+class UITestSchema(BaseObjectSchema):
+    test = fields.String(dump_only=True)
 
 
 def test_lazy_strings_are_serialized():
@@ -38,9 +48,33 @@ def test_prettyprint():
 
 
 def test_marhsmallow_serializer():
-    class TestSchema(ma.Schema):
-        title = ma.fields.Str(data_key="test")
+    class TestSchema(Schema):
+        title = fields.Str(data_key="test")
 
     s = MarshmallowJSONSerializer(schema_cls=TestSchema)
     assert s.serialize_object({"title": "a"}) == '{"test": "a"}'
     assert s.serialize_object_list([{"title": "a"}]) == '[{"test": "a"}]'
+
+
+def test_marshmallow_serializer_without_context():
+    serializer = MarshmallowSerializer(
+        format_serializer_cls=JSONSerializer,
+        object_schema_cls=UITestSchema,
+        list_schema_cls=BaseListSchema,
+    )
+    test = {"test": _("test")}
+
+    assert serializer.serialize_object(test) == '{"test": "test"}'
+
+
+def test_marshmallow_serializer_with_context():
+    serializer = MarshmallowSerializer(
+        format_serializer_cls=JSONSerializer,
+        object_schema_cls=UITestSchema,
+        list_schema_cls=BaseListSchema,
+        schema_context={"object_key": "ui"},
+    )
+    test = {"test": _("test")}
+    assert (
+        serializer.serialize_object(test) == '{"test": "test", "ui": {"test": "test"}}'
+    )

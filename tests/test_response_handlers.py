@@ -12,13 +12,14 @@ import marshmallow as ma
 import pytest
 
 from flask_resources import (
+    JSONSerializer,
+    MarshmallowSerializer,
     Resource,
     ResourceConfig,
     ResponseHandler,
     response_handler,
     route,
 )
-from flask_resources.serializers.json import MarshmallowJSONSerializer
 
 
 @pytest.fixture(scope="module")
@@ -34,10 +35,15 @@ def resource():
 
         response_handlers = {
             "application/json": ResponseHandler(
-                MarshmallowJSONSerializer(TestSchema), headers=my_headers
+                MarshmallowSerializer(
+                    format_serializer_cls=JSONSerializer, object_schema_cls=TestSchema
+                ),
+                headers=my_headers,
             ),
             "application/vnd.test+json": ResponseHandler(
-                MarshmallowJSONSerializer(TestSchema),
+                MarshmallowSerializer(
+                    format_serializer_cls=JSONSerializer, object_schema_cls=TestSchema
+                ),
             ),
         }
 

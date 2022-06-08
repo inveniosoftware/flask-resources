@@ -149,6 +149,8 @@ from .context import resource_requestctx
 from .deserializers import JSONDeserializer
 from .errors import HTTPJSONException, create_error_handler
 from .parsers import (
+    BaseListSchema,
+    BaseObjectSchema,
     MultiDictSchema,
     RequestBodyParser,
     RequestParser,
@@ -157,7 +159,11 @@ from .parsers import (
 )
 from .resources import Resource, ResourceConfig, route
 from .responses import ResponseHandler, response_handler
-from .serializers import JSONSerializer, MarshmallowJSONSerializer
+from .serializers import (
+    JSONSerializer,
+    MarshmallowJSONSerializer,
+    MarshmallowSerializer,
+)
 
 __version__ = "0.8.1"
 
@@ -168,7 +174,6 @@ __all__ = (
     "HTTPJSONException",
     "JSONDeserializer",
     "JSONSerializer",
-    "MarshmallowJSONSerializer",
     "MultiDictSchema",
     "request_body_parser",
     "request_parser",
@@ -181,4 +186,8 @@ __all__ = (
     "ResponseHandler",
     "route",
     "with_content_negotiation",
+    "BaseListSchema",
+    "MarshmallowSerializer",
+    "MarshmallowJSONSerializer",
+    "BaseObjectSchema",
 )
