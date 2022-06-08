@@ -8,20 +8,20 @@
 
 """Schema that's able to handle loading data from MultiDicts."""
 
-import marshmallow as ma
+from marshmallow import EXCLUDE, Schema, fields, missing, pre_load
 from werkzeug.datastructures import MultiDict
 
 
-class MultiDictSchema(ma.Schema):
+class MultiDictSchema(Schema):
     """MultiDict aware schema used for loading e.g. request.args."""
 
     class Meta:
         """Throw away unknown values."""
 
-        unknown = ma.EXCLUDE
+        unknown = EXCLUDE
 
     LIST_TYPES = [
-        ma.fields.List,
+        fields.List,
     ]
 
     @classmethod
@@ -32,7 +32,7 @@ class MultiDictSchema(ma.Schema):
         """
         return any((isinstance(field, t) for t in cls.LIST_TYPES))
 
-    @ma.pre_load
+    @pre_load
     def flatten_multidict(self, data, **kwargs):
         """Flatten a MultiDict into a normal dictionary."""
         if not isinstance(data, MultiDict):
@@ -43,3 +43,36 @@ class MultiDictSchema(ma.Schema):
             if name in data and not self.is_list_field(field):
                 data[name] = data[name][0]
         return data
+
+
+class BaseListSchema(Schema):
+    """List Schema for dumping extra information."""
+
+    hits = fields.Method("get_hits")
+    aggregations = fields.Method("get_aggs")
+
+    def get_hits(self, obj_list):
+        """Apply hits transformation."""
+        for obj in obj_list["hits"]["hits"]:
+            self.context["object_schema_cls"](context=self.context).dump(obj)
+        return obj_list["hits"]
+
+    def get_aggs(self, obj_list):
+        """Apply aggregations transformation."""
+        aggs = obj_list.get("aggregations")
+        if not aggs:
+            return missing
+        return aggs
+
+
+class BaseObjectSchema(Schema):
+    """Base Schema for dumping extra information."""
+
+    def dump(self, obj, **kwargs):
+        """Overriding marshmallow dump to dump extra key if any."""
+        object_key = self.context.get("object_key", None)
+        if object_key:
+            obj[object_key] = Schema.dump(self, obj, **kwargs)
+            return obj
+
+        return Schema.dump(self, obj, **kwargs)

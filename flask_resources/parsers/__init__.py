@@ -11,7 +11,7 @@
 from .base import RequestParser
 from .body import RequestBodyParser
 from .decorators import request_body_parser, request_parser
-from .schema import MultiDictSchema
+from .schema import BaseListSchema, BaseObjectSchema, MultiDictSchema
 
 __all__ = (
     "MultiDictSchema",
@@ -19,4 +19,6 @@ __all__ = (
     "request_parser",
     "RequestBodyParser",
     "RequestParser",
+    "BaseListSchema",
+    "BaseObjectSchema",
 )

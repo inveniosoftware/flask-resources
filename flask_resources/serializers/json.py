@@ -14,7 +14,7 @@ from flask import request
 from flask.json import JSONEncoder as JSONEncoderBase
 from speaklater import is_lazy_string
 
-from .base import SerializerMixin
+from .base import MarshmallowSerializer, SerializerMixin
 
 
 def flask_request_options():
@@ -72,33 +72,26 @@ class JSONSerializer(SerializerMixin):
         return json.dumps(obj_list, cls=self.encoder, **self.dumps_options)
 
 
-class MarshmallowJSONSerializer(JSONSerializer):
-    """JSON serializing using Marshmallow to transform output."""
+class MarshmallowJSONSerializer(MarshmallowSerializer):
+    """JSON serializing using Marshmallow to transform output.
+
+    **DEPRECATED**
+    Use MarshmallowSerializer instead
+    """
 
     def __init__(self, schema_cls, many_schema_cls=None, **options):
         """Initialize the serializer."""
-        self._schema_cls = schema_cls
-        self._many_schema_cls = many_schema_cls
-        super().__init__(**options)
-
-    def serialize_object(self, obj):
-        """Dump the object into a JSON string."""
-        return super().serialize_object(self.dump_one(obj))
-
-    def serialize_object_list(self, obj_list):
-        """Dump the object list into a JSON string."""
-        return super().serialize_object_list(self.dump_many(obj_list))
+        super().__init__(
+            format_serializer_cls=JSONSerializer,
+            object_schema_cls=schema_cls,
+            list_schema_cls=many_schema_cls,
+            **options
+        )
 
     def dump_one(self, obj):
         """Dump the object with extra information."""
-        return self._schema_cls().dump(obj)
+        return super().dump_obj(obj)
 
     def dump_many(self, obj_list):
         """Dump the list of objects with extra information."""
-        if self._many_schema_cls is None:
-            return self._schema_cls().dump(obj_list, many=True)
-        else:
-            ctx = {
-                "schema_cls": self._schema_cls,
-            }
-            return self._many_schema_cls(context=ctx).dump(obj_list)
+        return super().dump_list(obj_list)
