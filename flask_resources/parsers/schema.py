@@ -53,8 +53,12 @@ class BaseListSchema(Schema):
 
     def get_hits(self, obj_list):
         """Apply hits transformation."""
+        hits_list = []
         for obj in obj_list["hits"]["hits"]:
-            self.context["object_schema_cls"](context=self.context).dump(obj)
+            hits_list.append(
+                self.context["object_schema_cls"](context=self.context).dump(obj)
+            )
+        obj_list["hits"]["hits"] = hits_list
         return obj_list["hits"]
 
     def get_aggs(self, obj_list):
@@ -74,5 +78,4 @@ class BaseObjectSchema(Schema):
         if object_key:
             obj[object_key] = Schema.dump(self, obj, **kwargs)
             return obj
-
         return Schema.dump(self, obj, **kwargs)
