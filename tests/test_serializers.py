@@ -26,7 +26,7 @@ def _(s):
 
 
 class UITestSchema(BaseObjectSchema):
-    test = fields.String(dump_only=True)
+    test = fields.String(dump_only=True, data_key="title_l10n")
 
 
 def test_lazy_strings_are_serialized():
@@ -64,7 +64,12 @@ def test_marshmallow_serializer_without_context():
     )
     test = {"test": _("test")}
 
-    assert serializer.serialize_object(test) == '{"test": "test"}'
+    list_test = {"hits": {"hits": [{"test": _("test")}]}}
+    assert serializer.serialize_object(test) == '{"title_l10n": "test"}'
+    assert (
+        serializer.serialize_object_list(list_test)
+        == '{"hits": {"hits": [{"title_l10n": "test"}]}}'
+    )
 
 
 def test_marshmallow_serializer_with_context():
@@ -75,6 +80,12 @@ def test_marshmallow_serializer_with_context():
         schema_context={"object_key": "ui"},
     )
     test = {"test": _("test")}
+    list_test = {"hits": {"hits": [{"test": _("test")}]}}
     assert (
-        serializer.serialize_object(test) == '{"test": "test", "ui": {"test": "test"}}'
+        serializer.serialize_object(test)
+        == '{"test": "test", "ui": {"title_l10n": "test"}}'
+    )
+    assert (
+        serializer.serialize_object_list(list_test)
+        == '{"hits": {"hits": [{"test": "test", "ui": {"title_l10n": "test"}}]}}'
     )
