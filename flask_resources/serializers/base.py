@@ -54,8 +54,7 @@ class MarshmallowSerializer(SerializerMixin):
 
     def dump_obj(self, obj):
         """Dump the object using object schema class."""
-        ser_obj = deepcopy(obj)
-        return self.object_schema_cls(context=self.schema_context).dump(ser_obj)
+        return self.object_schema_cls(context=self.schema_context).dump(obj)
 
     def dump_list(self, obj_list):
         """Dump the list of objects."""
