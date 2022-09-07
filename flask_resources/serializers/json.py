@@ -11,7 +11,7 @@
 import json
 
 from flask import request
-from flask.json import JSONEncoder as JSONEncoderBase
+from flask.json.provider import _default
 from speaklater import is_lazy_string
 
 from .base import MarshmallowSerializer, SerializerMixin
@@ -27,7 +27,7 @@ def flask_request_options():
     return {}
 
 
-class JSONEncoder(JSONEncoderBase):
+class JSONEncoder(json.JSONEncoder):
     """JSONEncoder for our custom needs.
 
     - Knows to force translate lazy translation strings.
@@ -37,7 +37,7 @@ class JSONEncoder(JSONEncoderBase):
         """Override parent's default."""
         if is_lazy_string(obj):
             return str(obj)
-        return super().default(obj)
+        return _default(obj)
 
 
 class JSONSerializer(SerializerMixin):
