@@ -10,10 +10,12 @@
 
 from .base import MarshmallowSerializer, SerializerMixin
 from .json import JSONSerializer, MarshmallowJSONSerializer
+from .xml import XMLSerializer
 
 __all__ = (
     "JSONSerializer",
     "MarshmallowSerializer",
     "MarshmallowJSONSerializer",
     "SerializerMixin",
+    "XMLSerializer",
 )
