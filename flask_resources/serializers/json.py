@@ -9,6 +9,7 @@
 """JSON serializer."""
 
 import json
+import warnings
 
 from flask import request
 from flask.json import JSONEncoder as JSONEncoderBase
@@ -73,11 +74,15 @@ class JSONSerializer(SerializerMixin):
 
 
 class MarshmallowJSONSerializer(MarshmallowSerializer):
-    """JSON serializing using Marshmallow to transform output.
+    """JSON serializing using Marshmallow to transform output."""
 
-    **DEPRECATED**
-    Use MarshmallowSerializer instead
-    """
+    warnings.warn(
+        (
+            "MarshmallowJSONSerializer is going to be deprecated"
+            " use MarshmallowSerializer instead."
+        ),
+        DeprecationWarning,
+    )
 
     def __init__(self, schema_cls, many_schema_cls=None, **options):
         """Initialize the serializer."""
@@ -90,8 +95,22 @@ class MarshmallowJSONSerializer(MarshmallowSerializer):
 
     def dump_one(self, obj):
         """Dump the object with extra information."""
+        warnings.warn(
+            (
+                "MarshmallowJSONSerializer.dump_one is going to be deprecated"
+                "use MarshmallowSerializer.dump_obj instead."
+            ),
+            DeprecationWarning,
+        )
         return super().dump_obj(obj)
 
     def dump_many(self, obj_list):
         """Dump the list of objects with extra information."""
+        warnings.warn(
+            (
+                "MarshmallowJSONSerializer.dump_one is going to be deprecated"
+                "use MarshmallowSerializer.dump_list instead."
+            ),
+            DeprecationWarning,
+        )
         return super().dump_list(obj_list)
