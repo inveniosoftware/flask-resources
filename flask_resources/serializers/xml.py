@@ -19,11 +19,12 @@ class XMLSerializer(SerializerMixin):
 
     def serialize_object(self, obj, **kwargs):
         """Dump the object into a xml string."""
-        data = self.dump_obj(obj, **kwargs)
-        return self.string_encoder(data)
+        return self._string_encoder(obj)
 
     def serialize_object_list(self, obj_list, **kwargs):
         """Dump the object list into a xml string."""
         # this is a coupled to the `BaseListSchema` or any other list schema that
         # returns its search results with this schema
-        return "\n".join(obj_list["hits"]["hits"])
+        return "\n".join(
+            [self.serialize_object(obj, **kwargs) for obj in obj_list["hits"]["hits"]]
+        )

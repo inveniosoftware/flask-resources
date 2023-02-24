@@ -18,11 +18,20 @@ from flask_resources import (
     MarshmallowJSONSerializer,
     MarshmallowSerializer,
 )
-from flask_resources.serializers import JSONSerializer
+from flask_resources.serializers import JSONSerializer, XMLSerializer
 
 
 def _(s):
     return make_lazy_string(lambda: s)
+
+
+def dummy_xml_encoder(obj):
+    xml = "<root>"
+    for key, value in obj.items():
+        xml += f"<{key}>{value}</{key}>"
+
+    xml += "</root>"
+    return xml
 
 
 class UITestSchema(BaseObjectSchema):
@@ -37,6 +46,30 @@ def test_lazy_strings_are_serialized():
     assert '{"key": "Lazy"}' == serializer.serialize_object(lazy)
     assert '[{"key": "Lazy1"}, {"key": "Lazy2"}]' == serializer.serialize_object_list(
         list_lazy
+    )
+
+
+def test_xml_serializer_object():
+    serializer = XMLSerializer(dummy_xml_encoder)
+
+    obj = {"test": "one", "also": "test"}
+    assert (
+        "<root><test>one</test><also>test</also></root>"
+        == serializer.serialize_object(obj)
+    )
+
+
+def test_xml_serializer_object_list():
+    serializer = XMLSerializer(dummy_xml_encoder)
+
+    obj = {
+        "hits": {
+            "hits": [{"test": "one", "also": "test"}, {"test": "two", "also": "test"}]
+        }
+    }
+    assert (
+        "<root><test>one</test><also>test</also></root>\n<root><test>two</test><also>test</also></root>"
+        == serializer.serialize_object_list(obj)
     )
 
 
