@@ -15,7 +15,7 @@ from flask import request
 from flask.json.provider import _default
 from speaklater import is_lazy_string
 
-from .base import MarshmallowSerializer, SerializerMixin
+from .base import BaseSerializer, MarshmallowSerializer
 
 
 def flask_request_options():
@@ -41,7 +41,7 @@ class JSONEncoder(json.JSONEncoder):
         return _default(obj)
 
 
-class JSONSerializer(SerializerMixin):
+class JSONSerializer(BaseSerializer):
     """JSON serializer implementation."""
 
     def __init__(self, encoder=None, options=None):

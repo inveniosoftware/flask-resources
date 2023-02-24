@@ -7,28 +7,30 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """Serializers required interfaces."""
+from abc import ABC, abstractmethod
 from copy import deepcopy
 
 
-class SerializerMixin:
+class BaseSerializer(ABC):
     """Serializer Interface."""
 
+    @abstractmethod
     def serialize_object(self, obj):
         """Serialize a single object according to the response ctx.
 
         The object type must implement ``SerializableMixin``.
         """
-        raise NotImplementedError()
+        pass
 
     def serialize_object_list(self, obj_list):
         """Serialize a list of objects according to the response ctx.
 
         Each object type of the list should implement ``SerializableMixin``.
         """
-        raise NotImplementedError()
+        pass
 
 
-class MarshmallowSerializer(SerializerMixin):
+class MarshmallowSerializer(BaseSerializer):
     """Marshmallow serializer that serializes an obj into defined schema.
 
     :param format_serializer_cls: Serializer in charge of converting the data object into
