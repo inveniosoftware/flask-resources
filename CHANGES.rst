@@ -8,6 +8,10 @@
 Changes
 =======
 
+Version 0.9.1 (released 2023-02-24)
+
+- Fix bug on XML object and object list serialization formatting.
+
 Version 0.9.0 (released 2023-02-24)
 
 - Add deprecation warning to MarshmallowJSONSerializer.
