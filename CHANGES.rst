@@ -1,5 +1,5 @@
 ..
-    Copyright (C) 2020 CERN.
+    Copyright (C) 2020-2023 CERN.
 
     Flask-Resources is free software; you can redistribute it and/or
     modify it under the terms of the MIT License; see LICENSE file for more
@@ -7,6 +7,11 @@
 
 Changes
 =======
+
+Version 0.9.0 (released 2023-02-24)
+
+- Add deprecation warning to MarshmallowJSONSerializer.
+- Add support for XML serialization formatting.
 
 Version 0.1.0 (released TBD)
 

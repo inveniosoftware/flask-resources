@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2021 CERN.
+# Copyright (C) 2020-2023 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
 #
 # Flask-Resources is free software; you can redistribute it and/or modify it
@@ -165,7 +165,7 @@ from .serializers import (
     MarshmallowSerializer,
 )
 
-__version__ = "0.8.4"
+__version__ = "0.9.0"
 
 __all__ = (
     "__version__",
