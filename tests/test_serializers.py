@@ -18,7 +18,7 @@ from flask_resources import (
     MarshmallowJSONSerializer,
     MarshmallowSerializer,
 )
-from flask_resources.serializers import JSONSerializer, XMLSerializer
+from flask_resources.serializers import JSONSerializer, SimpleSerializer
 
 
 def _(s):
@@ -50,7 +50,7 @@ def test_lazy_strings_are_serialized():
 
 
 def test_xml_serializer_object():
-    serializer = XMLSerializer(dummy_xml_encoder)
+    serializer = SimpleSerializer(dummy_xml_encoder)
 
     obj = {"test": "one", "also": "test"}
     assert (
@@ -60,7 +60,7 @@ def test_xml_serializer_object():
 
 
 def test_xml_serializer_object_list():
-    serializer = XMLSerializer(dummy_xml_encoder)
+    serializer = SimpleSerializer(dummy_xml_encoder)
 
     obj = {
         "hits": {

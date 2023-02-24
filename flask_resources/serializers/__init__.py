@@ -8,14 +8,14 @@
 
 """Serializers."""
 
-from .base import MarshmallowSerializer, SerializerMixin
+from .base import BaseSerializer, MarshmallowSerializer
 from .json import JSONSerializer, MarshmallowJSONSerializer
-from .xml import XMLSerializer
+from .simple import SimpleSerializer
 
 __all__ = (
+    "BaseSerializer",
     "JSONSerializer",
     "MarshmallowSerializer",
     "MarshmallowJSONSerializer",
-    "SerializerMixin",
-    "XMLSerializer",
+    "SimpleSerializer",
 )
