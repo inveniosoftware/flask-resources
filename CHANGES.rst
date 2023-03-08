@@ -8,6 +8,13 @@
 Changes
 =======
 
+Version 1.0.0. (released 2023-03-09)
+
+- Remove MarshmallowJSONSerializer (deprecated).
+- Remove XMLSerializer in favor of SimpleSerializer with encoder function.
+- Remove SerializerMixin in favor of BaseSerializer interface.
+- Replace flask.JSONEncoder by json.JSONEncoder.
+
 Version 0.9.1 (released 2023-02-24)
 
 - Fix bug on XML object and object list serialization formatting.
