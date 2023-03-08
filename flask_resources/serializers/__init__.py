@@ -9,13 +9,12 @@
 """Serializers."""
 
 from .base import BaseSerializer, MarshmallowSerializer
-from .json import JSONSerializer, MarshmallowJSONSerializer
+from .json import JSONSerializer
 from .simple import SimpleSerializer
 
 __all__ = (
     "BaseSerializer",
     "JSONSerializer",
     "MarshmallowSerializer",
-    "MarshmallowJSONSerializer",
     "SimpleSerializer",
 )

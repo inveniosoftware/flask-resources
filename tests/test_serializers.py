@@ -12,12 +12,7 @@ from flask import Flask
 from marshmallow import Schema, fields
 from speaklater import make_lazy_string
 
-from flask_resources import (
-    BaseListSchema,
-    BaseObjectSchema,
-    MarshmallowJSONSerializer,
-    MarshmallowSerializer,
-)
+from flask_resources import BaseListSchema, BaseObjectSchema, MarshmallowSerializer
 from flask_resources.serializers import JSONSerializer, SimpleSerializer
 
 
@@ -78,15 +73,6 @@ def test_prettyprint():
     with app.test_request_context("/?prettyprint=1"):
         serializer = JSONSerializer()
         assert '{\n  "key": "1"\n}' == serializer.serialize_object({"key": "1"})
-
-
-def test_marhsmallow_serializer():
-    class TestSchema(Schema):
-        title = fields.Str(data_key="test")
-
-    s = MarshmallowJSONSerializer(schema_cls=TestSchema)
-    assert s.serialize_object({"title": "a"}) == '{"test": "a"}'
-    assert s.serialize_object_list([{"title": "a"}]) == '[{"test": "a"}]'
 
 
 def test_marshmallow_serializer_without_context():

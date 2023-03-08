@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2021 CERN.
+# Copyright (C) 2020-2023 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
 #
 # Flask-Resources is free software; you can redistribute it and/or modify it
@@ -71,46 +71,3 @@ class JSONSerializer(BaseSerializer):
     def serialize_object_list(self, obj_list):
         """Dump the object list into a json string."""
         return json.dumps(obj_list, cls=self.encoder, **self.dumps_options)
-
-
-class MarshmallowJSONSerializer(MarshmallowSerializer):
-    """JSON serializing using Marshmallow to transform output."""
-
-    warnings.warn(
-        (
-            "MarshmallowJSONSerializer is going to be deprecated"
-            " use MarshmallowSerializer instead."
-        ),
-        DeprecationWarning,
-    )
-
-    def __init__(self, schema_cls, many_schema_cls=None, **options):
-        """Initialize the serializer."""
-        super().__init__(
-            format_serializer_cls=JSONSerializer,
-            object_schema_cls=schema_cls,
-            list_schema_cls=many_schema_cls,
-            **options
-        )
-
-    def dump_one(self, obj):
-        """Dump the object with extra information."""
-        warnings.warn(
-            (
-                "MarshmallowJSONSerializer.dump_one is going to be deprecated"
-                "use MarshmallowSerializer.dump_obj instead."
-            ),
-            DeprecationWarning,
-        )
-        return super().dump_obj(obj)
-
-    def dump_many(self, obj_list):
-        """Dump the list of objects with extra information."""
-        warnings.warn(
-            (
-                "MarshmallowJSONSerializer.dump_one is going to be deprecated"
-                "use MarshmallowSerializer.dump_list instead."
-            ),
-            DeprecationWarning,
-        )
-        return super().dump_list(obj_list)

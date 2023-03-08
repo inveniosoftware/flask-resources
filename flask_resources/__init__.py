@@ -159,11 +159,7 @@ from .parsers import (
 )
 from .resources import Resource, ResourceConfig, route
 from .responses import ResponseHandler, response_handler
-from .serializers import (
-    JSONSerializer,
-    MarshmallowJSONSerializer,
-    MarshmallowSerializer,
-)
+from .serializers import JSONSerializer, MarshmallowSerializer
 
 __version__ = "0.9.1"
 
@@ -188,6 +184,5 @@ __all__ = (
     "with_content_negotiation",
     "BaseListSchema",
     "MarshmallowSerializer",
-    "MarshmallowJSONSerializer",
     "BaseObjectSchema",
 )
