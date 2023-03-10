@@ -45,11 +45,11 @@ class MarshmallowSerializer(BaseSerializer):
         format_serializer_cls,
         object_schema_cls,
         list_schema_cls=None,
-        schema_context={},
+        schema_context=None,
         **serializer_options
     ):
         """Initialize the serializer."""
-        self.schema_context = schema_context
+        self.schema_context = schema_context or {}
         self.object_schema_cls = object_schema_cls
         self.list_schema_cls = list_schema_cls
         self.format_serializer_cls = format_serializer_cls(**serializer_options)

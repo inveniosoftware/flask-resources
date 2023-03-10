@@ -28,7 +28,7 @@ def route(
     rule,
     view_meth,
     endpoint=None,
-    rule_options={},
+    rule_options=None,
     apply_decorators=True,
 ):
     """Create a route.
@@ -71,7 +71,7 @@ def route(
         "methods": [method],
         "view_func": view,
         "endpoint": endpoint,
-        **rule_options,
+        **(rule_options or {}),
     }
 
 
