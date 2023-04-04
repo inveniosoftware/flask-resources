@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2021 CERN.
+# Copyright (C) 2020-2023 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
 #
 # Flask-Resources is free software; you can redistribute it and/or modify it
@@ -8,12 +8,19 @@
 
 """Serializers."""
 
-from .base import BaseSerializer, MarshmallowSerializer
+from .base import (
+    BaseSerializer,
+    BaseSerializerSchema,
+    DumperMixin,
+    MarshmallowSerializer,
+)
 from .json import JSONSerializer
 from .simple import SimpleSerializer
 
 __all__ = (
     "BaseSerializer",
+    "BaseSerializerSchema",
+    "DumperMixin",
     "JSONSerializer",
     "MarshmallowSerializer",
     "SimpleSerializer",
