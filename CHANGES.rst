@@ -8,7 +8,11 @@
 Changes
 =======
 
-Version 1.0.0. (released 2023-03-09)
+Version 1.1.0 (released 2023-04-17)
+
+- Serializers: add marshmallow schema processors
+
+Version 1.0.0 (released 2023-03-09)
 
 - Remove MarshmallowJSONSerializer (deprecated).
 - Remove XMLSerializer in favor of SimpleSerializer with encoder function.
