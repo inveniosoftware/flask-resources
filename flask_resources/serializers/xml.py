@@ -4,34 +4,57 @@
 #
 # Invenio-RDM is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
-""" TODO """
+"""XML Formatter."""
 
 from .yaml import Formatter
 from lxml import etree
 import xmltodict
 
+
 class XMLFormatter(Formatter):
+    """XMLFormatter is a class that provides methods for serializing objects to XML format."""
+
     _namespaces = None
 
     @property
     def namespaces(self):
+        """Get the namespaces used for XML serialization.
+
+        :return: The namespaces used for XML serialization.
+        :rtype: dict
+        """
         return self._namespaces
 
     def __init__(self, **kwargs):
+        """Initialize the XMLFormatter.
+
+        :param namespaces: A dictionary of namespaces to be used for XML serialization. Defaults to None.
+        :type namespaces: dict, optional
+        """
         super().__init__()
         if "namespaces" in kwargs:
             self._namespaces = kwargs["namespaces"]
 
-        self.bootstrap = self._build_bootstrap()
-
-    def _build_bootstrap(self):
-        xml_tag = f"""<?xml version="1.0"?>"""
-        return xml_tag
-
     def serialize_object(self, obj):
+        """Serialize an object to XML format.
+
+        :param obj: The object to be serialized.
+        :type obj: dict
+        :return: The serialized object in XML format.
+        :rtype: str
+        """
         return self.to_str(self.to_etree(obj))
 
     def to_etree(self, obj):
+        """
+        Convert an object to an ElementTree object.
+
+        :param obj: The object to be converted.
+        :type obj: dict or str
+        :return: The converted object as an ElementTree object.
+        :rtype: ElementTree
+        :raises TypeError: If the object is not a dictionary or string.
+        """
         if isinstance(obj, dict):
             keys = list(obj.keys())
             # Dict has only one root
@@ -52,5 +75,15 @@ class XMLFormatter(Formatter):
 
         return _etree
 
-    def to_str(self, obj):
-        return etree.tostring(obj, xml_declaration=True, encoding="utf-8")
+    def to_str(self, obj, encoding="utf-8"):
+        """
+        Convert an ElementTree object to a string.
+
+        :param obj: The ElementTree object to be converted.
+        :type obj: ElementTree
+        :param encoding: The encoding to be used for the conversion. Defaults to "utf-8".
+        :type encoding: str, optional
+        :return: The converted object as a string.
+        :rtype: str
+        """
+        return etree.tostring(obj, xml_declaration=True, encoding=encoding)
