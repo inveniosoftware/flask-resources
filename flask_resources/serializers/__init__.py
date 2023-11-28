@@ -16,6 +16,7 @@ from .base import (
 )
 from .json import JSONSerializer
 from .simple import SimpleSerializer
+from .xml import XMLFormatter
 
 __all__ = (
     "BaseSerializer",
@@ -24,4 +25,5 @@ __all__ = (
     "JSONSerializer",
     "MarshmallowSerializer",
     "SimpleSerializer",
+    "XMLFormatter",
 )
