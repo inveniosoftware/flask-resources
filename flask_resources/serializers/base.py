@@ -149,3 +149,31 @@ class BaseSerializerSchema(Schema):
             # Data is assumed to be modified and returned by the dumper
             data = dumper.pre_dump(data)
         return data
+
+
+class BaseFormatter:
+    """Base formatter interface."""
+
+    def to_bytes(self, obj):
+        """Converts the object to bytes."""
+        raise NotImplementedError
+
+    def to_bytes_list(self, obj):
+        """Converts the object list to bytes."""
+        raise NotImplementedError
+
+    def to_str(self, obj):
+        """Converts the object to string."""
+        raise NotImplementedError
+
+    def to_str_list(self, obj):
+        """Converts the object list to string."""
+        raise NotImplementedError
+
+    def to_etree(self, obj):
+        """Converts the object to etree."""
+        raise NotImplementedError
+
+    def to_etree_list(self, obj):
+        """Converts the object list to etree."""
+        raise NotImplementedError

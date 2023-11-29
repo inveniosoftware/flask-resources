@@ -6,12 +6,12 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 """XML Formatter."""
 
-from .yaml import Formatter
+from .base import BaseFormatter
 from lxml import etree
 import xmltodict
 
 
-class XMLFormatter(Formatter):
+class XMLFormatter(BaseFormatter):
     """XMLFormatter is a class that provides methods for serializing objects to XML format."""
 
     _namespaces = None
