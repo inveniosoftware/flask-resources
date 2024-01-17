@@ -14,6 +14,7 @@ from .base import (
     DumperMixin,
     MarshmallowSerializer,
 )
+from .csv import CSVSerializer
 from .json import JSONSerializer
 from .simple import SimpleSerializer
 
@@ -21,6 +22,7 @@ __all__ = (
     "BaseSerializer",
     "BaseSerializerSchema",
     "DumperMixin",
+    "CSVSerializer",
     "JSONSerializer",
     "MarshmallowSerializer",
     "SimpleSerializer",

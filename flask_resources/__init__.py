@@ -159,7 +159,7 @@ from .parsers import (
 )
 from .resources import Resource, ResourceConfig, route
 from .responses import ResponseHandler, response_handler
-from .serializers import JSONSerializer, MarshmallowSerializer
+from .serializers import CSVSerializer, JSONSerializer, MarshmallowSerializer
 
 __version__ = "1.1.0"
 
@@ -170,6 +170,7 @@ __all__ = (
     "HTTPJSONException",
     "JSONDeserializer",
     "JSONSerializer",
+    "CSVSerializer",
     "MultiDictSchema",
     "request_body_parser",
     "request_parser",

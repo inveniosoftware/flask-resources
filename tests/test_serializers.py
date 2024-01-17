@@ -6,7 +6,7 @@
 # Flask-Resources is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
-"""Test deserialization."""
+"""Test serialization."""
 
 from flask import Flask
 from marshmallow import Schema, fields

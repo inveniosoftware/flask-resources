@@ -51,7 +51,6 @@ class CSVSerializer(BaseSerializer):
             raise ValueError("Please provide only fields to either include or exclude")
 
         self.header_separator = kwargs.pop("header_separator", "_")
-        super().__init__(*args, **kwargs)
 
     def serialize_object(self, obj):
         """Serialize a single record and persistent identifier.
