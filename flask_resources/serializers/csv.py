@@ -11,6 +11,7 @@ import csv
 
 from .base import BaseSerializer
 
+
 class Line(object):
     """Object that implements an interface the csv writer accepts."""
 

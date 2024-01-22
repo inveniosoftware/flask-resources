@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020 CERN.
+# Copyright (C) 2020-2024 CERN.
 # Copyright (C) 2020 Northwestern University.
 #
 # Flask-Resources is free software; you can redistribute it and/or modify
@@ -9,11 +9,11 @@
 """Test serialization."""
 
 from flask import Flask
-from marshmallow import Schema, fields
+from marshmallow import fields
 from speaklater import make_lazy_string
 
 from flask_resources import BaseListSchema, BaseObjectSchema, MarshmallowSerializer
-from flask_resources.serializers import JSONSerializer, SimpleSerializer
+from flask_resources.serializers import CSVSerializer, JSONSerializer, SimpleSerializer
 
 
 def _(s):
@@ -75,23 +75,22 @@ def test_prettyprint():
         assert '{\n  "key": "1"\n}' == serializer.serialize_object({"key": "1"})
 
 
-def test_marshmallow_serializer_without_context():
+def test_marshmallow_json_serializer_without_context():
     serializer = MarshmallowSerializer(
         format_serializer_cls=JSONSerializer,
         object_schema_cls=UITestSchema,
         list_schema_cls=BaseListSchema,
     )
     test = {"test": _("test")}
-
-    list_test = {"hits": {"hits": [{"test": _("test")}]}}
+    list_test = {"hits": {"hits": [{"test": _("test1")}, {"test": _("test2")}]}}
     assert serializer.serialize_object(test) == '{"title_l10n": "test"}'
     assert (
         serializer.serialize_object_list(list_test)
-        == '{"hits": {"hits": [{"title_l10n": "test"}]}}'
+        == '{"hits": {"hits": [{"title_l10n": "test1"}, {"title_l10n": "test2"}]}}'
     )
 
 
-def test_marshmallow_serializer_with_context():
+def test_marshmallow_json_serializer_with_context():
     serializer = MarshmallowSerializer(
         format_serializer_cls=JSONSerializer,
         object_schema_cls=UITestSchema,
@@ -99,12 +98,43 @@ def test_marshmallow_serializer_with_context():
         schema_context={"object_key": "ui"},
     )
     test = {"test": _("test")}
-    list_test = {"hits": {"hits": [{"test": _("test")}]}}
+    list_test = {"hits": {"hits": [{"test": _("test1")}, {"test": _("test2")}]}}
     assert (
         serializer.serialize_object(test)
         == '{"test": "test", "ui": {"title_l10n": "test"}}'
     )
     assert (
         serializer.serialize_object_list(list_test)
-        == '{"hits": {"hits": [{"test": "test", "ui": {"title_l10n": "test"}}]}}'
+        == '{"hits": {"hits": [{"test": "test1", "ui": {"title_l10n": "test1"}}, {"test": "test2", "ui": {"title_l10n": "test2"}}]}}'
+    )
+
+
+def test_marshmallow_csv_serializer_without_context():
+    serializer = MarshmallowSerializer(
+        format_serializer_cls=CSVSerializer,
+        object_schema_cls=UITestSchema,
+        list_schema_cls=BaseListSchema,
+    )
+    test = {"test": _("test")}
+    list_test = {"hits": {"hits": [{"test": _("test1")}, {"test": _("test2")}]}}
+    assert serializer.serialize_object(test) == "\r\n".join(["title_l10n", "test", ""])
+    assert serializer.serialize_object_list(list_test) == "\r\n".join(
+        ["title_l10n", "test1", "test2", ""]
+    )
+
+
+def test_marshmallow_csv_serializer_with_context():
+    serializer = MarshmallowSerializer(
+        format_serializer_cls=CSVSerializer,
+        object_schema_cls=UITestSchema,
+        list_schema_cls=BaseListSchema,
+        schema_context={"object_key": "ui"},
+    )
+    test = {"test": _("test")}
+    list_test = {"hits": {"hits": [{"test": _("test1")}, {"test": _("test2")}]}}
+    assert serializer.serialize_object(test) == "\r\n".join(
+        ["test,ui_title_l10n", "test,test", ""]
+    )
+    assert serializer.serialize_object_list(list_test) == "\r\n".join(
+        ["test,ui_title_l10n", "test1,test1", "test2,test2", ""]
     )
