@@ -65,8 +65,9 @@ class CSVSerializer(BaseSerializer):
 
     def serialize_object_list(self, obj_list):
         """Dump the object list into a csv string."""
-        raise NotImplementedError()
-    
+        records = [self.process_dict(obj) for obj in obj_list["hits"]["hits"]]
+        return self._format_csv(records)
+
     def process_dict(self, dictionary):
         """Transform record dict with nested keys to a flat dict."""
         return self._flatten(dictionary)
