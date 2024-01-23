@@ -51,7 +51,7 @@ class BaseListSchema(Schema):
     hits = fields.Method("get_hits")
     aggregations = fields.Method("get_aggs")
     links = fields.Method("get_links")
-    sortBy =  fields.Method("get_sorting_option")
+    sortBy = fields.Method("get_sorting_option")
 
     def get_hits(self, obj_list):
         """Apply hits transformation."""
@@ -69,14 +69,14 @@ class BaseListSchema(Schema):
         if not aggs:
             return missing
         return aggs
-    
+
     def get_links(self, obj_list):
         """Apply links transformation."""
         links = obj_list.get("links")
         if not links:
             return missing
         return links
-    
+
     def get_sorting_option(self, obj_list):
         """Apply sortBy transformation."""
         sortBy = obj_list.get("sortBy")
