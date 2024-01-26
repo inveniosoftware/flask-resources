@@ -109,52 +109,28 @@ class CSVSerializer(BaseSerializer):
             for k, v in value.items():
                 # for dict, build a key field_subfield, e.g. title_subtitle
                 new_key = parent_key + sep + k
-                # skip excluded keys
-                if new_key in self.csv_excluded_fields:
-                    continue
-                if self.csv_included_fields and not self.key_in_field(
-                    new_key, self.csv_included_fields
-                ):
-                    continue
-                items.extend(self._flatten(v, new_key).items())
+                if self.is_field_included(new_key):
+                    items.extend(self._flatten(v, new_key).items())
         elif isinstance(value, list):
             if not self.collapse_lists:
                 for index, item in enumerate(value):
                     # for lists, build a key with an index, e.g. title_0_subtitle
                     new_key = parent_key + sep + str(index)
-                    # skip excluded keys
-                    if new_key in self.csv_excluded_fields:
-                        continue
-                    if self.csv_included_fields and not self.key_in_field(
-                        parent_key, self.csv_included_fields
-                    ):
-                        continue
-                    items.extend(self._flatten(item, new_key).items())
+                    if self.is_field_included(new_key):
+                        items.extend(self._flatten(item, new_key).items())
             else:
-                # for non-collapsed lists do not include index, e.g. title_subtitle
+                # for collapsed lists do not include index, e.g. title_subtitle
                 new_key = parent_key
-                # skip excluded keys
-                if new_key not in self.csv_excluded_fields:
-                    if self.csv_included_fields:
-                        if self.key_in_field(parent_key, self.csv_included_fields):
-                            if all([isinstance(v, str) for v in value]):
-                                values = "\n".join(value)
-                                items.append((new_key, values))
-                            else:
-                                items.extend(
-                                    self._flatten_list_dict(value, new_key).items()
-                                )
+                if self.is_field_included(new_key):
+                    if all([isinstance(v, str) for v in value]):
+                        values = "\n".join(value)
+                        items.append((new_key, values))
                     else:
-                        if all([isinstance(v, str) for v in value]):
-                            values = "\n".join(value)
-                            items.append((new_key, values))
-                        else:
-                            items.extend(
-                                self._flatten_list_dict(value, new_key).items()
-                            )
+                        items.extend(self._flatten_list_dict(value, new_key).items())
 
         else:
-            items.append((parent_key, value))
+            if self.is_field_included(parent_key):
+                items.append((parent_key, value))
 
         return dict(items)
 
@@ -168,15 +144,16 @@ class CSVSerializer(BaseSerializer):
                 if isinstance(v, dict):
                     return self._flatten_list_dict_dict(value, parent_key)
                 new_key = f"{parent_key}.{k}" if parent_key else k
-                current_keys.add(new_key)
-                if new_key in keys:
-                    combined_dict[new_key].append(v)
-                else:
-                    keys.add(new_key)
-                    if iterator > 0:
-                        combined_dict[new_key] = [""] * iterator + [v]
+                if self.is_field_included(new_key):
+                    current_keys.add(new_key)
+                    if new_key in keys:
+                        combined_dict[new_key].append(v)
                     else:
-                        combined_dict[new_key] = [v]
+                        keys.add(new_key)
+                        if iterator > 0:
+                            combined_dict[new_key] = [""] * iterator + [v]
+                        else:
+                            combined_dict[new_key] = [v]
 
             missing_keys = keys - current_keys
             for missing_key in missing_keys:
@@ -200,28 +177,27 @@ class CSVSerializer(BaseSerializer):
             for k1, v1 in item.items():
                 if isinstance(v1, str):
                     new_key = f"{parent_key}.{k1}" if parent_key else f"{k1}"
-                    combined_dict[new_key] = [v1]
+                    if self.is_field_included(new_key):
+                        combined_dict[new_key] = [v1]
                 else:
                     if not isinstance(v1, dict):
                         continue
                     for k2, v2 in v1.items():
                         if not isinstance(v2, str):
                             continue
-                        if k1:
-                            new_key = (
-                                f"{parent_key}.{k1}.{k2}"
-                                if parent_key
-                                else f"{k1}.{k2}"
-                            )
-                        current_keys.add(new_key)
-                        if new_key in keys:
-                            combined_dict[new_key].append(v2)
-                        else:
-                            keys.add(new_key)
-                            if iterator > 0:
-                                combined_dict[new_key] = [""] * iterator + [v2]
+                        new_key = (
+                            f"{parent_key}.{k1}.{k2}" if parent_key else f"{k1}.{k2}"
+                        )
+                        if self.is_field_included(new_key):
+                            current_keys.add(new_key)
+                            if new_key in keys:
+                                combined_dict[new_key].append(v2)
                             else:
-                                combined_dict[new_key] = [v2]
+                                keys.add(new_key)
+                                if iterator > 0:
+                                    combined_dict[new_key] = [""] * iterator + [v2]
+                                else:
+                                    combined_dict[new_key] = [v2]
 
             missing_keys = keys - current_keys
             for missing_key in missing_keys:
@@ -234,6 +210,16 @@ class CSVSerializer(BaseSerializer):
             (key, "\n".join(map(str, values))) for key, values in combined_dict.items()
         ]
         return dict(flattened_items)
+
+    def is_field_included(self, key):
+        """Determines if a key should be included or not."""
+        if key in self.csv_excluded_fields:
+            return False
+        if self.csv_included_fields and not self.key_in_field(
+            key, self.csv_included_fields
+        ):
+            return False
+        return True
 
     def key_in_field(self, key, fields):
         """Checks if the given key is contained within any of the fields."""
