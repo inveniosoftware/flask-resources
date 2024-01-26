@@ -76,13 +76,17 @@ class CSVSerializer(BaseSerializer):
     def _format_csv(self, records):
         """Return the list of records as a CSV string."""
         # build a unique list of all records keys as CSV headers
-        headers = set()
-        for rec in records:
-            headers.update(rec.keys())
+        if self.csv_included_fields:
+            headers = self.csv_included_fields
+        else:
+            headers = set()
+            for rec in records:
+                headers.update(rec.keys())
+            headers = sorted(headers)
 
         # write the CSV output in memory
         line = Line()
-        writer = csv.DictWriter(line, fieldnames=sorted(headers))
+        writer = csv.DictWriter(line, fieldnames=headers)
         writer.writeheader()
         result = line.read()
 
