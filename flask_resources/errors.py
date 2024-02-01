@@ -9,6 +9,7 @@
 """Exceptions used in Flask Resources module."""
 
 import json
+import sentry_sdk
 
 from flask import current_app, g
 from werkzeug.exceptions import HTTPException
@@ -60,6 +61,10 @@ class HTTPJSONException(HTTPException):
             self.errors = errors
         if code is not None:
             self.code = code
+            if code >= 500:
+                sentry_event_id = sentry_sdk.last_event_id()
+                if sentry_event_id is not None:
+                    g.sentry_event_id = str(sentry_event_id)
 
     @property
     def name(self):
