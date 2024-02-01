@@ -1,5 +1,5 @@
 ..
-    Copyright (C) 2020-2023 CERN.
+    Copyright (C) 2020-2024 CERN.
 
     Flask-Resources is free software; you can redistribute it and/or
     modify it under the terms of the MIT License; see LICENSE file for more
@@ -7,6 +7,11 @@
 
 Changes
 =======
+
+Version 1.2.0 (released 2024-02-01)
+
+- Add CSV serializer
+- Added links and sortby options to list schemas
 
 Version 1.1.0 (released 2023-04-17)
 
