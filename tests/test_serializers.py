@@ -8,6 +8,7 @@
 
 """Test serialization."""
 
+import pytest
 from flask import Flask
 from marshmallow import fields
 from speaklater import make_lazy_string
@@ -137,4 +138,74 @@ def test_marshmallow_csv_serializer_with_context():
     )
     assert serializer.serialize_object_list(list_test) == "\r\n".join(
         ["test,ui_title_l10n", "test1,test1", "test2,test2", ""]
+    )
+
+
+@pytest.fixture(scope="module")
+def csv_test_data():
+    return {
+        "doi": "10.123",
+        "metadata": {
+            "resource_type": {"id": "image-photo"},
+            "creators": [
+                {
+                    "person_or_org": {
+                        "name": "Doe, John",
+                    }
+                },
+                {
+                    "person_or_org": {
+                        "name": "Doe, Jane",
+                    }
+                },
+            ],
+        },
+        "publication_date": "2020-06-01",
+        "title": "A Test Record",
+    }
+
+
+def test_csv_excluded_fields_header(csv_test_data):
+    serializer = CSVSerializer(
+        csv_excluded_fields=["publication_date", "title", "metadata_creators"]
+    )
+    assert serializer.serialize_object(csv_test_data) == "\r\n".join(
+        [
+            "doi,metadata_resource_type_id",
+            "10.123,image-photo",
+            "",
+        ]
+    )
+
+
+def test_csv_included_fields_header(csv_test_data):
+    serializer = CSVSerializer(csv_included_fields=["publication_date", "title"])
+    assert serializer.serialize_object(csv_test_data) == "\r\n".join(
+        [
+            "publication_date,title",
+            "2020-06-01,A Test Record",
+            "",
+        ]
+    )
+
+
+def test_csv_header_separator_header(csv_test_data):
+    serializer = CSVSerializer(header_separator=".")
+    assert serializer.serialize_object(csv_test_data) == "\r\n".join(
+        [
+            "doi,metadata.creators.0.person_or_org.name,metadata.creators.1.person_or_org.name,metadata.resource_type.id,publication_date,title",
+            '10.123,"Doe, John","Doe, Jane",image-photo,2020-06-01,A Test Record',
+            "",
+        ]
+    )
+
+
+def test_csv_collapse_lists_header(csv_test_data):
+    serializer = CSVSerializer(collapse_lists=True)
+    assert serializer.serialize_object(csv_test_data) == "\r\n".join(
+        [
+            "doi,metadata_creators.person_or_org.name,metadata_resource_type_id,publication_date,title",
+            '10.123,"Doe, John\nDoe, Jane",image-photo,2020-06-01,A Test Record',
+            "",
+        ]
     )
