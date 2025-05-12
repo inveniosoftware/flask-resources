@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2020-2024 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Flask-Resources is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -56,10 +57,9 @@ class BaseListSchema(Schema):
     def get_hits(self, obj_list):
         """Apply hits transformation."""
         hits_list = []
+        object_schema = self.context["object_schema_cls"](context=self.context)
         for obj in obj_list["hits"]["hits"]:
-            hits_list.append(
-                self.context["object_schema_cls"](context=self.context).dump(obj)
-            )
+            hits_list.append(object_schema.dump(obj))
         obj_list["hits"]["hits"] = hits_list
         return obj_list["hits"]
 
