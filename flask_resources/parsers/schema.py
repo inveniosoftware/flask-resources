@@ -12,6 +12,8 @@
 from marshmallow import EXCLUDE, Schema, fields, missing, pre_load
 from werkzeug.datastructures import MultiDict
 
+from ..base import WrapSchemaToPreserveContext
+
 
 class MultiDictSchema(Schema):
     """MultiDict aware schema used for loading e.g. request.args."""
@@ -46,7 +48,7 @@ class MultiDictSchema(Schema):
         return data
 
 
-class BaseListSchema(Schema):
+class BaseListSchema(WrapSchemaToPreserveContext):
     """List Schema for dumping extra information."""
 
     hits = fields.Method("get_hits")
@@ -85,7 +87,7 @@ class BaseListSchema(Schema):
         return sortBy
 
 
-class BaseObjectSchema(Schema):
+class BaseObjectSchema(WrapSchemaToPreserveContext):
     """Base Schema for dumping extra information."""
 
     def dump(self, obj, **kwargs):

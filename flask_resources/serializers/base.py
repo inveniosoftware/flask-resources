@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2020-2023 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Flask-Resources is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -11,6 +12,8 @@
 from abc import ABC, abstractmethod
 
 from marshmallow import Schema, post_dump, pre_dump
+
+from ..base import WrapSchemaToPreserveContext
 
 
 class BaseSerializer(ABC):
@@ -113,7 +116,7 @@ class DumperMixin:
 # https://github.com/inveniosoftware/flask-resources/issues/117
 
 
-class BaseSerializerSchema(Schema):
+class BaseSerializerSchema(WrapSchemaToPreserveContext):
     """Enables the extension of Marshmallow schemas serialization."""
 
     def __init__(self, dumpers=None, **kwargs):

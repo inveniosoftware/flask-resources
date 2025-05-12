@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2020-2024 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Flask-Resources is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -142,6 +143,7 @@ Below is a large example that demonstrates:
 
 
 """
+import marshmallow
 
 from .config import from_conf
 from .content_negotiation import with_content_negotiation
@@ -157,9 +159,12 @@ from .parsers import (
     request_body_parser,
     request_parser,
 )
+from .parsers.schema import WrapSchemaToPreserveContext
 from .resources import Resource, ResourceConfig, route
 from .responses import ResponseHandler, response_handler
 from .serializers import CSVSerializer, JSONSerializer, MarshmallowSerializer
+
+marshmallow.Schema = WrapSchemaToPreserveContext
 
 __version__ = "1.2.0"
 
