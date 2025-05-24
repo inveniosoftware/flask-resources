@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2020-2023 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Flask-Resources is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -9,13 +10,12 @@
 """JSON serializer."""
 
 import json
-import warnings
 
 from flask import request
 from flask.json.provider import _default
 from speaklater import is_lazy_string
 
-from .base import BaseSerializer, MarshmallowSerializer
+from .base import BaseSerializer
 
 
 def flask_request_options():
