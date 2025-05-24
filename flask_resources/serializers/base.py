@@ -11,9 +11,9 @@
 
 from abc import ABC, abstractmethod
 
-from marshmallow import Schema, post_dump, pre_dump
+from marshmallow import post_dump, pre_dump
 
-from ..base import WrapSchemaToPreserveContext
+from ..base import Schema
 
 
 class BaseSerializer(ABC):
@@ -116,7 +116,7 @@ class DumperMixin:
 # https://github.com/inveniosoftware/flask-resources/issues/117
 
 
-class BaseSerializerSchema(WrapSchemaToPreserveContext):
+class BaseSerializerSchema(Schema):
     """Enables the extension of Marshmallow schemas serialization."""
 
     def __init__(self, dumpers=None, **kwargs):

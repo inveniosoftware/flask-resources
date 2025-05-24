@@ -143,8 +143,7 @@ Below is a large example that demonstrates:
 
 
 """
-import marshmallow
-
+from .base import Schema
 from .config import from_conf
 from .content_negotiation import with_content_negotiation
 from .context import resource_requestctx
@@ -159,12 +158,9 @@ from .parsers import (
     request_body_parser,
     request_parser,
 )
-from .parsers.schema import WrapSchemaToPreserveContext
 from .resources import Resource, ResourceConfig, route
 from .responses import ResponseHandler, response_handler
 from .serializers import CSVSerializer, JSONSerializer, MarshmallowSerializer
-
-marshmallow.Schema = WrapSchemaToPreserveContext
 
 __version__ = "1.2.0"
 
@@ -191,4 +187,5 @@ __all__ = (
     "BaseListSchema",
     "MarshmallowSerializer",
     "BaseObjectSchema",
+    "Schema",
 )

@@ -1,7 +1,17 @@
-from marshmallow import Schema
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2025 Graz University of Technology.
+#
+# Flask-Resources is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+
+"""Schema base."""
 
 
-class WrapSchemaToPreserveContext(Schema):
+from marshmallow import Schema as BaseSchema
+
+
+class Schema(BaseSchema):
     """Local wrapper for Schema to preserve context feature."""
 
     def __init__(self, *args, **kwargs):

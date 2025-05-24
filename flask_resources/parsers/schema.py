@@ -9,10 +9,10 @@
 
 """Schema that's able to handle loading data from MultiDicts."""
 
-from marshmallow import EXCLUDE, Schema, fields, missing, pre_load
+from marshmallow import EXCLUDE, fields, missing, pre_load
 from werkzeug.datastructures import MultiDict
 
-from ..base import WrapSchemaToPreserveContext
+from ..base import Schema
 
 
 class MultiDictSchema(Schema):
@@ -48,7 +48,7 @@ class MultiDictSchema(Schema):
         return data
 
 
-class BaseListSchema(WrapSchemaToPreserveContext):
+class BaseListSchema(Schema):
     """List Schema for dumping extra information."""
 
     hits = fields.Method("get_hits")
@@ -87,7 +87,7 @@ class BaseListSchema(WrapSchemaToPreserveContext):
         return sortBy
 
 
-class BaseObjectSchema(WrapSchemaToPreserveContext):
+class BaseObjectSchema(Schema):
     """Base Schema for dumping extra information."""
 
     def dump(self, obj, **kwargs):
