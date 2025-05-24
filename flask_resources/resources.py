@@ -2,13 +2,12 @@
 #
 # Copyright (C) 2020-2021 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Flask-Resources is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """Resource view."""
-
-from inspect import ismethod
 
 from flask import Blueprint
 from werkzeug.exceptions import HTTPException

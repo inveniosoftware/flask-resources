@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2020-2021 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Flask-Resources is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -18,8 +19,6 @@ parser (preferably), or accessing ``request.view_args``. The goal of this
 is to ensure that the view function access only validated data.
 """
 
-from functools import wraps
-from inspect import ismethod
 
 from flask import g
 from werkzeug.local import LocalProxy
