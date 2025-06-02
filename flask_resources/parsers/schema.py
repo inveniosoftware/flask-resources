@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2020-2024 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Flask-Resources is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -53,12 +54,21 @@ class BaseListSchema(Schema):
     links = fields.Method("get_links")
     sortBy = fields.Method("get_sorting_option")
 
+    def __init__(self, object_schema_cls, **kwargs):
+        """Construct."""
+        self.object_schema_cls = object_schema_cls
+        self.object_key = kwargs.pop("object_key", None)
+        super().__init__(**kwargs)
+
     def get_hits(self, obj_list):
         """Apply hits transformation."""
         hits_list = []
+
         for obj in obj_list["hits"]["hits"]:
             hits_list.append(
-                self.context["object_schema_cls"](context=self.context).dump(obj)
+                # placing object_key=self.object_key in dump is not working because marshmallow.Schema.dump does not have **kwargs and cannot handle object_key (GloblSearchSchema breaks)
+                # placing object_key=self.object_key to the object_schema_cls() doesn't work either because schemas inheriting from OneOfSchema don't work (until now only `LOMUIRecordSchema` breaks with that)
+                self.object_schema_cls().dump(obj)
             )
         obj_list["hits"]["hits"] = hits_list
         return obj_list["hits"]
@@ -90,7 +100,9 @@ class BaseObjectSchema(Schema):
 
     def dump(self, obj, **kwargs):
         """Overriding marshmallow dump to dump extra key if any."""
-        object_key = self.context.get("object_key", None)
+        # TODO: this object_key is really hard to remove since it should be kept generic
+        # using everytime "ui" should break the exports! seems it doesn't
+        object_key = kwargs.pop("object_key", "ui")
         if object_key:
             obj[object_key] = Schema.dump(self, obj, **kwargs)
             return obj

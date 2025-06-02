@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2020-2023 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Flask-Resources is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -50,13 +51,11 @@ class MarshmallowSerializer(BaseSerializer):
         self.schema_context = schema_context or {}
         schema_kwargs = schema_kwargs or {}
         self.format_serializer = format_serializer_cls(**serializer_options)
-        self.object_schema = object_schema_cls(context=schema_context, **schema_kwargs)
+        self.object_schema = object_schema_cls(**schema_kwargs)
         if list_schema_cls:
             self.list_schema = list_schema_cls(
-                context={
-                    "object_schema_cls": object_schema_cls,
-                    **self.schema_context,
-                }
+                object_schema_cls=object_schema_cls,
+                **self.schema_context,
             )
         else:
             self.list_schema = None
