@@ -2,11 +2,14 @@
 #
 # Copyright (C) 2020-2024 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Flask-Resources is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """Schema that's able to handle loading data from MultiDicts."""
+
+from warnings import warn
 
 from marshmallow import EXCLUDE, Schema, fields, missing, pre_load
 from werkzeug.datastructures import MultiDict
@@ -88,9 +91,20 @@ class BaseListSchema(Schema):
 class BaseObjectSchema(Schema):
     """Base Schema for dumping extra information."""
 
+    object_key = None
+
     def dump(self, obj, **kwargs):
         """Overriding marshmallow dump to dump extra key if any."""
-        object_key = self.context.get("object_key", None)
+        if self.context and "object_key" in self.context:
+            object_key = self.context.get("object_key", None)
+            if object_key:
+                warn(
+                    "using object_key in context is deprecated, use class object_key instead.",
+                    DeprecationWarning,
+                )
+        else:
+            object_key = self.object_key
+
         if object_key:
             obj[object_key] = Schema.dump(self, obj, **kwargs)
             return obj
