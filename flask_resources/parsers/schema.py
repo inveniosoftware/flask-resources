@@ -56,13 +56,32 @@ class BaseListSchema(Schema):
     links = fields.Method("get_links")
     sortBy = fields.Method("get_sorting_option")
 
+    def __init__(self, object_schema_cls=None, **kwargs):
+        """Construct."""
+        super().__init__(**kwargs)
+        self.object_schema_cls = object_schema_cls
+
     def get_hits(self, obj_list):
         """Apply hits transformation."""
-        hits_list = []
-        for obj in obj_list["hits"]["hits"]:
-            hits_list.append(
-                self.context["object_schema_cls"](context=self.context).dump(obj)
+        if self.object_schema_cls:
+            object_schema_cls = self.object_schema_cls
+        else:
+            object_schema_cls = self.context["object_schema_cls"]
+            warn(
+                "using context for object_schema_cls is deprecated, use constructor for it.",
+                DeprecationWarning,
             )
+
+        if len(self.context.keys()) > 0:
+            object_schema = object_schema_cls(context=self.context)
+            warn(
+                "Relying on context is deprecated, please look for different solutions!",
+                DeprecationWarning,
+            )
+        else:
+            object_schema = object_schema_cls()
+
+        hits_list = [object_schema.dump(obj) for obj in obj_list["hits"]["hits"]]
         obj_list["hits"]["hits"] = hits_list
         return obj_list["hits"]
 
