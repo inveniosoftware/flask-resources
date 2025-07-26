@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2020-2023 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Flask-Resources is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -9,6 +10,7 @@
 """Serializers required interfaces."""
 
 from abc import ABC, abstractmethod
+from warnings import warn
 
 from marshmallow import Schema, post_dump, pre_dump
 
@@ -47,17 +49,32 @@ class MarshmallowSerializer(BaseSerializer):
         **serializer_options
     ):
         """Initialize the serializer."""
-        self.schema_context = schema_context or {}
         schema_kwargs = schema_kwargs or {}
         self.format_serializer = format_serializer_cls(**serializer_options)
-        self.object_schema = object_schema_cls(context=schema_context, **schema_kwargs)
-        if list_schema_cls:
-            self.list_schema = list_schema_cls(
-                context={
-                    "object_schema_cls": object_schema_cls,
-                    **self.schema_context,
-                }
+
+        if schema_context:
+            self.object_schema = object_schema_cls(
+                context=schema_context, **schema_kwargs
             )
+            warn(
+                "Relying on context is deprecated, please look for different solutions!",
+                DeprecationWarning,
+            )
+
+        else:
+            self.object_schema = object_schema_cls(**schema_kwargs)
+
+        if list_schema_cls:
+            if schema_context:
+                self.list_schema = list_schema_cls(
+                    object_schema_cls=object_schema_cls,
+                    context=schema_context,
+                )
+            else:
+                self.list_schema = list_schema_cls(
+                    object_schema_cls=object_schema_cls,
+                )
+
         else:
             self.list_schema = None
 
