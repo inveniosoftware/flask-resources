@@ -1,5 +1,6 @@
 ..
     Copyright (C) 2020-2024 CERN.
+    Copyright (C) 2026 Graz University of Technology.
 
     Flask-Resources is free software; you can redistribute it and/or
     modify it under the terms of the MIT License; see LICENSE file for more
@@ -7,6 +8,14 @@
 
 Changes
 =======
+
+Version v1.3.0 (released 2026-01-27)
+
+- refactor: move object_schema_cls to constructor
+- refactor(schema): make object_key class property
+- setup: change to reusable workflows
+- fix: setuptools require underscores instead of dashes
+- tests: create tests for CSVSerializer
 
 Version 1.2.0 (released 2024-02-01)
 
