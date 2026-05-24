@@ -1,10 +1,6 @@
-# -*- coding: utf-8 -*-
-#
-# Copyright (C) 2021 CERN.
-# Copyright (C) 2021 Northwestern University.
-#
-# Flask-Resources is free software; you can redistribute it and/or modify it
-# under the terms of the MIT License; see LICENSE file for more details.
+# SPDX-FileCopyrightText: 2021 CERN.
+# SPDX-FileCopyrightText: 2021 Northwestern University.
+# SPDX-License-Identifier: MIT
 
 """Small utilities to resolve values from the resource configuration."""
 
