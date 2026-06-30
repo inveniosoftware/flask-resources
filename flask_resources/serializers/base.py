@@ -42,7 +42,7 @@ class MarshmallowSerializer(BaseSerializer):
         list_schema_cls=None,
         schema_context=None,
         schema_kwargs=None,
-        **serializer_options
+        **serializer_options,
     ):
         """Initialize the serializer."""
         schema_kwargs = schema_kwargs or {}
