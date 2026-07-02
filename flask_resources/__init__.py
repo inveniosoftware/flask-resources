@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: 2020-2024 CERN.
 # SPDX-FileCopyrightText: 2020-2021 Northwestern University.
 # SPDX-FileCopyrightText: 2026 Graz University of Technology.
+# SPDX-FileCopyrightText: 2026 TU Wien.
 # SPDX-License-Identifier: MIT
 
 """Library for implementing configurable REST APIs.
@@ -158,7 +159,7 @@ from .resources import Resource, ResourceConfig, route
 from .responses import ResponseHandler, response_handler
 from .serializers import CSVSerializer, JSONSerializer, MarshmallowSerializer
 
-__version__ = "1.3.0"
+__version__ = "1.3.1"
 
 __all__ = (
     "__version__",
