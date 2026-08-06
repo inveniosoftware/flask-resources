@@ -46,11 +46,13 @@ class ResourceRequestCtx(object):
 
     - The mimetype selected by the content negotiation.
     - The content type of the request payload
+    - The remote address of the client.
     """
 
-    def __init__(self, config):
+    def __init__(self, config, remote_addr=None):
         """Initialize the resource context."""
         self.config = config
+        self.remote_addr = remote_addr
         self.args = None
         self.headers = None
         self.data = None

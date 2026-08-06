@@ -54,6 +54,9 @@ def resource():
         def header_unknown(self):
             return resource_requestctx.headers, 200
 
+        def remote_addr(self):
+            return {"remote_addr": resource_requestctx.remote_addr}, 200
+
         def create_url_rules(self):
             return [
                 route("GET", "/args", self.args),
@@ -61,6 +64,7 @@ def resource():
                 route("GET", "/viewargs/<id>", self.view_args),
                 route("GET", "/header", self.header),
                 route("GET", "/header-unknown", self.header_unknown),
+                route("GET", "/remote-addr", self.remote_addr),
             ]
 
     return TestResource(TestConfig)
@@ -111,3 +115,8 @@ def test_headers(client):
     res = client.get("/header-unknown", headers={"if-match": "1"})
     assert res.json["if_match"] == 1
     assert "user_agent" in res.json
+
+
+def test_remote_addr(client):
+    res = client.get("/remote-addr", environ_base={"REMOTE_ADDR": "203.0.113.42"})
+    assert res.json == {"remote_addr": "203.0.113.42"}
