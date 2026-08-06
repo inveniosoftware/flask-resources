@@ -6,7 +6,7 @@
 
 from inspect import ismethod
 
-from flask import Blueprint
+from flask import Blueprint, request
 from werkzeug.exceptions import HTTPException
 
 from .config import from_conf, resolve_from_conf
@@ -55,7 +55,7 @@ def route(
             view_meth = decorator(view_meth)
 
     def view(*args, **kwargs):
-        with ResourceRequestCtx(config):
+        with ResourceRequestCtx(config, remote_addr=request.remote_addr):
             # args and kwargs are ignored on purpose - use a request parser
             # to retrieve the validated values.
             return view_meth()
